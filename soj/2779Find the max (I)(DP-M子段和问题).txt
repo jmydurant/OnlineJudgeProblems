@@ -1,0 +1,32 @@
+#include<cstdio>
+#include<cstring>  //这次把dp换成了滚动数组。。并且加入了g来记录可以不包含第i个的最大表示方法。。。使复杂度直接变成了O^NK。。
+#include<climits>
+#define INF -400000000
+using namespace std;
+int MAX(int a,int b){return a>b?a:b;}
+int MIN(int a,int b){return a<b?a:b;}
+int f[1010],g[1010];
+int digit[1010];
+int main(void)
+{
+    int N,K;
+    while(EOF!=scanf("%d%d",&N,&K))
+    {
+        for(int i=1;i<=N;i++){scanf("%d",digit+i);}
+        f[0]=0,g[0]=0;
+        for(int i=1;i<=N;i++){g[i]=INF;f[i]=INF;}
+        for(int i=1;i<=N;i++)
+        {
+            int t=MIN(i,K);
+            int j;
+            for(j=1;j<=t;j++)
+            {
+                f[j]=MAX(f[j],g[j-1])+digit[i];
+                g[j-1]=MAX(f[j-1],g[j-1]);
+            }
+            g[j-1]=MAX(f[j-1],g[j-1]);
+        }
+        printf("%d\n",g[K]);
+    }
+    return 0;
+}

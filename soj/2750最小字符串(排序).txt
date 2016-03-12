@@ -1,0 +1,39 @@
+#include<cstdio>   //对字符串进行排序。。如果ab<ba。。则a在b前面。。。只是cmp函数设计的问题了。。有现成的库函数。。所以so easy。。。
+#include<cmath>
+#include<cstring>
+#include<deque>
+#include<queue>
+#include<algorithm>
+#include<climits>
+using namespace std;
+struct abc
+{
+    char word[35];
+}zimu[10010];
+bool cmp(abc a,abc b)
+{
+    char x[80];
+    char y[80];
+    strcpy(x,a.word);
+    strcpy(y,b.word);
+    strcat(x,b.word);
+    strcat(y,a.word);
+    if(strcmp(x,y)<0)return true;
+    else return false;
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        getchar();
+        for(int i=0;i<N;i++)gets(zimu[i].word);
+        sort(zimu,zimu+N,cmp);
+        for(int i=0;i<N;i++)
+        {
+            printf("%s",zimu[i].word);
+        }
+        printf("\n");
+    }
+    return 0;
+}

@@ -1,0 +1,79 @@
+#include<cstring>      //这种题目算是水题么。。。直接秒。。看来我对快速幂应该比较熟练了。。。啦啦啦
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#include<map>
+using namespace std;
+struct abc
+{
+    long long digit[3][3];
+    abc(){memset(digit,0,sizeof(digit));}
+}A,B;
+void matrix_time(int n)
+{
+    while(n)
+    {
+        if(n%2)
+        {
+            abc tmpt;
+            for(int i=0;i<=2;i++)
+            {
+                for(int j=0;j<=2;j++)
+                {
+                    for(int k=0;k<=2;k++)
+                    {
+                        tmpt.digit[i][j]+=((A.digit[i][k]*B.digit[k][j])%99001);
+                        tmpt.digit[i][j]%=99001;
+                    }
+                }
+            }
+            for(int i=0;i<=2;i++)
+            {
+                for(int j=0;j<=2;j++)
+                {
+                    A.digit[i][j]=tmpt.digit[i][j];
+                }
+            }
+        }
+        abc tmpt;
+        for(int i=0;i<=2;i++)
+        {
+            for(int j=0;j<=2;j++)
+            {
+                for(int k=0;k<=2;k++)
+                {
+                    tmpt.digit[i][j]+=((B.digit[i][k]*B.digit[k][j])%99001);
+                    tmpt.digit[i][j]%=99001;
+                }
+            }
+        }
+        for(int i=0;i<=2;i++)
+        {
+            for(int j=0;j<=2;j++)
+            {
+                B.digit[i][j]=tmpt.digit[i][j];
+            }
+        }
+        n/=2;
+    }
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        A.digit[0][0]=3;A.digit[0][1]=2;A.digit[0][2]=1;
+        A.digit[1][0]=0;A.digit[1][1]=0;A.digit[1][2]=0;
+        A.digit[2][0]=0;A.digit[2][1]=0;A.digit[2][2]=0;
+        B.digit[0][0]=1;B.digit[0][1]=1;B.digit[0][2]=0;
+        B.digit[1][0]=1;B.digit[1][1]=0;B.digit[1][2]=1;
+        B.digit[2][0]=1;B.digit[2][1]=0;B.digit[2][2]=0;
+        if(N<=3){printf("%d\n",N);}
+        else
+        {
+            matrix_time(N-3);
+            printf("%lld\n",A.digit[0][0]%99001);
+        }
+    }
+    return 0;
+}

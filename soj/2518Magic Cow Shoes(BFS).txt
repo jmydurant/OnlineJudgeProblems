@@ -1,0 +1,66 @@
+#include<iostream>   //因为奇偶数的移动方式不同。。。所以得分开处理。。还有visit函数。。。必须奇数和偶数都走一次后才不能经过。。。
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#include<climits>
+#include<queue>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MOD 19871118
+using namespace std;
+int visit[60][60];
+typedef pair<int,int> point;
+typedef pair<point,point> P;
+int dx[]={1,1,-1,-1,2,2,-2,-2};
+int dy[]={2,-2,2,-2,1,-1,1,-1};
+int ddx[]={0,0,2,-2};
+int ddy[]={2,-2,0,0};
+int main(void)
+{
+    int row,col,sx,sy,ex,ey;
+    while(2==scanf("%d%d",&row,&col))
+    {
+        scanf("%d%d%d%d",&sx,&sy,&ex,&ey);
+        memset(visit,0,sizeof(visit));
+        queue<P>q;
+        q.push(P(point(true,0),point(sx,sy)));
+        visit[sx][sy]=4;
+        while(!q.empty())
+        {
+            P tmpt=q.front();q.pop();
+            point t=tmpt.second;
+            point info=tmpt.first;
+            int x=t.first,y=t.second;
+            if(x==ex && y==ey)
+            {
+                printf("%d\n",info.second);
+                break;
+            }
+            if(info.first)
+            {
+                for(int i=0;i<8;i++)
+                {
+                    int x1=x+dx[i],y1=y+dy[i];
+                    if(x1>0 && x1<=row && y1>0 && y1<=col && (0==visit[x1][y1]||2==visit[x1][y1]))
+                    {
+                        visit[x1][y1]+=1;
+                        q.push(P(point(false,info.second+1),point(x1,y1)));
+                    }
+                }
+            }
+            else
+            {
+                for(int i=0;i<4;i++)
+                {
+                    int x1=x+ddx[i],y1=y+ddy[i];
+                    if(x1>0 && x1<=row && y1>0 && y1<=col && (0==visit[x1][y1]||1==visit[x1][y1]))
+                    {
+                        visit[x1][y1]+=2;
+                        q.push(P(point(true,info.second+1),point(x1,y1)));
+                    }
+                }
+            }
+        }
+    }
+}

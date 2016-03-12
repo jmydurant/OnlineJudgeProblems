@@ -1,0 +1,75 @@
+#include<cstdio>     //今天调试了一下午。。。终于把这个剪枝给调试出来了。。虽然是入门题。。对我这样的新手还是难度很大的。。。
+#include<cstring>
+#include<algorithm>
+using namespace std;
+int sticks[100];     //记录木杆的长度
+int used[100];       //记录是否使用过
+int n,len;
+bool cmp(const int a,const int b)
+{
+    return a>b;
+}
+bool dfs(int i,int l,int total);   //i表示当前杆子的标号。。l表示还剩多少就凑成一个目标杆子。。total表示得到的杆子的长度还剩多少。total=0就算完成   
+int main(void)
+{
+    while(scanf("%d",&n)&&n)
+    {
+        int sum=0;
+        bool ok=false;
+        for(int i=0;i<n;i++)
+        {
+            scanf("%d",&sticks[i]);
+            sum+=sticks[i];
+        }
+        memset(used,0,sizeof(used));
+        sort(sticks,sticks+n,cmp);    //杆子从大到小排序。。选的时候优先选大的。可以减少dfs次数
+        for(len=sticks[0];len<=sum/2;len++) //从最长的杆子开始找起。。一直到总长度的一半。。这样找的次数少。。而且如果都失败那肯定len就是总杆长了
+        {
+            if(0==sum%len)
+            {
+                if(dfs(0,len,sum))
+                {
+                    ok=true;
+                    printf("%d\n",len);
+                    break;
+                }
+            }
+        }
+        if(!ok)
+        {
+            printf("%d\n",sum);
+        }
+    }
+    return 0;
+}
+bool dfs(int i,int l,int total)
+{
+    if(0==l)
+    {
+        total-=len;
+        if(0==total)return true;       //如果一个杆子凑好了。但是所有的杆子还没有消耗掉。。那么就从剩下的最长的继续凑另一个杆子
+        for(i=0;used[i];i++) ;
+        used[i]=1;
+        if(dfs(i+1,len-sticks[i],total))return true;
+        used[i]=0;total+=len;
+    }
+    else
+    {
+        for(int j=i;j<n;j++)
+        {
+            if(j>0&&sticks[j-1]==sticks[j]&&!used[j-1]) //如果上一个杆子等长而且上一个没有被用。。那么这个也就不要用了。。直接跳过
+                continue;
+            if(!used[j]&&sticks[j]<=l)
+            {
+                l-=sticks[j];used[j]=1;
+                if(dfs(j,l,total))return true;
+                used[j]=0;l+=sticks[j];
+                if(sticks[j]==l)     //如果上一个杆子是凑成目标的一部分。。但是继续dfs的时候还是失败了。。那么整体就必然失败了
+                {
+                    break;          //就可以直接跳过了。。
+                }
+            }
+        }
+    }
+    return false;
+}

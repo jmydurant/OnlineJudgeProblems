@@ -1,0 +1,54 @@
+#include<stdio.h>
+#include<string.h>
+char DNA[110][110];
+int num[110];
+
+int wuxudu(int linenum, int numlength);     //soj上做过。。直接可耻的粘过来了。。。
+int main(void)
+{
+    int n,m;
+    int i,k;
+    scanf("%d%d",&n,&m);
+
+
+        memset(num,0,sizeof(num));
+        getchar();
+        for(i=1;i<=m;i++)
+        {
+
+            gets(DNA[i]);
+
+            num[i]= wuxudu(i , n);
+
+        }
+        for(k=0;k<=5050;k++)
+        {
+            for(i=1;i<=m;i++)
+            {
+                if(num[i]==k)
+                {
+                    printf("%s\n",DNA[i]);
+                    num[i]=10000;
+                }
+            }
+        }
+
+
+    return 0;
+}
+int wuxudu(int linenum ,int numlength )
+{
+    int count=0;
+    int p,q;
+    for(p=0;p<numlength-1;p++)
+    {
+        for(q=p+1;q<numlength;q++)
+        {
+            if(DNA[linenum][p]>DNA[linenum][q])
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}

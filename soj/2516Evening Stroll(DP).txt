@@ -1,0 +1,57 @@
+#include<iostream>    //一道纯水题。。。也算是状态转移么。。。
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#include<climits>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MOD 19871118
+using namespace std;
+char puzzle[40][40];
+int dp[40][40];
+int main(void)
+{
+    int row,col;
+    while(2==scanf("%d%d",&row,&col))
+    {
+        int x,y;
+        int z,w;
+        getchar();
+        memset(dp,0,sizeof(dp));
+        bool flag=true;
+        for(int i=1;i<=row;i++)
+        {
+            for(int j=1;j<=col;j++)
+            {
+                scanf("%c",&puzzle[i][j]);
+                getchar();
+                if('B'==puzzle[i][j])
+                {
+                    if(flag)
+                    {
+                        x=i;
+                        y=j;
+                        flag=false;
+                    }
+                    else
+                    {
+                        z=i;
+                        w=j;
+                    }
+                }
+            }
+        }
+        dp[x][y]=1;
+        for(int i=x;i<=row;i++)
+        {
+            for(int j=y;j<=col;j++)
+            {
+                if('R'==puzzle[i][j])continue;
+                dp[i][j]=dp[i][j]+dp[i-1][j]+dp[i][j-1];
+            }
+        }
+        printf("%d\n",dp[z][w]);
+    }
+    return 0;
+}

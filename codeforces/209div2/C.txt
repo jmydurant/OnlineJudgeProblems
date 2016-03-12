@@ -1,0 +1,86 @@
+#include <iostream>   //‘Ÿ’Ωsplay....
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 1000010
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+multiset<LL> q;
+LL power(LL a,LL n)
+{
+    LL ans = 1;
+    while(n)
+    {
+        if(n%2 == 1)
+        {
+            ans *= a;
+            ans %= mod;
+        }
+        a *= a;
+        a %= mod;
+        n /= 2;
+    }
+    return ans;
+}
+
+LL d[maxn] , x;
+int n;
+
+int main(void)
+{
+    while(cin >> n)
+    {
+        q.clear();
+        cin >> x;
+        LL sum = 0;
+        FOR(i,1,n) cin >> d[i],sum += d[i];
+        LL ans = 0;
+        LL num = 0;
+        FOR(i,1,n)
+        d[i] = sum-d[i],q.insert(d[i]);
+        set<LL>::iterator it;
+        while(!q.empty())
+        {
+            it = q.begin();
+            LL ttt = *it;
+            //printf("it is %I64d\n",(*it));
+            q.erase(it);
+            num++;
+            it = q.begin();
+            //printf("then it is %I64d\n",(*it));
+            while((!q.empty()) && (*it) == ttt)
+            {
+                q.erase(it);
+                num++;
+                it = q.begin();
+            }
+            ans = ttt;
+            if(num%x)break;
+            else
+            {
+                int aaa = num/x;
+                for(LL i = 1;i<=aaa;i++)
+                q.insert(ttt+1);
+            }
+            num = 0;
+        }
+        LL res = power(x,MIN(ans,sum));
+        cout << res << endl;
+    }
+    return 0;
+}

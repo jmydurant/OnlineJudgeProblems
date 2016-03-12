@@ -1,0 +1,89 @@
+#include<stdio.h>
+#include<string.h>
+int queen[11];
+void Findway(int sum[],int n,int line );   //line代表列数。。之后函数调用是从1开始。。表示填写第一列皇后的位置
+int main(void)
+{
+      //queen记录每一列皇后的位置
+    int n;             // n代表棋盘大小
+    int sum[1];
+
+
+
+    while((scanf("%d",&n))&&n!=0)
+    {
+        sum[0]=0;
+        int i;
+        memset(queen,0,sizeof(queen));
+        for(i=1;i<=n;i++)
+        {
+
+            scanf("%d",&queen[i]);
+
+        }
+        Findway(sum,n,1);
+
+        printf("%d\n",sum[0]);
+    }
+    return 0;
+}
+void Findway(int sum[],int n,int line)
+{   int x,y;   //计数工具
+    if(line>n)
+    {
+        sum[0]++;
+    }
+    else
+    {
+        if(line==1)
+        {
+            if(queen[line]==0)
+            {
+                for(x=1;x<=n;x++)
+                {
+                    queen[line]=x;
+                    Findway(sum,n,(line+1));
+                    queen[line]=0;
+                }
+            }
+            else
+            {
+                Findway(sum,n,(line+1));
+            }
+        }
+        else
+        {
+            if(queen[line]==0)
+            {
+                for(y=1;y<=n;y++)
+                {
+                    if((y-queen[line-1]!=1)&&(y!=queen[line-1])&&(y-queen[line-1]!=-1))   //比较前面一列是否有相连的棋子
+                    {
+                        ;
+                    }
+                    else
+                    {
+                        queen[line]=y;
+                        Findway(sum,n,(line+1));
+                        queen[line]=0;
+                    }
+
+                }
+            }
+            else
+            {
+                if((queen[line]-queen[line-1]!=1)&&(queen[line]!=queen[line-1])&&(queen[line]-queen[line-1]!=-1))
+                {
+                    ;
+                }
+                else
+                {
+                    Findway(sum,n,(line+1));
+
+                }
+            }
+
+        }
+    }
+}
+

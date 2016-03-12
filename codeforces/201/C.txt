@@ -1,0 +1,54 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define p(i,j) ((i*col)+j)
+#define MAXN 110100
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+#define link fasdfasdf
+using namespace std;
+int gcd(int a,int b)
+{
+    int temp;
+    while(b)
+    {
+        temp = a%b;
+        a = b;
+        b = temp;
+    }
+    return a;
+}
+int a[MAXN];
+int main(void)
+{
+    int n;
+    while(EOF!=scanf("%d",&n))
+    {
+        int maxnum = -1;
+        int com;
+        for(int i = 1;i<=n;i++)
+        {
+            scanf("%d",a+i);
+            maxnum = MAX(maxnum,a[i]);
+        }
+        com = maxnum;
+        for(int i = 1;i<=n;i++)
+        {
+            com = gcd(com,a[i]);
+        }
+        maxnum /= com;
+        maxnum -= n;
+        if(maxnum%2)
+            printf("Alice\n");
+        else
+            printf("Bob\n");
+    }
+    return 0;
+}

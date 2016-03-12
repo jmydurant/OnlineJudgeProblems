@@ -1,0 +1,23 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>     //虽然说是博弈。。但是并不难想。。不是那种有难度的。。。
+using namespace std;
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        long long num;
+        scanf("%lld",&num);
+        if(num%11>=1&&num%11<=9)
+        {
+            printf("Win\n");
+        }
+        else
+        {
+            printf("Fail\n");
+        }
+    }
+    return 0;
+}

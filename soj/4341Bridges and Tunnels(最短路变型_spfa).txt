@@ -1,0 +1,116 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-5
+#define INF 500000000
+#define maxn 4010
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{                 //in true
+    int t,nxt,w;
+    bool flag;
+}edge[100000];
+int headline[maxn] , E;
+inline void add(int f,int t,int w,char ss){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].w = w;
+    edge[E].flag = (ss == 'I') ? true : false;
+    headline[f] = E++;
+}
+int n,m,Q;
+int s,e;
+int q[5010101] , head,tail;
+int dis[maxn] , disin[maxn];
+bool visit[maxn];
+void spfa(void){
+    head = 0 , tail = 1;
+    q[head] = s;
+    FOR(i,0,n){
+        dis[i] = disin[i] = INF;
+    }
+    rst(visit,false);
+    dis[s] = disin[s] = 0;
+    visit[s] = true;
+    while(head < tail){
+        int u = q[head]; head++; visit[u] = false;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(edge[i].flag){
+                if(disin[v] > disin[u]){
+                    disin[v] = disin[u];
+                    dis[v] = dis[u] + edge[i].w;
+                    if(!visit[v]){
+                        visit[v] = true;
+                        q[tail] = v; tail++;
+                    }
+                }else if(disin[v] == disin[u] && dis[v] > dis[u] + edge[i].w){
+                    dis[v] = dis[u] + edge[i].w;
+                    if(!visit[v]){
+                        visit[v] = true;
+                        q[tail] = v; tail++;
+                    }
+                }
+            }else{
+                if(disin[v] > disin[u] + edge[i].w){
+                    disin[v] = disin[u] + edge[i].w;
+                    dis[v] = dis[u] + edge[i].w;
+                    if(!visit[v]){
+                        visit[v] = true;
+                        q[tail] = v; tail++;
+                    }
+                }else if(disin[v] == disin[u] + edge[i].w && dis[v] > dis[u] + edge[i].w){
+                    dis[v] = dis[u] + edge[i].w;
+                    if(!visit[v]){
+                        visit[v] = true;
+                        q[tail] = v; tail++;
+                    }
+                }
+            }
+        }
+    }
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    REP(i,m){
+        int a,b,w; char op[10];
+        scanf("%d%d%d%s",&a,&b,&w,op);
+        add(a,b,w,op[0]); add(b,a,w,op[0]);
+    }
+    while(Q--){
+        scanf("%d%d",&s,&e);
+        spfa();
+        if(dis[e] == INF)printf("IMPOSSIBLE\n");
+        else printf("%d %d\n",disin[e] , dis[e]);
+    }
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&m,&Q)) solve();
+    return 0;
+}

@@ -1,0 +1,64 @@
+#include<cstdio>    //置换群的置换一定是有循环的。。抓住这点就能把模拟降到一个小规模上去了。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) (a)^(-(a))
+#define mod 100000000;
+using namespace std;
+int a[1010],b[1010];
+int tmpt[1010];
+int N,M;
+int len;
+void measure(void)
+{
+    len=0;
+    while(1)
+    {
+        for(int i=1;i<=N;i++)
+        {
+            tmpt[i]=a[a[i]];
+        }
+        len++;
+        bool ok=true;
+        for(int i=1;i<=N;i++)
+        {
+            if(tmpt[i]!=b[i])
+            {
+                ok=false;
+                break;
+            }
+        }
+        if(ok)break;
+        memcpy(a,tmpt,sizeof(tmpt));
+    }
+}
+int main(void)
+{
+    while(2==scanf("%d%d",&N,&M))
+    {
+        for(int i=1;i<=N;i++)
+            scanf("%d",a+i);
+        memcpy(b,a,sizeof(a));
+        measure();
+        int k=(len-M%len)%len;
+        while(k--)
+        {
+            for(int i=1;i<=N;i++)
+                tmpt[i]=b[b[i]];
+            memcpy(b,tmpt,sizeof(tmpt));
+        }
+        for(int i=1;i<=N;i++)
+            printf("%d\n",b[i]);
+    }
+    return 0;
+}

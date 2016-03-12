@@ -1,0 +1,16 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>   //  对于x,y,z,w的模余数。。分别a乘以y，z，m的公倍数的k倍。。且这个数模x为一。。然后把这些加起来模xyzw。。注意如果是0
+#include<climits>    //则答案是xyzw。。。
+using namespace std;
+int main()
+{
+    int a,b,c,d;
+    while(EOF!=scanf("%d%d%d%d",&a,&b,&c,&d))
+    {
+        int result=107939*a+50141*b+95381*c+76038*d;
+        result%=164749;
+        if(0==result)printf("%d\n",164749);
+        else printf("%d\n",result);
+    }
+}

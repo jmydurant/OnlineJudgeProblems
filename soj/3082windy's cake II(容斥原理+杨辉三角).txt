@@ -1,0 +1,80 @@
+#include<cstring>   //本题的精髓还是在容斥原理上面。。。但是求组合数的时候还是用到了杨辉三角。。。原嘉神提供的建议。。果然神勇。。。
+#include<cstdio>   //原理可以自行百度 容斥原理_染色。。这里就不解释了。。。算了。。周日还得写解题报告。。所以到时候再补上吧。。。
+#include<algorithm>
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MOD 19871118LL
+using namespace std;
+long long rev[1110];
+long long pow(long long a,long long n)
+{
+    long long res=1;
+    while(n)
+    {
+        if(n%2)
+        {
+            res*=a;
+            res%=MOD;
+        }
+        a*=a;
+        a%=MOD;
+        n/=2;
+    }
+    return res;
+}
+void make_yanghui(int now,long long n)
+{
+    long long s[2][1010];
+    int flag=1;
+    s[1][1]=1;s[1][2]=1;
+    for(int i=2;i<=n;i++)
+    {
+        s[1-flag][1]=1;s[1-flag][i+1]=1;
+        for(int j=2;j<=i;j++)
+        {
+            s[1-flag][j]=s[flag][j-1]+s[flag][j];
+            s[1-flag][j]%=MOD;
+        }
+        flag=1-flag;
+    }
+    for(int i=1;i<=n+1;i++)rev[i]=s[flag][i];
+}
+int main(void)
+{
+    long long N,M;
+    while(2==scanf("%lld%lld",&N,&M))
+    {
+        if(M==1)
+        {
+            if(N==1)printf("1\n");
+            else printf("0\n");
+            continue;
+        }
+        if(N<M)
+        {
+            printf("0\n");
+            continue;
+        }
+        long long res=0;
+        long long flag=1;
+        rev[1]=1;rev[2]=1;
+        make_yanghui(1,M-1);
+        for(long long i=M-1;i>=1;i--)
+        {
+            long long tmpt=rev[M-i]*pow(i,N-1);
+            //printf("%I64d %I64d\n",rev[M-i],pow(i,N-1));
+            tmpt%=MOD;
+            res+=(tmpt*flag);
+            res%=MOD;
+            flag=-flag;
+        }
+        while(res<0)res+=MOD;
+        res*=M;res%=MOD;
+        printf("%lld\n",res);
+    }
+    return 0;
+}

@@ -1,0 +1,126 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+typedef struct node                       //建立一个树
+{
+   char *knowname;
+   struct node * left;
+   struct node * right;
+} Node;
+char songlist[2010][600];               //好激动。。。会使用二分查找了。。。而且在Solution中是最快解法。。。
+char knownsong[2010][600];
+Node *Makesong(char *songname);             //把一首歌的名字插入到二叉树中。。。
+void Addsong(Node*newsong,Node*root);       //下面都是如果插入树的。。。
+void Additem(char *songname,Node *ptree);
+int Checksong(Node *ptree,char *songname);//查找。。。找到返回0，没找到返回1。。。
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int i;
+        int listnum,knownum;
+        Node Root;
+        Root.left=NULL;Root.right=NULL;
+        Node *root=&Root;
+        scanf("%d%d",&knownum,&listnum);
+        getchar();
+        gets(knownsong[1]);
+        root->knowname=knownsong[1];
+        for(i=2;i<=knownum;i++)
+        {
+            gets(knownsong[i]);
+            Additem(knownsong[i],root);
+        }
+        for(i=1;i<=listnum;i++)
+        {
+            gets(songlist[i]);
+        }
+        for(i=1;i<=listnum;i++)
+        {
+           if(Checksong(root,songlist[i]))
+           {
+               printf("%s\n",songlist[i]);
+           }
+           else
+           {
+               ;
+           }
+        }
+
+
+    }
+    return 0;
+}
+Node *Makesong(char *songname)
+{
+    Node *new_node;
+    new_node=(Node*)malloc(sizeof(Node));
+    new_node->knowname=songname;
+    new_node->left=NULL;
+    new_node->right=NULL;
+    return new_node;
+}
+void Addsong(Node*newsong,Node*root)
+{
+    if(strcmp(newsong->knowname,root->knowname)<0)
+    {
+        if(NULL==root->left)
+        {
+            root->left=newsong;
+        }
+        else
+        {
+            Addsong(newsong,root->left);
+        }
+    }
+    else
+    {
+        if(NULL==root->right)
+        {
+            root->right=newsong;
+        }
+        else
+        {
+            Addsong(newsong,root->right);
+        }
+    }
+}
+
+void Additem(char *songname,Node *ptree)
+{
+    Node *new_node;
+    new_node=Makesong(songname);
+    Addsong(new_node,ptree);
+}
+int Checksong(Node *root,char *songname)
+{
+    if(strcmp(songname,root->knowname)<0)
+    {
+        if(NULL==root->left)
+        {
+            return 1;
+        }
+        else
+        {
+            return Checksong(root->left,songname);
+        }
+    }
+    else if(strcmp(songname,root->knowname)>0)
+    {
+        if(NULL==root->right)
+        {
+            return 1;
+        }
+        else
+        {
+            return Checksong(root->right,songname);
+        }
+    }
+
+    else
+    {
+        return 0;
+    }
+}

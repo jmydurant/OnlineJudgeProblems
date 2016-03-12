@@ -1,0 +1,151 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个建图题。。首先每个中转站拆点。。限流量为w 。。之后枚举每个点。如果能链接。。就限流量为无限大。然后dinic一遍即可。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 10100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int capacity , flow;
+}puzzle[110][110];
+void INIT(void){
+    FOR(i,0,109)FOR(j,0,109){
+        puzzle[i][j].capacity = puzzle[i][j].flow = 0;
+    }
+}
+int n,P ,op ,ed;
+struct data{
+    int s[10] , d[10];
+    int ww;
+}pp[55];
+struct abc{
+    int f,t,ww;
+}ans[110*110];
+inline bool judge(int i,int j){
+    bool flag = true;
+    REP(k,P){
+        if(pp[i].d[k] == 1 && pp[j].s[k] == 0){
+            flag = false;
+            break;
+        }
+        if(pp[i].d[k] == 0 && pp[j].s[k] == 1){
+            flag = false;
+            break;
+        }
+    }
+    return flag;
+}
+int dis[110];
+bool bfs(void){
+    rst(dis , 0);
+    dis[op] =1;
+    queue<int> q;
+    q.push(op);
+    while(!q.empty()){
+        int u = q.front() ; q.pop();
+        for(int i = 2;i<=ed ;i++){
+            if(!dis[i] && puzzle[u][i].capacity > puzzle[u][i].flow){
+                q.push(i);
+                dis[i] = dis[u] + 1;
+            }
+        }
+        if(u == ed)return true;
+    }return false;
+}
+int dfs(int u , int c){
+    if(u == ed)return c;
+    int temp = c;
+    for(int i = 2;i<=ed;i++){
+        if(dis[i] == dis[u] + 1 && c && puzzle[u][i].capacity > puzzle[u][i].flow){
+            int tt = dfs(i , MIN(temp , puzzle[u][i].capacity - puzzle[u][i].flow));
+            puzzle[u][i].flow += tt;
+            puzzle[i][u].flow -= tt;
+            temp -= tt;
+        }
+    }
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op , INF);
+    return maxflow;
+}
+int main(void){
+    while(2 == scanf("%d%d",&P,&n)){
+        FOR(i,1,n){
+            scanf("%d",&pp[i].ww);
+            REP(j,P) scanf("%d",&pp[i].s[j]);
+            REP(j,P) scanf("%d",&pp[i].d[j]);
+        }
+        INIT();
+        op = 2*n + 2; ed = 2*n + 3;
+        FOR(i,1,n){
+            bool up = true , down = true;
+            REP(k,P){
+                if(pp[i].s[k] == 1){
+                    up = false;
+                    break;
+                }
+            }
+            REP(k,P){
+                if(pp[i].d[k] == 0){
+                    down = false;
+                    break;
+                }
+            }
+            if(up){
+                puzzle[op][i*2].capacity = INF;
+            }
+            if(down){
+                puzzle[i*2+1][ed].capacity = INF;
+            }
+            FOR(j,1,n){
+                if(i == j)continue;
+                if(judge(i,j)){
+                    puzzle[i*2+1][j*2].capacity = INF;
+                }
+            }
+            puzzle[i*2][i*2+1].capacity = pp[i].ww;
+        }
+        int lalala = dinic();
+        int tot = 0;
+        FOR(i,1,n){
+            FOR(j,1,n){
+                if(i == j)continue;
+                if(puzzle[i*2+1][j*2].flow > 0){
+                    tot++;
+                    ans[tot].f = i ; ans[tot].t = j ; ans[tot].ww = puzzle[i*2+1][j*2].flow;
+                }
+            }
+        }
+        printf("%d %d\n",lalala,tot);
+        FOR(i,1,tot) printf("%d %d %d\n",ans[i].f , ans[i].t , ans[i].ww);
+    }return 0;
+}

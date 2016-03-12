@@ -1,0 +1,110 @@
+#include <iostream>  //一道比较经典的三分题目。。写"点"这个类到是用了不少的地方。。唔噗噗。。
+#include <cstdio>    //先分一下E点。。带进去再分一下F点。。。所以其实是三分之中还有一个三分。。
+#include <cstring>   //注意AB 或者CD重合的情况。。要特判。。。
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <deque>
+#include <climits>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 2010
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+#define h(i,j) (i*col+j)
+#define eps 1e-10
+using namespace std;
+typedef long long LL;
+struct node
+{
+    double x,y;
+    node(double sx = 0,double sy = 0){x = sx,y = sy;}
+    node operator + (const node & temp)const
+    {
+        return node(x+temp.x,y+temp.y);
+    }
+    node operator - (const node & temp)const
+    {
+        return node(x-temp.x,y-temp.y);
+    }
+    node operator * (const double mmm)const
+    {
+        return node(x*mmm,y*mmm);
+    }
+    node operator / (const double nnn)const
+    {
+        return node(x/nnn,y/nnn);
+    }
+    node operator = (const node & temp)
+    {
+        x = temp.x; y = temp.y;
+        return (*this);
+    }
+}A,B,C,D;
+double v1,v2,v3;
+inline double dis(node m,node n)
+{
+    node ans = (m-n);
+    return sqrt(ans.x*ans.x+ans.y*ans.y);
+}
+
+inline double cal(node E,node F)
+{
+    double ans = dis(A,E)/v1 + dis(D,F)/v2 + dis(E,F)/v3;
+    return ans;
+}
+
+double FINDF(node E)
+{
+    double ans = INF;
+    node p = C, q = D;
+    while(dis(p,q)>eps)
+    {
+        node temp = (q-p)/3;
+        node pp = p + temp;
+        node qq = q - temp;
+        double ps = cal(E,pp);
+        double qs = cal(E,qq);
+        if(ps>qs) p = pp;
+        else q = qq;
+        if(ps<ans) ans = ps;
+        if(qs<ans) ans = qs;
+    }
+    if(dis(C,D)<eps) ans = cal(E,C);
+    return ans;
+}
+
+double FINDE(void)
+{
+    double ans = INF;
+    node p = A, q = B;
+    while(dis(p,q)>eps)
+    {
+        node temp = (q-p)/3;
+        node pp = p + temp;
+        node qq = q - temp;
+        double ps = FINDF(pp);
+        double qs = FINDF(qq);
+        if(ps>qs) p = pp;
+        else q = qq;
+        if(ps<ans) ans = ps;
+        if(qs<ans) ans = qs;
+    }
+    if(dis(A,B)<eps) ans = FINDF(A);
+    return ans;
+}
+
+int main(void)
+{
+    while(cin >> A.x >> A.y >> B.x >> B.y >> C.x >> C.y >> D.x >> D.y)
+    {
+        cin >> v1 >> v2 >> v3;
+        printf("%.2lf\n",FINDE());
+    }
+    return 0;
+}

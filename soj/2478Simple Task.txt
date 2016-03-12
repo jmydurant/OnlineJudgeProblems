@@ -1,0 +1,36 @@
+#include<stdio.h>
+
+int a[210];
+int b[210];
+int main(void)
+{
+    int t,m,n;
+    scanf("%d",&t);
+    for(;t>0;t--)
+    {
+        int i,j,count;
+        count=0;
+        scanf("%d",&m);
+        for(i=0;i<m;i++)
+        {
+            scanf("%d",&a[i]);
+        }
+        scanf("%d",&n);
+        for(j=0;j<n;j++)
+        {
+            scanf("%d",&b[j]);
+        }
+        for(i=0;i<m;i++)
+        {
+            for(j=0;j<n;j++)
+            {
+                if(0==(a[i]+b[j]))
+                {
+                    count++;
+                }
+            }
+        }
+        printf("%d\n",count);
+    }
+    return 0;
+}

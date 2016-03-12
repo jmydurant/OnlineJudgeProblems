@@ -1,0 +1,62 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int FILTER[3][3]={{0,-1,0},{-1,5,-1},{0,-1,0}};   //白痴模拟。。方法题目直接给了。。所以照搬即可。。但是要注意输入输出格式
+int DEST[6][6];
+int SRC[6][6];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int i,j;
+        for(i=0;i<6;i++)
+        {
+            for(j=0;j<6;j++)
+            {
+                scanf("%d",&SRC[i][j]);
+            }
+        }
+        getchar();
+        for(i=0;i<6;i++)
+        {
+            for(j=0;j<6;j++)
+            {
+                int a,b,sum=0;
+                if(i==0||j==0||i==5||j==5)
+                {
+                    DEST[i][j]=SRC[i][j];
+                }
+                else
+                {
+                    for(a=-1;a<=1;a++)
+                    {
+                        for(b=-1;b<=1;b++)
+                        {
+                            sum+=FILTER[1+a][1+b] * SRC[i+a][j+b];
+                        }
+                    }
+                    if(sum<0)
+                    {
+                        sum=0;
+                    }
+                    else if(sum>255)
+                    {
+                        sum=255;
+                    }
+                    DEST[i][j]=sum;
+                }
+            }
+        }
+        for(i=0;i<=5;i++)
+        {
+            for(j=0;j<=5;j++)
+            {
+                printf("%d%c",DEST[i][j],(0==(j+1)%6)?'\n':' ');
+            }
+        }
+        printf("\n");
+    }
+    return 0;
+}

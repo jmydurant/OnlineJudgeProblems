@@ -1,0 +1,83 @@
+#include <iostream>  //和那个幸运数字的题目一样。。。换汤不换药。。我换了几个数字就过去了。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define INF 2000000001
+#define maxn 2500
+#define MOD 19871118LL
+using namespace std;
+typedef long long LL;
+LL x,y;
+LL digit[maxn];
+LL a[maxn];
+int tot;
+void INIT(void)
+{
+    a[1] = 0;
+    for(int i = 1;i<=1025;i++)
+        a[i*2] = a[i]*10+4, a[i*2+1] = a[i]*10+7;
+    //cout << a[2000] << endl;
+    tot = 0;
+    for(int i = 2050;i>1;i--)
+    {
+        bool ok = true;
+        for(int j = 2;j<i;j++)
+        {
+            if(a[i]%a[j] == 0)
+            {
+                ok = false;
+                break;
+            }
+        }
+        if(ok)
+            digit[++tot] = a[i];
+    }
+    //cout << tot << endl;
+}
+
+LL gcd(LL a,LL b)
+{
+    LL temp;
+    while(b)
+    {
+        temp = a%b;
+        a = b;
+        b = temp;
+    }
+    return a;
+}
+
+LL dfs(int ind,LL gggcd)
+{
+    if(ind>tot)
+        return y/gggcd-x/gggcd;
+    LL ans = dfs(ind+1,gggcd);
+    LL ggggggggggcd = gcd(gggcd,digit[ind]);
+    if(gggcd/ggggggggggcd<=y/digit[ind])       //即最小公倍数小于y
+        ans -= dfs(ind+1,gggcd/ggggggggggcd*digit[ind]);
+    return ans;
+}
+
+
+int main(void)
+{
+    INIT();
+    while(cin >> x >> y)
+    {
+        x--;
+        int ind = 2;
+        while(digit[ind]>y && ind<=tot)ind++;
+        cout << y - x -dfs(ind,1) << endl;
+    }
+    return 0;
+}

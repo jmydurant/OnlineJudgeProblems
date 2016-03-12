@@ -1,0 +1,73 @@
+#include<cstdio>   //还是用叉积。。但是发现可以用快速排斥试验+跨立试验来做。。不过还是叉积王道哈。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 100000000
+#define lowbit(a) ((a)&(-(a)))
+#define MAXN 1001000
+#define esp 1e-8
+using namespace std;
+struct point{double x,y;};
+struct line{point a,b;};
+line l[101000];
+int zero(double x)
+{
+    if(abs(x)<esp)
+        return 0;
+    if(x>0.0)
+        return 1;
+    return -1;
+}
+double cross(point a,point b,point c)
+{
+    return (a.x-c.x)*(b.y-c.y)-(b.x-c.x)*(a.y-c.y);
+}
+bool check(point a,point b,point c,point d)
+{
+    if(zero(cross(a,b,c))*zero(cross(a,b,d))>=0)
+        return false;
+    if(zero(cross(c,d,a))*zero(cross(c,d,b))>=0)
+        return false;
+    return true;
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N) && N)
+    {
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%lf%lf%lf%lf",&l[i].a.x,&l[i].a.y,&l[i].b.x,&l[i].b.y);
+        }
+        printf("Top sticks:");
+        for(int i=1;i<=N;i++)
+        {
+            bool ok=true;
+            for(int j=i+1;j<=N;j++)
+            {
+                if(check(l[i].a,l[i].b,l[j].a,l[j].b))
+                {
+                    ok=false;
+                    break;
+                }
+            }
+            if(ok)
+            {
+                printf(" %d%c",i,i==N?'.':',');
+            }
+        }
+        printf("\n");
+    }
+}
+
+
+

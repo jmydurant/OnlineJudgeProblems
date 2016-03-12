@@ -1,0 +1,134 @@
+#include <cstdio>    //模仿3423的写法。。把图分成两层。。第一层进行最裸的dij。。然后第二层dij的时候利用dp思想
+#include <cstring>   //dis[1][b] > MIN(dis[0][now] + w/2,dis[1][now]+w)对于所有的now的子节点b都是这样压缩。。
+#include <algorithm>
+#include <queue>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 1010
+#define MAXV 101000
+#define INF 500000000
+using namespace std;
+int dis[2][MAXN];
+struct node
+{
+    int t,nxt;
+    int w;
+}edge[MAXV];
+int headline[MAXN];
+int tot;
+int n,m,s,e;
+void ADD(int a,int b,int w)
+{
+    tot++;
+    edge[tot].t = b;
+    edge[tot].nxt = headline[a];
+    edge[tot].w = w;
+    headline[a] = tot;
+}
+bool visit[MAXN];
+struct cmp
+{
+    bool operator ()(const int &a,const int &b)const
+    {
+        return dis[1][a] > dis[1][b];
+    }
+};
+bool dijkstra0(int s,int e)
+{
+    memset(visit,false,sizeof(visit));
+    int now = s;
+    visit[now] = true;
+    dis[0][now] = 0;
+    for(int step = 1;step<n;step++)
+    {
+        for(int i = headline[now];i != -1;i = edge[i].nxt)
+        {
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(dis[0][b] > dis[0][now] + w)
+                dis[0][b] = dis[0][now] + w;
+        }
+        int minr = INF,temp;
+        for(int i = 1;i<=n;i++)
+        {
+            if(minr > dis[0][i] && (!visit[i]))
+            {
+                minr = dis[0][i];
+                temp = i;
+            }
+        }
+        if(minr == INF)
+        {
+            break;
+        }
+        now = temp;
+        visit[now] = true;
+    }
+    if(dis[0][e] > INF-100)
+        return false;
+    return true;
+}
+
+void dijkstra1(int s,int e)
+{
+    memset(visit,false,sizeof(visit));
+    priority_queue<int,vector<int>,cmp> q;
+    int now = s;
+    dis[1][now] = 0;
+    visit[now] = true;
+    q.push(s);
+    while(!q.empty())
+    {
+        now = q.top();
+        q.pop();
+        visit[now] = false;
+        for(int i = headline[now];i != -1 ;i = edge[i].nxt)
+        {
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(dis[1][b] > MIN(dis[0][now] + w/2,dis[1][now]+w))
+            {
+                dis[1][b] = MIN(dis[0][now] + w/2,dis[1][now]+w);
+                //printf("dis %d is change to %d\n",b,dis[1][b]);
+                if(!visit[b])
+                {
+                    visit[b] = true;
+                    q.push(b);
+                }
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d%d%d",&n,&m,&s,&e);
+        memset(headline,-1,sizeof(headline));
+        tot = 0;
+        while(m--)
+        {
+            int a,b,w;
+            scanf("%d%d%d",&a,&b,&w);
+            ADD(a,b,w);
+        }
+        for(int i = 0;i<2;i++)
+            for(int j = 1;j<=n;j++)
+            dis[i][j] = INF;
+        if(dijkstra0(s,e))
+            dijkstra1(s,e);
+        else
+        {
+            printf("-1\n");
+            continue;
+        }
+        printf("%d\n",dis[1][e]);
+    }
+    return 0;
+}
+
+
+
+
+

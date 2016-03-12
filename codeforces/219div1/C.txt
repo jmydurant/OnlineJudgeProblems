@@ -1,0 +1,73 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个队列优化dp。。写的搓死。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 151000
+using namespace std;
+typedef long long LL;
+int n,m,d;
+LL q[maxn],head,tail;
+int a[310],b[310],t[310];
+LL dp[2][151000];
+void solve(void){
+    LL ans = 0;
+    FOR(i,1,m){
+        scanf("%d%d%d",a+i,b+i,t+i);
+        ans += b[i];
+    }
+    t[0] = 1;
+    FOR(i,0,n)dp[0][n] = 0;
+    int flag = 1;
+    FOR(i,1,m){
+        LL dis = (LL)(t[i] - t[i-1])*d;
+        LL cap = MIN((LL)n,dis + 1);
+        head = tail = 0;
+        int k = 0;
+        FOR(j,1,cap-1){
+            while(head < tail && dp[1-flag][j] > dp[1-flag][q[tail - 1]])tail--;
+            q[tail] = j; tail++;
+        }
+        FOR(j,cap,n){
+            k++;
+            while(head < tail && (q[head] < (k - dis)))head++;
+            while(head < tail && dp[1-flag][j] > dp[1-flag][q[tail - 1]])tail--;
+            q[tail] = j; tail++;
+            dp[flag][k] = dp[1-flag][q[head]] - abs(a[i] -k);
+        }
+        k++;
+        for(;k<=n;k++){
+            while(head < tail && (q[head] < (k - dis)))head++;
+            dp[flag][k] = dp[1-flag][q[head]] - abs(a[i] - k);
+        }
+        flag = 1 - flag;
+    }
+    //for(int i = 1;i<=n;i++)printf("%I64d  ",dp[1][i]);printf("\n");
+    //for(int i = 1;i<=n;i++)printf("%I64d  ",dp[0][i]);printf("\n");
+    LL res = dp[1-flag][1];
+    FOR(i,2,n) res = MAX(dp[1-flag][i],res);
+    printf("%I64d\n",ans + res);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&m,&d))solve();
+    return 0;
+}

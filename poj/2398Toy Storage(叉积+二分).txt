@@ -1,0 +1,82 @@
+#include<cstdio>   //这个和2318的思路一样。。好白痴。。。
+#include<cstring>
+#include<algorithm>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) ((a)&(-(a)))
+#define MAXN 1001000
+#define y1 fsafsa
+using namespace std;
+typedef long long LL;
+int package[5100];
+int to[5100];
+struct point
+{
+    LL x1,x2;
+}p[5100];
+bool cmp(point a,point b)
+{
+    if(a.x1!=b.x1)
+        return a.x1<b.x1;
+    return a.x2<b.x2;
+}
+int N,M;
+LL y1,y2,x,y;
+LL abc;
+int judge(LL left,LL right)
+{
+    LL f1=((y-y2)*(p[left].x1-p[left].x2)-(y1-y2)*(x-p[left].x2));
+    LL f2=((y-y2)*(p[right].x1-p[right].x2)-(y1-y2)*(x-p[right].x2));
+    if(f1<0 && f2>0)
+        return 0;
+    if(f1>0)return -1;
+    else return 1;
+}
+void solve(LL l,LL r)
+{
+    LL mid=(l+r)/2;
+    int flag=judge(mid,mid+1);
+    if(0==flag)
+    {
+        abc=mid;
+        return;
+    }
+    else if(1==flag)
+        solve(mid+1,r);
+    else
+        solve(l,mid);
+}
+int main()
+{
+    while(EOF!=scanf("%d",&N) && N)
+    {
+        scanf("%d%lld%lld%lld%lld",&M,&p[0].x1,&y1,&p[N+1].x2,&y2);
+        p[0].x2=p[0].x1;
+        p[N+1].x1=p[N+1].x2;
+        memset(package,0,sizeof(package));
+        memset(to,0,sizeof(to));
+        for(int i=1;i<=N;i++)
+            scanf("%lld%lld",&p[i].x1,&p[i].x2);
+        sort(p+1,p+N+1,cmp);
+        for(int i=1;i<=M;i++)
+        {
+            scanf("%lld%lld",&x,&y);
+            solve(0,N+1);
+            package[abc]++;
+        }
+        for(int i=0;i<=N;i++)
+        {
+            if(package[i]>0)
+                to[package[i]]++;
+        }
+        printf("Box\n");
+        for(int i=1;i<=N;i++)
+        {
+            if(to[i]>0)
+                printf("%d: %d\n",i,to[i]);
+        }
+    }
+    return 0;
+}

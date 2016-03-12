@@ -1,0 +1,21 @@
+//baihacker的证明。。。飞雪果然牛啊。。
+//如果n是偶数，那么要么有奇数个向上的奇数个向下的，要么有偶数个向上的偶数个向下的。
+对于前者，答案是奇数，对于后者，答案是偶数，于是不存在解。
+否则的话，肯定是有奇数个向上的，偶数个向下的，或者反过来。
+如果答案是奇数，那么肯定是这奇数个都翻一次，如果有多余的，那么就在一个上翻偶数次，而最多有n个奇数。
+如果答案是偶数，同样的，把偶数个的都翻一次，多余的就在同一个上打酱油，而明显，最多有n-1个偶数。
+显然答案是n-1。 
+#include<cstdio>
+#include<cstring>
+#define INF 10000000
+using namespace std;
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        if(N%2)printf("%d\n",N-1);
+        else printf("No Solution!\n");
+    }
+    return 0;
+}

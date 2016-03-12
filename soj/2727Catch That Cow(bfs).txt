@@ -1,0 +1,73 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //问一个数。。通过一定的计算方式最快到达另一个数要几步。。bfs一下即可。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int s,e;
+int visit[201000] , q[201000] ,dis[201000], head,tail,ans;
+int bfs(void){
+    while(head < tail){
+        int u = q[head] , dd = dis[head]; head++;
+        if(dd >= ans)return ans;
+        if(u-1 >= 0 && !visit[u-1]){
+            visit[u-1] = true;
+            q[tail] = u - 1 , dis[tail] = dd+1; tail++;
+        }
+        if(u+1 == e)return MIN(ans , dd+1);
+        if(!visit[u+1]){
+            visit[u+1] = true;
+            q[tail] = u+1 , dis[tail] = dd+1; tail++;
+        }
+        if(u * 2 >= e){
+            ans = MIN(ans,u*2 - e + dd + 1);
+        }else if(!visit[u*2]){
+            visit[u*2] = true;
+            q[tail] = u*2 , dis[tail] = dd+1; tail++;
+        }
+    }return -1;
+}
+void solve(void){
+    if(s >= e){
+        printf("%d\n",s - e);
+        return;
+    }
+    rst(visit,false);
+    visit[s] = true;
+    head = 0, tail = 1; ans = INF;
+    q[head] = s , dis[head] = 0;
+    printf("%d\n",bfs());
+}
+int main(void){
+    while(2 == scanf("%d%d",&s,&e)) solve();
+    return 0;
+}

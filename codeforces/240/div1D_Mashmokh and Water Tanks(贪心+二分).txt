@@ -1,0 +1,91 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //主要思想是这样的。。对于每一个点。。如果要等另一个点。。要花费(di-dj)的点数。。
+#include <cstdio>     //我们枚举上界。。和下界。。然后贪心即可。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 110000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn << 1];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int n,k,p;
+int dp[maxn];
+LL s[maxn] , t[maxn];
+void dfs(int u,int fa,int deep){
+    dp[deep]++;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(v != fa){
+            dfs(v , u , deep+1);
+        }
+    }
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    rst(dp,0);
+    REP(i,n-1){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a , b);
+        add(b , a);
+    }
+    dfs(1,-1,0);
+    dp[0] = 0;
+    s[0] = 0; t[0] = 0;
+    FOR(i,1,n) s[i] = s[i-1] + dp[i];
+    FOR(i,1,n) t[i] = t[i-1] + (LL)i*dp[i];
+    //FOR(i,1,n)printf("s%d is %I64d\n",i,s[i]);
+    LL ans = 0;
+    for(int d1 = n , d2 = n;d1 >= 1 ;d1--){   //d1下界 d2上界
+        while(true){
+            LL tt = s[d1] - s[d2-1];
+            LL kk = t[d1] - t[d2-1];
+            if(tt * d1 - kk > p)break;
+            d2--;
+        }
+        LL tt = s[d1] - s[d2];
+        LL price = tt * d1 - (t[d1] - t[d2]);
+        price = p - price;
+        LL aa = MIN(dp[d2] , k - tt);
+        if(d1 > d2)aa = MIN(aa , price / (d1 - d2));
+        ans = MAX(ans , tt + aa);
+    }
+    printf("%I64d\n",ans);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&k,&p)) solve();
+    return 0;
+}

@@ -1,0 +1,103 @@
+#include<cstdio>     //精髓是。。设置llen和rlen。。代表这个区间从左走有多少个连续的0.。从右走有多少连续的0.。。
+#include<cstring>    //然后每次都更新就行了。。依靠他的子线段。。如果左子线段被打通的话。。还要加上右边的子线段的llen。。这是很显然的。。
+#include<climits>
+#include<algorithm>
+#include<stack>
+#define INF 0x7f7f7f7f
+using namespace std;
+struct Node
+{
+    int left,right,mid;
+    int llen,rlen;
+}tree[201000];
+int visit[50010];
+void build_tree(int x,int y,int num)
+{
+    tree[num].left=x;
+    tree[num].right=y;
+    tree[num].mid=(x+y)>>1;
+    tree[num].llen=y-x+1;
+    tree[num].rlen=y-x+1;
+    if(x==y)return;
+    int middle=tree[num].mid;
+    build_tree(x,middle,num<<1);
+    build_tree(middle+1,y,num<<1|1);
+}
+void change_tree(int loc,int num,int op)
+{
+    if(tree[num].left==tree[num].right)
+    {
+        if(op)
+        {
+            tree[num].llen=0;
+            tree[num].rlen=0;
+        }
+        else
+        {
+            tree[num].llen=1;
+            tree[num].rlen=1;
+        }
+        return;
+    }
+    int middle=tree[num].mid;
+    if(loc<=middle)change_tree(loc,num<<1,op);
+    else change_tree(loc,num<<1|1,op);
+    tree[num].llen=tree[num<<1].llen;
+    tree[num].rlen=tree[num<<1|1].rlen;
+    if(tree[num<<1].llen==(tree[num<<1].right-tree[num<<1].left+1))
+    {
+        tree[num].llen+=tree[num<<1|1].llen;
+    }
+    if(tree[num<<1|1].rlen==(tree[num<<1|1].right-tree[num<<1|1].left+1))
+    {
+        tree[num].rlen+=tree[num<<1].rlen;
+    }
+}
+int req_tree(int loc,int num)
+{
+    if(tree[num].left+tree[num].llen-1>=loc)return tree[num].llen;
+    if(tree[num].right-tree[num].rlen+1<=loc)return tree[num].rlen;
+    int middle=tree[num].mid;
+    if(loc<=middle&&middle-loc+1>tree[num<<1].rlen)return req_tree(loc,num<<1);
+    if(loc>middle&&loc-middle>tree[num<<1|1].llen)return req_tree(loc,num<<1|1);
+    return req_tree(loc,num<<1)+req_tree(loc,num<<1|1);
+}
+int main(void)
+{
+    int N,q;
+    while(2==scanf("%d%d",&N,&q))
+    {
+        build_tree(1,N,1);
+        memset(visit,0,sizeof(visit));
+        stack<int>que;
+        while(q--)
+        {
+            char abc[10];
+            scanf("%s",abc);
+            char op=abc[0];
+            if(op=='D')
+            {
+                int a;
+                scanf("%d",&a);
+                visit[a]=1;
+                que.push(a);
+                change_tree(a,1,1);
+            }
+            else if(op=='Q')
+            {
+                int a;
+                scanf("%d",&a);
+                if(visit[a])printf("%d\n",0);
+                else printf("%d\n",req_tree(a,1));
+            }
+            else
+            {
+                int a=que.top();
+                visit[a]=0;
+                que.pop();
+                change_tree(a,1,0);
+            }
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,39 @@
+#include<cstring>   //二元排序。。比较两个元素先后顺序的优劣。。就可以了。。。注意要用long long 型来保存。。。
+#include<cstdio>
+#include<algorithm>
+#include<climits>
+#include<queue>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MOD 19871118
+using namespace std;
+struct abc
+{
+    long long t,d;
+    bool operator <(const abc &b)const
+    {
+        return t*b.d<b.t*d;
+    }
+}cow[100100];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%lld%lld",&cow[i].t,&cow[i].d);
+        }
+        sort(cow+1,cow+N+1);
+        long long res=0;
+        long long T=0;
+        for(int i=1;i<=N;i++)
+        {
+            res+=T*cow[i].d;
+            T+=(cow[i].t*2);
+        }
+        printf("%lld\n",res);
+    }
+    return 0;
+}

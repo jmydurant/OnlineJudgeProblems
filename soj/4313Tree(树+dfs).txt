@@ -1,0 +1,66 @@
+#include <cstdio>   //事实上在那个节点开始dfs都可以。。反正这个节点满k就把他删去。。多余k就说明不符合题意。。少于k就继续走。。
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define maxn 100100
+#define rst(x,k) memset(x,k,sizeof(x))
+using namespace std;
+struct node
+{
+    int t,nxt;
+}edge[maxn*10];
+int headline[maxn];
+int tot;
+int n,K,aim;
+void add(int f,int t)
+{
+    tot++;
+    edge[tot].t = t;
+    edge[tot].nxt = headline[f];
+    headline[f] = tot;
+}
+
+int dfs(int u,int fa)
+{
+    int ans = 1;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(v != fa)
+        {
+            int temp = dfs(v,u);
+            if(temp == -1)
+                return -1;
+            ans += temp;
+        }
+    }
+    if(ans>aim) return -1;
+    return ans%aim;
+}
+
+int main(void)
+{
+    int casenum;
+    scanf("%d\n",&casenum);
+        while(casenum--)
+        {
+            scanf("%d%d",&n,&K);
+            aim = K;
+            rst(headline,-1);
+            tot = 0;
+            FOR(i,1,n-1)
+            {
+                int a,b; scanf("%d%d",&a,&b);
+                add(a,b);
+                add(b,a);
+            }
+            if(dfs(1,-1) == 0)
+                printf("YES\n");
+            else
+                printf("NO\n");
+        }
+    return 0;
+}

@@ -1,0 +1,65 @@
+#include<cstring>   //白书上面有讲。。。这道题也可以用康拓展开来做。。貌似哈。。。
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int A[13];
+int q[13];
+int R[13];
+bool visit[13];
+int main(void)
+{
+    A[0]=A[1]=1;
+    for(int i=2;i<=12;i++)
+    {
+        A[i]=A[i-1]*i;
+    }
+    //printf("%d\n",A[3]);
+    int casenum; scanf("%d",&casenum);
+    int abc=0;
+    while(casenum--)
+    {
+        int N,K; scanf("%d%d",&N,&K);
+        memset(R,0,sizeof(R));
+        memset(visit,0,sizeof(visit));
+        for(int i=1;i<=K;i++)
+        {
+            scanf("%d",q+i);
+            visit[q[i]]=true;
+        }
+        for(int i=K-1;i>0;i--)
+        {
+            for(int j=K;j>i;j--)
+            {
+                if(q[i]>q[j])R[i]++;
+            }
+        }
+        for(int i=1;i<=K;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                if((!visit[j]) && q[i]>j)R[i]++;
+            }
+        }
+        //for(int i=1;i<=K;i++)printf("%d ",R[i]);
+        //printf("\n");
+        int tot=0;
+        for(int i=1;i<=K;i++)
+        {
+            tot+=(R[i]*(A[N-i]/A[N-K]));
+        }
+        printf("Variace cislo %d ma poradove cislo %d.\n",++abc,tot+1);
+    }
+    return 0;
+}

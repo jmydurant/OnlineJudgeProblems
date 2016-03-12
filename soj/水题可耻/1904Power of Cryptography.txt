@@ -1,0 +1,14 @@
+#include<cstdio>
+#include<cstring>
+#include<cmath>
+using namespace std;
+int main(void)
+{
+    double a,b,result;
+    while(EOF!=scanf("%lf%lf",&a,&b))//和1017一模一样
+    {
+        result=0.5+pow(b,1.0/a);
+        printf("%d\n",(int)result);
+    }
+    return 0;
+}

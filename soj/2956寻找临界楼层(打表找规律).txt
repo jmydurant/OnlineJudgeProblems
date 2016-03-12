@@ -1,0 +1,51 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 5000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;  //打表规律 n -->  ( n*(n-1)/2 , n*(n+1)/2)
+LL a[101010];
+void INIT(void){
+    FOR(i,1,100000){
+        a[i] = (LL)i * (i+1) / 2;
+    }
+    //cout  << a[100000] << endl;
+}
+void solve(void){
+    int n; scanf("%d",&n);
+    int tt = lower_bound(a , a+100000 , n) - a;
+    printf("%d\n",tt);
+}
+int main(void){
+    INIT();
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

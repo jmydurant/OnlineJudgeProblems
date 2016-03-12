@@ -1,0 +1,52 @@
+#include<cstring>
+#include<cstdio>   //早上想偷懒切一道水题。。还被虐了。。次奥！！！
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+using namespace std;
+const double Pi=2.0*asin(1.0);
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        double r,R,H,V;
+        scanf("%lf%lf%lf%lf",&r,&R,&H,&V);
+        double ans;
+        if(r==R)
+        {
+            ans=(V/Pi)/(R*R);
+        }
+        else
+        {
+            double dx=(R-r)/H;
+            double tmpt=(3.0*V/Pi);
+            double x=r/dx;
+            tmpt/=(dx*dx);
+            tmpt+=(x*x*x);
+            ans=pow(tmpt,1.0/3.0);
+            //printf("%lf\n",ans);
+            ans-=x;
+        }
+        if(ans>H)printf("%lf\n",H);
+        else printf("%lf\n",ans);
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+

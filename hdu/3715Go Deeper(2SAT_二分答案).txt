@@ -1,0 +1,116 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //对条件进行二分。。每次满足mid个。。建图然后2SAT判断可行性。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-5
+#define INF 50000000
+#define maxn 500
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[101010];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int n,m;
+int a[10100] , b[10100] , c[10100] , mid;
+void buildg(void){
+    rst(headline , -1); E = 0;
+    FOR(i,1,mid){
+        if(c[i] == 0){
+            add(a[i] + n ,b[i]);
+            add(b[i] + n, a[i]);
+        }else if(c[i] == 2){
+            add(a[i] , b[i] + n);
+            add(b[i] , a[i] + n);
+        }else{
+            add(a[i] , b[i]);
+            add(b[i] , a[i]);
+            add(a[i] + n , b[i] + n);
+            add(b[i] + n , a[i] + n);
+        }
+    }
+}
+int dfn[maxn] , low[maxn] , tot , st[maxn] , top , belong[maxn] , scc;
+bool instack[maxn];
+void tarjan(int u){
+    dfn[u] = low[u] = ++tot;
+    st[top] = u; top++;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(dfn[u] == low[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+bool judge(void){
+    rst(dfn,0);
+    rst(instack,0);
+    tot = scc = top = 0;
+    FOR(i,0,2*n-1)if(!dfn[i])tarjan(i);
+    FOR(i,0,n-1)if(belong[i] == belong[i+n])return false;
+    return true;
+}
+void solve(void){
+    scanf("%d%d",&n,&m);
+    FOR(i,1,m){
+        scanf("%d%d%d",a+i,b+i,c+i);
+    }
+    int l = 0 , r = m;
+    int ans = 0;
+    while(l <= r){
+        mid = (l + r)>>1;
+        buildg();
+        if(judge()){
+            ans = mid;
+            l = mid + 1;
+        }else r = mid - 1;
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

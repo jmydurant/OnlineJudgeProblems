@@ -1,0 +1,107 @@
+#include<cstring>// 第一次接触置换群。。感觉好神奇。。完美值可以贪心得到。。所需的时间可以用置换的最大节来解决。。
+#include<cstdio>//当最大节只有1的时候。。就是0,2的时候就是1，大于二的时候就是二。。因为可以用一次置换把所有的节都断成小于等于二的节。。
+#include<climits>  //只是找循环节的时候要注意。。sort排完了序之后有可能是会把循环节给扩大。。比如2,2,2,1交换之后变成了4,1,2,3..一个4循环的节。。
+#include<algorithm>//但其实只需交换首尾即可。。所以要特殊处理。。。
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define MOD 1000003LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+struct abc
+{
+    int good,r;
+    bool operator < (const abc & tmpt) const
+    {
+        if(good == tmpt.good)return r<tmpt.r;
+        return good<tmpt.good;
+    }
+}item[10010];
+bool visit[10010];
+int main(void)
+{
+    long long ans;
+    int N;
+    item[0].good=-10;
+    while(EOF!=scanf("%d",&N))
+    {
+        ans=0;
+        memset(visit,0,sizeof(visit));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",&item[i].good);
+            item[i].r=i;
+        }
+        sort(item+1,item+N+1);
+        //for(int i=1;i<=N;i++)printf("%d ",item[i].r);printf("\n");
+        for(int i=1;i<=N;i++)
+        {
+            ans+=i*item[i].good;
+        }
+        int state=0,now;
+        for(int i=1;i<=N;i++)
+        {
+            int start=i;
+            now=0;
+            int low=item[i].r;
+            int last=0;
+            while(1)
+            {
+                if(0==visit[start])
+                {
+                    visit[start]=true;
+                    if(item[start].r==start)
+                    {
+                        state=MAX(1,state);
+                        break;
+                    }
+                    if(item[start].good==item[item[start].r].good || item[start].good==item[last].good)
+                    {
+                        if(((start>=low && start<=item[start].r) || (start<=low && start>=item[start].r)))
+                        {
+                            ;
+                        }
+                        else
+                        {
+                           // printf("pass\n");
+                            now++;
+                        }
+                    }
+                    else
+                    {
+                        low=item[item[start].r].r;
+                        now++;
+                    }
+                    last=start;
+                    start=item[start].r;
+                    if(now>state)state=now;
+                    if(state>2)break;
+                    continue;
+                }
+                break;
+            }
+            if(state>2)break;
+        }
+        printf("%lld\n",ans);
+        if(state==1)
+        {
+            printf("%d\n",0);
+        }
+        else if(state==2)
+        {
+            printf("%d\n",1);
+        }
+        else
+        {
+            printf("%d\n",2);
+        }
+    }
+    return 0;
+}

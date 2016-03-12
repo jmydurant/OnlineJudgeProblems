@@ -1,0 +1,143 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //应该说用km算法也能做。。毕竟完备匹配也可以用费用流来做。。所以就试了一下。。果然如此。。
+#include <cstring>    //我居然沙茶到用bfs来算距离。。直接哈密顿距离不就完啦。。艹。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 1100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+char puzzle[110][110];
+int _hash[110][110];
+int r[210][210] , cost[210][210];
+int row,col,n,op,ed;
+int dx[] = {1,-1,0,0};
+int dy[] = {0,0,1,-1};
+int qx[1100] , qy[1100] , dis[1100] , fa[1100];
+bool visit[110][110];
+inline bool judge(int i,int j){
+    if(i >= 0 && i < row && j >= 0 && j <col)return true;
+    return false;
+}
+void bfs(int ind,int aa,int bb){
+    ind += n;
+    int head = 0 ,tail = 1;
+    qx[head] = aa , qy[head] = bb , dis[head] = 0;
+    rst(visit,0);
+    visit[aa][bb] = true;
+    int sx , sy ,dd;
+    int tt = 0;
+    while(head < tail){
+        sx = qx[head] , sy = qy[head] , dd = dis[head]; head++;
+        REP(k,4){
+            int tx = sx + dx[k] , ty = sy + dy[k];
+            if(judge(tx , ty) && (!visit[tx][ty])){
+                visit[tx][ty] = true;
+                qx[tail] = tx , qy[tail] = ty , dis[tail] = dd+1; tail++;
+                if(_hash[tx][ty]){
+                    cost[ind][_hash[tx][ty]] = dd+1;
+                    cost[_hash[tx][ty]][ind] = -(dd+1);
+                    //printf("n is %d  ind is %d\n",n,ind);
+                    tt++;
+                    if(tt == n)return;
+                }
+            }
+        }
+    }
+}
+void spfa(void){
+    FOR(i,0,ed) visit[i][0] = false , dis[i] = INF , fa[i] = -1;
+    queue<int> q; q.push(op);
+    dis[op] = 0 , visit[op][0] = true;
+    while(!q.empty()){
+        int u = q.front(); q.pop(); visit[u][0] = false;
+        for(int i = 0;i<=ed;i++){
+            if(r[u][i] > 0 && dis[i] > dis[u] + cost[u][i]){
+                dis[i] = dis[u] + cost[u][i];
+                fa[i] = u;
+                if(!visit[i][0]){
+                    visit[i][0] = true;
+                    q.push(i);
+                }
+            }
+        }
+    }
+}
+int MCMF(void){
+    int mincost = 0;
+    while(true){
+        spfa();
+        if(fa[ed] == -1)break;
+        int u = ed;
+        //printf("dis ed is %d\n",dis[ed]);
+        while(u != -1){
+            r[fa[u]][u] --;
+            r[u][fa[u]] ++;
+            u = fa[u];
+        }
+        mincost += dis[ed];
+    }return mincost;
+}
+void solve(void){
+    REP(i,row) scanf("%s",puzzle[i]);
+    n = 0;
+    rst(_hash,0); rst(r, 0); rst(cost,0);
+    REP(i,row)REP(j,col){
+        if(puzzle[i][j] == 'H'){
+            _hash[i][j] = ++n;
+        }
+    }
+    op = 0, ed = 2*n+1;
+    int tt = 0;
+    REP(i,row)REP(j,col){
+        if(puzzle[i][j] == 'm')bfs(++tt,i,j);
+    }
+    FOR(i,1,n){
+        r[op][i+n] = 1;
+        r[i][ed] = 1;
+    }
+    FOR(i,1,n){
+        FOR(j,1,n){
+            r[i+n][j] = 1;
+        }
+    }
+    //FOR(i,0,ed){
+    //    FOR(j,0,ed)printf("%d ",cost[i][j]);printf("\n");
+    //}
+    //FOR(i,0,ed){
+    //    FOR(j,0,ed)printf("%d ",r[i][j]);printf("\n");
+    //}
+    int ans = MCMF();
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&row,&col)){
+        if(row == 0 && col == 0)break;
+        solve();
+    }return 0;
+}

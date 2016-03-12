@@ -1,0 +1,81 @@
+dp[i][j][k]：严格最长上升子序列的数目。
+    i：当前进行到数字的位数，最低位为0。
+    j: 状态压缩，10个数字中出现过哪些数字。
+    k：当前最长上升子序列的长度。
+#include<cstring>    //就是一个状态DP。。。状态转移方程找对就可以了。。。。
+#include<cstdio>
+#include<algorithm>
+#include<climits>
+#include<queue>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MOD 19871118
+using namespace std;
+typedef __int64 LL;
+LL dp[19][1<<10][11];
+LL digit[20];
+LL left,right,K;
+LL dfs(int pos,int state,int len,bool istop)
+{
+    if(pos<0)return len==K;
+    if(!istop && dp[pos][state][K]!=-1)return dp[pos][state][K];
+    LL ans=0;
+    int maxn= istop?digit[pos]:9;
+    for(int i=0;i<=maxn;i++)
+    {
+        if(i || state)
+        {
+            if((1<<i)>state)
+            {
+                ans+=dfs(pos-1,(1<<i)|state,len+1, istop && (i==maxn));
+            }
+            if((1<<i)&state)
+            {
+                ans+=dfs(pos-1,state,len, istop && (i==maxn));
+            }
+            else
+            {
+                for(int j=i+1;j<=9;j++)
+                {
+                    if((1<<j) & state)
+                    {
+                        ans+=dfs(pos-1,(state | (1 << i)) ^ (1 << j),len,istop && (i==maxn));
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            ans+=dfs(pos-1,0,0,istop && (i==maxn));
+        }
+    }
+    if(!istop && dp[pos][state][K]==-1)
+    {
+        dp[pos][state][K]=ans;
+    }
+    return ans;
+}
+LL solve(LL n)
+{
+    if(0==n)return 0;
+    int len=0;
+    while(n)
+    {
+        digit[len++]=n%10;
+        n/=10;
+    }
+    return dfs(len-1,0,0,true);
+}
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    int kkk=0;
+    memset(dp,-1,sizeof(dp));
+    while(casenum--)
+    {
+        scanf("%I64d%I64d%I64d",&left,&right,&K);
+        printf("Case #%d: %I64d\n",++kkk,solve(right)-solve(left-1));
+    }
+}

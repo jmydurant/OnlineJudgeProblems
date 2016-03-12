@@ -1,0 +1,99 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //还是裸题。。。。不能多说。。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define maxn 110000
+#define INF 1000000000
+#define mod 1000003LL
+#define base 105000
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int pos,fail;
+    int nxt[128];
+    void INIT(void){
+        pos = fail = 0;
+        rst(nxt,0);
+    }
+}tree[maxn];
+int cnt[maxn];
+int tot,n;
+void Insert(char *s,int _pos){
+    int now = 0;
+    for(;*s;s++){
+        int c = *s;
+        if(tree[now].nxt[c] == 0){
+            tot++; tree[tot].INIT();
+            tree[now].nxt[c] = tot;
+        }
+        now = tree[now].nxt[c];
+    }
+    tree[now].pos = _pos;
+}
+void bfs(void){
+    int now = 0;
+    queue<int> q;
+    q.push(0);
+    while(!q.empty()){
+        now = q.front(); q.pop();
+        for(int i = 0;i<128;i++){
+            if(tree[now].nxt[i]){
+                int temp = tree[now].nxt[i];
+                if(now) tree[temp].fail = tree[tree[now].fail].nxt[i];
+                q.push(temp);
+            }else tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+        }
+    }
+}
+
+void Match(char *s){
+    int now = 0;
+    for(;*s;s++){
+        int c = *s;
+        now = tree[now].nxt[c];
+        for(int temp = now;temp;temp = tree[temp].fail){
+            cnt[tree[temp].pos]++;
+        }
+    }
+}
+char s[1001][55];
+char str[2100000];
+void solve(void){
+    tot = 0;
+    rst(cnt,0);
+    tree[0].INIT();
+    for(int i = 1;i<=n;i++){
+        scanf("%s",s[i]);
+        Insert(s[i],i);
+    }
+    bfs();
+    scanf("%s",str);
+    Match(str);
+    for(int i = 1;i<=n;i++){
+        if(cnt[i])printf("%s: %d\n",s[i],cnt[i]);
+    }
+}
+int main(void){
+    while(EOF != scanf("%d",&n))solve();
+    return 0;
+}

@@ -1,0 +1,58 @@
+#include <iostream>   //我是沙茶.....dpi代表i结尾的有多少个。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 2000100
+#define INF 2100001000
+#define mod 10007
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+char a[maxn];
+int nxt[maxn];
+int dp[maxn];
+void getnxt(int len){
+    nxt[0] = -1; int k = -1;
+    FOR(i,1,len-1){
+        while(k>-1 && a[i] != a[k+1])k = nxt[k];
+        if(a[i] == a[k+1])k++;
+        nxt[i] = k;
+    }
+    //FOR(i,0,len-1)printf("%d ",nxt[i]);printf("\n");
+}
+void INIT(void){
+    int n; scanf("%d%s",&n,a);
+    getnxt(n);
+    rst(dp,0);
+    dp[0] = 1;
+    int ans = 1;
+    FOR(i,1,n-1){
+        if(nxt[i]>=0)dp[i] = (dp[nxt[i]]+1)%mod;
+        else dp[i] = 1;
+        ans += dp[i];
+        ans %= mod;
+    }
+    printf("%d\n",(ans) % mod);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)INIT();
+    return 0;
+}

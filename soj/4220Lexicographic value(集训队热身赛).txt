@@ -1,0 +1,67 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>  //一个数据编码的问题。。原理很简单。。。八数码问题就是用这个打hash表的。。。
+#include<climits>
+using namespace std;
+char digit[25];
+char put[25];
+long long f[25];long long A[18];
+long long R[18],vis[18];
+int main(void)
+{
+    int casenum;
+    A[1]=1;
+    for(int i=2;i<=17;i++){A[i]=A[i-1]*i;}
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        long long result=0;
+        long long pre;
+        int num;
+        memset(f,0,sizeof(f));
+        memset(R,0,sizeof(R));
+        scanf("%d",&num);
+        getchar();
+        gets(digit);
+        for(int i=1;i<num;i++)
+        {
+            for(int j=i-1;j>=0;j--){if(digit[i]>digit[j])f[i]++;}
+        }
+        for(int i=0;i<num;i++)
+        {
+            for(int j=0;j<num;j++)
+            {
+                if(digit[i]>digit[j]){R[i]++;}
+            }
+        }
+        for(int i=0;i<num;i++){result+=(R[i]-f[i])*A[num-i-1];}
+        printf("%lld ",result);
+        pre=result-1;
+        if(pre<0)printf("NULL!\n");
+        else
+        {
+            sort(digit,digit+num);
+            //puts(digit);
+            memset(vis,0,sizeof(vis));
+            for(int i=0;i<num;i++)
+            {
+                int zhanwei=0;
+                while(pre>=A[num-i-1]&&pre)
+                {
+                    if(vis[zhanwei])zhanwei++;
+                    else
+                    {
+                        pre-=A[num-i-1];
+                        zhanwei++;
+                    }
+                }
+                while(vis[zhanwei])zhanwei++;
+                put[i]=digit[zhanwei];
+                vis[zhanwei]=1;
+            }
+            put[num]='\0';
+            puts(put);
+        }
+    }
+    return 0;
+}

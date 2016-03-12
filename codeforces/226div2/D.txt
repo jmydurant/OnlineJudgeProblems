@@ -1,0 +1,66 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //开始的时候用几何来算。。要用到旋转矩阵。。然后就是压状dp了。。总体来说是不错的一道题目。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define INF 1400000000
+#define maxn 711080
+#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+using namespace std;
+typedef long long LL;
+struct P{
+    double x,y,angle;
+}p[25];
+double l,r;
+inline double calline(int ind,double d,double angle){
+    double x = d - p[ind].x , y = -p[ind].y;
+    double nx = x*cos(angle) - y*sin(angle) , ny = x*sin(angle) + y*cos(angle);
+    //printf("nx is  %lf\nny =  %lf\n",nx,ny);
+    x = p[ind].x; y = p[ind].y;
+    if(fabs(ny) < eps)return r;
+    double deta = x * ny - nx * y;
+    if(deta / ny < d)return r;
+    return min(r,deta / (ny));
+}
+double dp[1<<20];
+int n;
+int main(void){
+    while(cin >> n >> l >> r){
+        REP(i,n){
+            cin >> p[i].x >> p[i].y >> p[i].angle;
+            p[i].angle = p[i].angle / 180 * Pi;
+        }
+        int top = 1<<n;
+        REP(i,top)dp[i] = l;
+        REP(i,top){
+            REP(j,n){
+                if(!(i & h(j))){
+                    dp[i | h(j)] = max(dp[i | h(j)] , calline(j,dp[i],p[j].angle));
+                }
+            }
+        }
+        printf("%.7lf\n",dp[top-1] - l);
+    }return 0;
+}

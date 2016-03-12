@@ -1,0 +1,62 @@
+#include<cstdio>  //处理边界的时候错了一次。。这次清晰多了。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int rock[50010];
+int N,K;
+int LEN;
+bool judge(int mid)
+{
+    int used=0;
+    int last=0;
+    for(int i=1;i<=N+1;i++)  //这个地方。。我是判断大于mid的间隙可以么。。方便左右边界操作。。。
+    {
+        if(rock[i]-last<=mid)used++;
+        else
+        {
+            last=rock[i];
+        }
+    }
+    if(used<=K)return true;
+    return false;
+}
+int main(void)
+{
+    while(3==scanf("%d%d%d",&LEN,&N,&K))
+    {
+        rock[0]=0;
+        rock[N+1]=LEN;
+        int left=LEN,right=LEN;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",rock+i);
+        }
+        sort(rock,rock+N+1);
+        for(int i=1;i<=N+1;i++)
+        {
+            left=MIN(left,rock[i]-rock[i-1]);
+        }
+        int mid=((left+right)>>1);
+        while(left<right)
+        {
+           // printf("pass\n");
+            if(judge(mid))left=mid+1;//下边界可行可以加一。。。
+            else right=mid;
+            mid=((left+right)>>1);
+        }
+        printf("%d\n",mid);
+    }
+    return 0;
+}

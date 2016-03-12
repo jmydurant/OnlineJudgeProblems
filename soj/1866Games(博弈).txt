@@ -1,0 +1,76 @@
+#include <iostream>   //用dp的方法求sg函数。。只是一个对sg函数的理解和应用罢了。。
+#include <cstdio>     //注意。。如果某个点不能获胜的话。。那么最好的结果就是平局了。。所以还要搜索是否可以平局
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int dp[100100];
+int step[15];
+int n,m;
+int main(void)
+{
+    while(EOF!=scanf("%d",&n))
+    {
+        for(int i = 1;i<=n;i++)
+            dp[i] = -1;
+        scanf("%d",&m);
+        for(int i = 1;i<=m;i++)
+            scanf("%d",step+i);
+        dp[0] = 0;
+        for(int i = 1;i<=n;i++)
+        {
+            int flag = 0,value = 0;
+            for(int j = 1;j<=m;j++)
+            {
+                int temp = i-step[j];
+                if(temp<0)
+                    continue;
+                flag = 1;
+                if(dp[temp] == 0)
+                {
+                    value = 1;
+                    break;
+                }
+                else if(dp[temp] == -1)
+                {
+                    value = -1;
+                }
+            }
+            if(flag)
+            {
+                dp[i] = value;
+            }
+            else
+            {
+                dp[i] = -1;
+            }
+        }
+        //for(int i = 0;i<=n;i++)
+        //{
+        //    printf("dp %d == %d\n",i,dp[i]);
+        //}
+        //getchar();
+        if(dp[n] == 1)
+        {
+            printf("Pablo wins\n");
+        }
+        else if(dp[n] == 0)
+        {
+            printf("Chris wins\n");
+        }
+        else
+        {
+            printf("Draw\n");
+        }
+    }
+    return 0;
+}

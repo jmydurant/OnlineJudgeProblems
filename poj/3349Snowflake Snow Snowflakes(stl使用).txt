@@ -1,0 +1,74 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //神奇的stl使用。。居然没有hash就过掉了。。可能是数据水了。。
+#include <cstring>    //lexicographical_compare函数。。比较两个区间段的字典序，如果前面的小就true否则false。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int sss[100001][6];
+int temp[6];
+int a[100001],n;
+inline bool cmp(int a,int b){
+    return lexicographical_compare(sss[a],sss[a]+6 , sss[b],sss[b]+6);
+}
+void solve(void){
+    REP(i,n){
+        REP(j,6) scanf("%d",temp+j);
+        memcpy(sss[i],temp,sizeof(temp));
+        REP(j,5){
+            rotate(temp,temp+1,temp+6);
+            if(lexicographical_compare(temp,temp+6,sss[i],sss[i]+6)) memcpy(sss[i],temp,sizeof(temp));
+        }
+        reverse(temp,temp+6);
+        REP(j,6){
+            rotate(temp,temp+1,temp+6);
+            if(lexicographical_compare(temp,temp+6,sss[i],sss[i]+6)) memcpy(sss[i],temp,sizeof(temp));
+        }
+    }
+    //REP(i,n){
+    //    REP(j,6)printf("%d ",sss[i][j]);
+    //    printf("\n");
+    //}
+    REP(i,n) a[i] = i;
+    sort(a,a+n,cmp);
+    bool ok = false;
+    FOR(i,1,n-1){
+        if(memcmp(sss[a[i]],sss[a[i-1]],sizeof(temp)) == 0){
+            ok = true;
+            break;
+        }
+    }
+    if(ok)printf("Twin snowflakes found.\n");
+    else printf("No two snowflakes are alike.\n");
+}
+int main(void){
+    while(EOF != scanf("%d",&n))solve();
+    return 0;
+}

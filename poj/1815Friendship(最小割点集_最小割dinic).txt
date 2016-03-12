@@ -1,0 +1,134 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //其实我感觉自己的做法很沙茶。。果然只有数据水我才能A了。。艹。。
+#include <cstring>    //思想就是求割点集。。用最小割拆点就能做。。但是要字典序输出割点这个比较蛋疼。。
+#include <algorithm>  //其实我的做法很垃圾。。枚举每个点。然后把边拆掉再做最大流。如果流量减小就说明是割点。。否则还原边。。
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000
+#define maxn 201000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,aa,bb,    op , ed;
+int t[maxn] , nxt[maxn] , cap[maxn] , flow[maxn];  //怕超时。没有封装
+int edge[500];
+int headline[maxn] , E;
+inline void add(int _f,int _t,int ww){
+    t[E] = _t;
+    nxt[E] = headline[_f];
+    cap[E] = ww;
+    flow[E] = 0;
+    headline[_f] = E++;
+    t[E] = _f;
+    nxt[E] = headline[_t];
+    cap[E] = flow[E] = 0;
+    headline[_t] = E++;
+}
+int  dis[500] , q[101010] , head,tail;
+bool bfs(void){
+    FOR(i,1,2*n){
+        dis[i] = 0;
+    }
+    head = 0 , tail = 1;
+    q[head] = op; dis[op] = 1;
+    while(head < tail){
+        int u = q[head]; head++;
+        for(int i = headline[u];~i;i = nxt[i]){
+            int v = t[i];
+            if(!dis[v] && cap[i] > flow[i]){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+                if(v == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed || (!c))return c;
+    int temp = c;
+    for(int i = headline[u];~i;i = nxt[i]){
+        int v = t[i];
+        if(dis[v] == dis[u] + 1 && temp && cap[i] > flow[i]){
+            int tt = dfs(v,MIN(temp,cap[i] - flow[i]));
+            flow[i] += tt;
+            flow[i ^ 1] -= tt;
+            temp -= tt;
+            if(!temp)break;
+        }
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op,INF);
+    return maxflow;
+}
+int res[500] , resnum;
+void solve(void){
+    op = 2 * aa;
+    ed = 2 * bb - 1;
+    E = 0; rst(headline,-1);
+    bool flag = false;
+    FOR(i,1,n){
+        FOR(j,1,n){
+            int tt; scanf("%d",&tt);
+            if(i == j){
+                edge[i] = E;
+                add(2*i-1,2*i,1);
+                continue;
+            }
+            if(tt){
+                if(i == aa && j == bb)flag = true;
+                if(i != j)add(2*i,2*j-1,1);
+            }
+        }
+    }
+    if(flag){
+        printf("NO ANSWER!\n");
+        return;
+    }
+    int ans = dinic();
+    printf("%d\n",ans);
+    resnum = 0;
+    FOR(i,1,n){
+        if(i == aa || i == bb)continue;
+        REP(j,E) flow[j] = 0;
+        cap[edge[i]] = 0;
+        int curflow = dinic();
+        if(curflow < ans){
+            resnum++;
+            res[resnum] = i;
+            ans--;
+        }else{
+            cap[edge[i]] = 1;
+        }
+        if(ans <= 0)break;
+    }
+    FOR(i,1,resnum) printf("%d%c",res[i],(i == resnum)?'\n':' ');
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&aa,&bb)) solve();
+    return 0;
+}

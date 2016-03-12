@@ -1,0 +1,100 @@
+#include<cstdio>   //美其名曰随机化算法。。说白了就是蒙啊。。什么玩意。。。解析如下
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int A[510][510],B[510][510],C[510][510];
+int T[510];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                scanf("%d",&A[i][j]);
+            }
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                scanf("%d",&B[i][j]);
+            }
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                scanf("%d",&C[i][j]);
+            }
+        }
+        for(int i=1;i<=N;i++)
+        {
+            T[i]= ::rand()%100+1;
+        }
+        //for(int i=1;i<=N;i++)printf("%d ",T[i]);printf("\n");
+        int T1[510],T2[510],T3[510];
+        memset(T1,0,sizeof(T1));
+        memset(T2,0,sizeof(T2));
+        memset(T3,0,sizeof(T3));
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                T1[i]+=T[j]*A[j][i];
+            }
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                T2[i]+=T1[j]*B[j][i];
+            }
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                T3[i]+=T[j]*C[j][i];
+            }
+        }
+        bool flag=true;
+        for(int i=1;i<=N;i++)
+        {
+            if(T2[i]!=T3[i])
+            {
+                flag=false;
+                break;
+            }
+        }
+        if(flag)
+        {
+            printf("YES\n");
+        }
+        else
+        {
+            printf("NO\n");
+        }
+    }
+    return 0;
+}
+题意 : 方阵A,B,C, 问A * B = C是否成立。(方阵为n*n维)
+ 
+一看题还以为用Strassen算法，就到自习室看了一晚，算法不容易实现。看了Discuss才知道有更好的办法解决这题，利用矩阵的性质。
+若 A = B, 则 T * A = T * B. 注意反之不成立，即矩阵乘法消去律不成立。但这题仍然可利用消去律，因为消去律不成立这一事件发生的概率非常小。随机生成一个向量T(1*n)，计算 T * A * B 和 T * C，比较结果是否相等。
+ 
+整理一下思路，本题要证明 A*B = C，可以转化成对 T * A * B = T * C 的证明，因为矩阵相乘的时间复杂度很大，因此T选作向量，可以有效降低时间复杂度。

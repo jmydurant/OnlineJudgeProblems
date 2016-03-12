@@ -1,0 +1,25 @@
+#include<cstdio>
+#include<cstring>    //水题还得调半天。。。废了。。。
+#include<cmath>
+#define INF 10000000
+using namespace std;
+int main(void)
+{
+    unsigned long long M,N;
+    while(EOF!=scanf("%llu%llu",&M,&N))
+    {
+        unsigned long long result=0;
+        //printf("%llu %llu\n",N,M);
+        if(M<N){unsigned long long tmpt=M;M=N;N=tmpt;}
+        while(M!=N)
+        {
+            result+=N*N*N*N;
+            M=M-N;
+            if(M<N){unsigned long long tmpt=M;M=N;N=tmpt;}
+           // printf("%llu %llu\n",N,M);
+        }
+        result+=N*N*N*N;
+        printf("%llu\n",result);
+    }
+    return 0;
+}

@@ -1,0 +1,116 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //建图是关键。。这题建图不好想。。首先拆点为i和i'  源点对所有i建立边。费用0，流1.。i'到汇点建边同理。。
+#include <cstring>    //然后源点到i'建边费用为ai。。代表直接能力爆发。。然后如果有一个高速航行i-->j就建立i-->j'的边费用wi
+#include <algorithm>  //然后就可以放心的费用流了。。
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 140000000
+#define maxn 500000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int f,t,nxt;
+    int r,c;
+}edge[105000];
+int headline[2000] , E;
+inline void add(int f,int t,int w,int c){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].r = w;
+    edge[E].c = c;
+    headline[f] = E++;
+    edge[E].f = t;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].r = 0;
+    edge[E].c = -c;
+    headline[t] = E++;
+}
+int n,m,op,ed;
+bool visit[2000];
+int dis[2000] , fa[2000];
+int q[20000] , head,tail;
+bool spfa(void){
+    FOR(i,op,ed){
+        visit[i] = false;
+        fa[i] = -1;
+        dis[i] = INF;
+    }
+    dis[op] = 0;
+    visit[op] = true;
+    head = 0 , tail = 1;
+    q[head] = op;
+    while(head < tail){
+        int u = q[head]; head++; visit[u] = false;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(dis[v] > dis[u] + edge[i].c && edge[i].r > 0){
+                dis[v] = dis[u] + edge[i].c;
+                fa[v] = i;
+                if(!visit[v]){
+                    visit[v] = true;
+                    q[tail] = v; tail++;
+                }
+            }
+        }
+    }
+    if(fa[ed] != -1)return true;
+    return false;
+}
+int MCMF(void){
+    int mincost = 0;
+    while(spfa()){
+        int u = fa[ed];
+        while(u != -1){
+            edge[u].r--;
+            edge[u^1].r++;
+            u = fa[edge[u].f];
+        }
+        mincost += dis[ed];
+    }
+    return mincost;
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    op = 0,ed = 2*n+1;
+    FOR(i,1,n){
+        int tt; scanf("%d",&tt);
+        add(op,i,1,0);
+        add(op,i+n,1,tt);
+        add(i+n,ed,1,0);
+    }
+    REP(i,m){
+        int a,b,w; scanf("%d%d%d",&a,&b,&w);
+        if(a > b)swap(a,b);
+        add(a,b+n,1,w);
+    }
+    int ans = MCMF();
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

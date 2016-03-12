@@ -1,0 +1,21 @@
+#include<cstdio>   //刷个水题遭报应了。。。WA两次。。不好好看题目。。作死啊啊啊啊啊啊啊！！！！！！！
+#include<cstring>
+using namespace std;
+int dp[1010];
+int main(void)
+{
+    dp[1]=1;dp[2]=2;
+    dp[0]=0;
+    for(int i=3;i<=1009;i++)
+    {
+        dp[i]=(dp[i-1]+dp[i-2])%2012;
+    }
+    int casenum;scanf("%d",&casenum);
+    for(int i=1;i<=casenum;i++)
+    {
+        int N;
+        scanf("%d",&N);
+        printf("Case #%d: %d\n",i,dp[N]);
+    }
+    return 0;
+}

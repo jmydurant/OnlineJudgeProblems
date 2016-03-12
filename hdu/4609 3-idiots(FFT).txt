@@ -1,0 +1,116 @@
+#include<iostream>   //一道典型用快速傅里叶变换的题目。。具体题解http://www.cnblogs.com/kuangbin/archive/2013/07/24/3210565.html
+#include<cstdio>   
+#include<cmath>
+#include<cstring>
+#include <algorithm>
+#define MAXN 400040
+using namespace std;
+typedef long long LL;
+const double Pi  =  acos(-1.0);//定义Pi的值
+struct complex //定义复数结构体
+{
+	double re,im;
+	complex(double r=0.0,double i=0.0)
+	{  re=r,im=i; }  //初始化
+	//定义三种运算
+	complex operator +(complex o)
+	{ return complex(re+o.re,im+o.im);}
+	complex operator -(complex o)
+	{ return complex(re-o.re,im-o.im);}
+	complex operator *(complex o)
+	{ return complex(re*o.re-im*o.im,re*o.im+im*o.re);}
+}x1[MAXN];
+int a[MAXN];
+LL sum[MAXN];    //存储最后的结果
+LL num[MAXN];
+void BRC(complex *y,int len)//二进制反转倒置
+{
+	int i,j,k;
+	for(i=1,j=len/2;i<len-1;i++)
+	{
+		if(i<j)swap(y[i],y[j]);//i<j保证只交换一次
+		k=len/2;
+		while(j>=k)
+		{
+			j-=k;k=k/2;
+		}
+		if(j<k)j+=k;
+	}
+}
+void FFT(complex *y,int len ,double on)//on=1表示顺，-1表示逆
+{
+	int i,j,k,h;
+	complex u,t;
+	BRC(y,len);
+	for(h=2;h<=len;h<<=1)//控制层数
+	{
+		//初始化单位复根
+		complex wn(cos(on*2*Pi/h),sin(on*2*Pi/h));
+		for(j=0;j<len;j+=h)//控制起始下标
+		{
+			//初始化螺旋因子
+			complex w(1,0);
+			for(k=j;k<j+h/2;k++)
+			{
+				u=y[k];
+				t=w*y[k+h/2];
+				y[k]=u+t;
+				y[k+h/2]=u-t;
+				w=w*wn;//更新螺旋因子
+			}
+		}
+	}
+	if(on==-1)
+		for(i=0;i<len;i++) //逆FFT(IDFT)
+			y[i].re/=len;
+
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n; scanf("%d",&n);
+        memset(num,0,sizeof(num));
+        for(int i = 0;i<n;i++)
+            scanf("%d",a+i),num[a[i]]++;
+        sort(a,a+n);
+        int len = 1,len1 = a[n-1]+1;
+        while(len<len1*2)len <<= 1;
+        for(int i = 0;i<len1;i++)
+            x1[i] = complex(num[i],0);
+        for(int i = len1;i<len;i++)
+            x1[i] = complex(0,0);
+        FFT(x1,len,1);
+        for(int i = 0;i<len;i++)
+        {
+            x1[i] = x1[i]*x1[i];
+        }
+        FFT(x1,len,-1);
+        for(int i = 0;i<len;i++)
+        {
+            num[i] = (LL)(x1[i].re+0.5);
+        }
+        len = 2*a[n-1];
+        for(int i = 0;i<n;i++)
+            num[a[i]+a[i]]--;
+        for(int i = 1;i<=len;i++)
+            num[i] /= 2;
+        //for(int i = 0;i<=len;i++)
+            //printf("the%d   is  %I64d\n",i,sum[i]);
+        sum[0] = 0;
+        for(int i = 1;i<=len;i++)
+            sum[i] = sum[i-1]+num[i];
+        LL ans = 0;LL tot = (LL)n*(n-1)*(n-2)/6;
+        for(int i = 0;i<n;i++)
+        {
+            ans += (sum[len]-sum[a[i]]);
+            ans -= (long long)(n-1);
+            ans -= (long long)(n-i-1)*(i);
+            ans -= (long long)(n-i-1)*(n-i-2)/2;
+        }
+        printf("%.7lf\n",(double)ans/tot);
+    }
+    return 0;
+}

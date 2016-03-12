@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <map>
+#define INF 0xffffffff
+#define MAXN 51000
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+long long a[101000];
+int main(void)
+{
+    int N,Q;
+    while(2==scanf("%d%d",&N,&Q))
+    {
+        long long tmpt=0;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%I64d",a+i);
+        }
+        for(int i=1;i<=Q;i++)
+        {
+            int op; scanf("%d",&op);
+            if(op==1)
+            {
+                int k;
+                long long add;
+                scanf("%d%I64d",&k,&add);
+                a[k]=add-tmpt;
+            }
+            else if(op==2)
+            {
+                long long add;
+                scanf("%I64d",&add);
+                tmpt+=add;
+            }
+            else
+            {
+                int k; scanf("%d",&k);
+                printf("%I64d\n",a[k]+tmpt);
+            }
+        }
+    }
+    return 0;
+}

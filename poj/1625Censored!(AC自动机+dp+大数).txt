@@ -1,0 +1,123 @@
+#include <cstdio>             //用vs2012写的感觉好爽。。。
+#include <cstring>            //我是一个纯沙茶。。这种题目做不来的。。大数都能写re。。还活个毛线。。
+#include <algorithm>          //简述一下思路。dp[i][j]代表i长度。模式是j的结尾的个数对于字典树上非叶子的点有dp[i][p] = dp[i][p] + dp[i][j]。j是p的父亲
+#include <queue>
+#include <iostream>
+#include <climits>
+#include <cmath>
+#define  REP(i,n) for(int i = 0;i<(n);i++)
+#define  FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define  FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define  rst(x,k) memset(x,k,sizeof(x))
+#define  maxn 256
+#define  mod 18446744073709551616LL
+#define  ni 10330176681277348905LL
+#define  INF 1000000000
+#define  base 128
+using namespace  std;
+typedef unsigned long long LL;
+struct bign{
+	int a[110];
+	bign(void){rst(a,0);}
+	void INIT(void){rst(a,0);}
+	
+	void show(void){
+		int i = 109;
+		while (i > 0 && (!a[i])) i--;
+		for(;i>=0;i--)printf("%d",a[i]);
+		printf("\n");
+	}
+}dp[55][110];
+bign operator + (const bign & a,const bign & b){
+	bign ans;
+	FORD(i,109,0) ans.a[i] = a.a[i] + b.a[i];
+	FOR(i,0,109-2){
+		ans.a[i+1] += (ans.a[i] / 10);
+		ans.a[i] %= 10;
+	}
+	return ans;
+}
+struct node{
+	int fail,nxt[maxn];
+	bool end;
+	void INIT(void){
+		fail = end = 0;
+		rst(nxt,0);
+	}
+}tree[550];
+int tot,n,m,p;
+bool visit[maxn];
+void Insert(char *s){
+	int now = 0;
+	for(;*s;s++){
+		int c = *s + base;
+		if(!tree[now].nxt[c]){
+			tot++; tree[tot].INIT();
+			tree[now].nxt[c] = tot;
+		}
+		now = tree[now].nxt[c];
+	}
+	tree[now].end = true;
+}
+void bfs(void){
+	int now = 0;
+	queue<int> q;
+	q.push(0);
+	while (!q.empty()){
+		now = q.front(); q.pop();
+		REP(i,maxn){
+			if(tree[now].nxt[i]){
+				int temp = tree[now].nxt[i];
+				if(now){
+					tree[temp].fail = tree[tree[now].fail].nxt[i];
+				}
+				q.push(temp);
+				tree[temp].end |= tree[tree[temp].fail].end;
+			}else tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+		}
+	}
+}
+char s[50];
+void cal(int len){
+	FOR(i,0,len){
+		FOR(j,0,tot) dp[i][j].INIT();
+	}
+	dp[0][0].a[0] = 1;
+	FOR(i,1,len){
+		FOR(j,0,tot){
+			if(tree[j].end)continue;
+			REP(k,maxn){
+				if(!visit[k])continue;
+				int temp = tree[j].nxt[k];
+				if(!tree[temp].end){
+					dp[i][temp] = dp[i][temp] + dp[i-1][j];
+				}
+			}
+		}
+	}
+	bign ans;
+	FOR(i,0,tot) ans = ans + dp[len][i];
+	ans.show();
+}
+void solve(void){
+	rst(visit,false);
+	tot = 0; tree[0].INIT();
+	REP(i,n){
+		char ccc;
+		scanf(" %c",&ccc);
+		visit[(int)ccc + base] = true;
+		//printf("char is %c\n",ccc);
+		//system("pause");
+	}
+	REP(i,p){
+		scanf(" %s",s);
+		//printf("s is %s",s);
+		//system("pause");
+		Insert(s);
+	}
+	bfs();
+	cal(m);
+}
+int main(void){
+	while (3 == scanf("%d%d%d",&n,&m,&p))solve();
+}

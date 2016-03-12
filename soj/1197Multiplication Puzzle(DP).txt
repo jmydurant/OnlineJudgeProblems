@@ -1,0 +1,35 @@
+#include<cstdio>     //dp还是得时不时的练一下。。。dp（i，j，k）代表把i,k与k,j合成的最小代价。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+int dp[110][110][110],good[110][110];
+int digit[110];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        for(int i=1;i<=N;i++)scanf("%d",digit+i);
+        memset(good,INF,sizeof(good));
+        for(int i=1;i<=N;i++)good[i][i+1]=0;
+        for(int i=N-2;i>=1;i--)
+        {
+            for(int j=i+2;j<=N;j++)
+            {
+                for(int k=i+1;k<=j-1;k++)
+                {
+                    dp[i][j][k]=good[i][k]+good[k][j]+digit[i]*digit[j]*digit[k];
+                    if(good[i][j]>dp[i][j][k])good[i][j]=dp[i][j][k];
+                }
+            }
+        }
+        printf("%d\n",good[1][N]);
+    }
+}

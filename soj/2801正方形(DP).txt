@@ -1,0 +1,45 @@
+#include<cstdio>
+#include<cmath>
+#include<cstring>
+using namespace std;
+inline int MIN(int a,int b,int c)
+{
+    if(a>b)a=b;
+    if(a>c)a=c;
+    return a;
+}
+int dp[1010][1010];
+int stone[1010][1010];
+int main(void)
+{
+    int N,m;
+    while(EOF!=scanf("%d%d",&N,&m))
+    {
+        int result=0;
+        memset(dp,0,sizeof(dp));
+        memset(stone,0,sizeof(stone));
+        for(int i=1;i<=m;i++)
+        {
+            int x,y;
+            scanf("%d%d",&x,&y);
+            stone[x][y]=1;
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                if(stone[i][j])dp[i][j]=0;
+                else
+                {
+                    dp[i][j]=MIN(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1;   //递推公式。。。。其他的都很简单。。
+                    if(dp[i][j]>result)result=dp[i][j];
+                }
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}
+
+
+

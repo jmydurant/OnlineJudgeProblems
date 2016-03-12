@@ -1,0 +1,95 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //这题直接暴搜就能过。。有点感动。。。
+#include <cstdio>     //对于图来说。。如果a为红色。。那么他的后续节点也必须是红色。否则失败。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-3
+#define INF 50000000
+#define maxn 16100
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[40100];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int n,m;
+#define RED 1
+#define BLUE 2
+#define WHITE 0
+int color[maxn] , st[maxn] , top;
+bool dfs(int u){
+    if(color[u] == RED)return true;
+    if(color[u] == BLUE)return false;
+    st[top] = u; top++;
+    color[u] = RED; color[u ^ 1] = BLUE;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfs(v))return false;
+    }
+    return true;
+}
+bool judge(void){
+    rst(color,0);
+    REP(i,n){
+        if(!color[i]){
+            top = 0;
+            if(!dfs(i)){
+                while(top > 0){
+                    top--;
+                    color[st[top]] = WHITE;
+                    color[st[top] ^ 1] = WHITE;
+                }
+                if(!dfs(i ^ 1))return false;
+            }
+        }
+    }
+    return true;
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    n *= 2;
+    REP(i,m){
+        int a,b; scanf("%d%d",&a,&b);
+        a--; b--;
+        add(a , b ^ 1);
+        add(b , a ^ 1);
+    }
+    if(judge()){
+        REP(i,n){
+            if(color[i] == RED)printf("%d\n",i+1);
+        }
+    }else printf("NIE\n");
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

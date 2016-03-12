@@ -1,0 +1,97 @@
+#include <iostream>
+#include <cstdio>    //由于图非常小。。所以怒搜之。。而且简单搜完之后。。可以对每个边做判定。。保证结果一定正确。。
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <climits>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 100
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+struct node
+{
+    int f,t,w;
+    int nxt;
+}edge[maxn*10];
+int headline[maxn];
+int tot;
+bool visit[maxn];
+int xxoo[maxn];
+void add(int f,int t,int w)
+{
+    tot++;
+    edge[tot].f = f;
+    edge[tot].t = t;
+    edge[tot].w = w;
+    edge[tot].nxt = headline[f];
+    headline[f] = tot;
+}
+int n,m;
+void dfs(int u)
+{
+    visit[u] = true;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(!visit[v])
+        {
+            xxoo[v] = xxoo[u]^edge[i].w;
+            dfs(v);
+        }
+    }
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&n,&m);
+        rst(visit,0);
+        rst(headline,-1); tot = 0;
+        rst(xxoo,0);
+        bool ok = true;
+        REP(i,m)
+        {
+            int a,b,w; scanf("%d%d%d",&a,&b,&w);
+            add(a,b,w); add(b,a,w);
+        }
+        if(!ok)
+        {
+            printf("No\n");
+            continue;
+        }
+        FOR(i,1,n)
+        {
+            if(!visit[i])
+            {
+                dfs(i);
+            }
+        }
+        for(int i = 1;i<=tot;i++)
+        {
+            int f = edge[i].f;
+            int t = edge[i].t;
+            //printf("f is %d to is %d  xxxx is %d\n",f,t,(xxoo[f]^xxoo[t]));
+            if((xxoo[f]^xxoo[t]) != edge[i].w)
+            {
+                ok = false;
+                break;
+            }
+        }
+        if(ok)
+            printf("Yes\n");
+        else
+            printf("No\n");
+    }
+    return 0;
+}

@@ -1,0 +1,112 @@
+#include <vector>   //尼玛输出格式错误WA了两次。。。
+#include <queue>    //这个稍微麻烦一点。。每次输入数据都有排序一次。。
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <cstring>
+#define INF 999999999.0
+#define eps 1e-11
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+using namespace std;
+vector<int> puzzle[30];
+int tot[30],cnt[30];
+int ans[30];
+int N;
+int toposort(void)
+{
+    memcpy(cnt,tot,sizeof(cnt));
+    //bool maodun=false;
+    bool confuse=false;
+    int start;
+    queue<int>q;
+    for(int lap=1;lap<=N;lap++)
+    {
+        int num=0;
+        for(int i=1;i<=N;i++)
+        {
+            if(0==cnt[i])
+            {
+                num++;
+                start=i;
+            }
+        }
+        if(0==num)
+            return 0;
+        if(num>1)
+            confuse=true;
+        q.push(start);
+        ans[lap]=start;
+        cnt[start]=-1;
+        int n=puzzle[start].size();
+        for(int j=0;j<n;j++)
+        {
+            int tmpt=puzzle[start][j];
+            cnt[tmpt]--;
+        }
+    }
+    if(confuse)
+        return -1;
+    return 1;
+}
+void INIT(void)
+{
+    memset(tot,0,sizeof(tot));
+    for(int i=1;i<=N;i++)
+        puzzle[i].clear();
+}
+int main(void)
+{
+    int M;
+    //freopen("in.txt","r",stdin);
+    while(2==scanf("%d%d",&N,&M) && (N || M))
+    {
+        INIT();
+        char str[10];
+        bool finish=0;
+        for(int step=1;step<=M;step++)
+        {
+            scanf("%s",str);
+            if(finish)
+                continue;
+            int a=str[0]-'A'+1;
+            int b=str[2]-'A'+1;
+            puzzle[a].push_back(b);
+            tot[b]++;
+            int flag=toposort();
+            if(0==flag)
+            {
+                printf("Inconsistency found after %d relations.\n",step);
+                finish=true;
+            }
+            else if(1==flag)
+            {
+                printf("Sorted sequence determined after %d relations: ",step);
+                for(int i=1;i<=N;i++)
+                {
+                    printf("%c",ans[i]+'A'-1);
+                }
+                printf(".\n");
+                finish=true;
+            }
+        }
+        if(!finish)
+            printf("Sorted sequence cannot be determined.\n");
+    }
+    return 0;
+}
+

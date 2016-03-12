@@ -1,0 +1,64 @@
+#include<stdio.h>
+#include<string.h>     //把故事2的代码改都没改就提交了。。。居然还过了。。。看来真是唬人的啊。。。。
+struct item
+{
+    int left;
+    int right;
+    long long num;
+} number[50100];
+void gongzuo(int point);
+long long result[50100];
+int main(void)
+{
+    int n;
+    while(EOF!=scanf("%d",&n))
+    {
+       int i;
+       for(i=1;i<=n;i++)
+       {
+        scanf("%lld",&number[i].num);
+        number[i].left=i-1;
+        number[i].right=i+1;
+       }
+       number[n].right=0;
+       number[0].right=-1;
+       for(i=n;i>=1;i--)
+       {
+           gongzuo(i);
+       }
+       for(i=1;i<=n;i++)
+       {
+           printf("%lld\n",result[i]);
+       }
+    }
+
+    return 0;
+}
+void gongzuo(int point)
+{
+    int i=point;
+    int j=point;
+    while(1)
+    {
+        if(0==number[j].right)
+        {
+            result[i]=0;
+            return ;
+        }
+        else
+        {
+            j=number[j].right;
+            if(number[j].num>number[i].num)
+            {
+                result[i]=number[j].num;
+                return;
+            }
+            else
+            {
+                number[i].right=number[j].right;
+
+            }
+        }
+
+    }
+}

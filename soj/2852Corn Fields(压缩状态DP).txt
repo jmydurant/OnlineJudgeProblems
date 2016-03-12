@@ -1,0 +1,112 @@
+#include<cstdio>     //和炮兵阵地那道题基本上思路是一样的。。先预处理出所有合法的状态。。然后开始枚举合法状态dp就可以了。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) (a)^(-(a))
+#define mod 100000000;
+using namespace std;
+int state[5000];
+int ditu[15];
+int dp[15][5000];
+int tot,row,col;
+void INIT(void)
+{
+    tot=0;
+    for(int i=0;i<(1<<col);i++)
+    {
+        int num=i;
+        bool ok=true;
+        while(num>0)
+        {
+            if(num&1)
+            {
+                num>>=1;
+                if(num&1)
+                {
+                    ok=false;
+                    break;
+                }
+                num>>=1;
+            }
+            else
+            {
+                num>>=1;
+            }
+        }
+        if(ok)
+            state[++tot]=i;
+    }
+    memset(dp,0,sizeof(dp));
+}
+int main(void)
+{
+    while(EOF!=scanf("%d%d",&row,&col))
+    {
+        if(0==row || 0==col)
+        {
+            printf("0\n");
+            continue;
+        }
+        INIT();
+        for(int i=1;i<=row;i++)
+        {
+            int tmpt=0,k;
+            for(int j=1;j<=col;j++)
+            {
+                tmpt<<=1;
+                scanf("%d",&k);
+                if(!k)
+                {
+                    tmpt|=1;
+                }
+            }
+            ditu[i]=tmpt;
+        }
+        for(int i=1;i<=tot;i++)
+        {
+            if(!(ditu[1]&state[i]))
+            {
+                dp[1][i]=1;
+            }
+            else
+            {
+                dp[1][i]=0;
+            }
+        }
+        for(int i=2;i<=row;i++)
+        {
+            for(int j=1;j<=tot;j++)
+            {
+                if(!(state[j]&ditu[i-1]))
+                {
+                    for(int k=1;k<=tot;k++)
+                    {
+                        if((!(ditu[i]&state[k])) && (!(state[j]&state[k])))
+                        {
+                            dp[i][k]+=dp[i-1][j];
+                            dp[i][k]%=mod;
+                        }
+                    }
+                }
+            }
+        }
+        int ans=0;
+        for(int i=1;i<=tot;i++)
+        {
+            ans+=dp[row][i];
+            ans%=mod;
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

@@ -1,0 +1,78 @@
+#include <iostream>  //这题用裸的treap会被tle到死。。思路见下。。长见识了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define INF 2000000001
+#define maxn 420100
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+struct node
+{
+    int l,r;
+    int fa;
+    int fix;
+    char word[50];
+    bool operator <(const node&temp) const
+    {
+        return strcmp(word,temp.word)<0;
+    }
+}tree[maxn];
+
+int root;
+
+void pr(int x)
+{
+    if(x == -1)
+        return;
+    printf("(");
+    pr(tree[x].l);
+    printf("%s/%d",tree[x].word,tree[x].fix);
+    pr(tree[x].r);
+    printf(")");
+}
+int n;
+int main(void)
+{
+    while(EOF != scanf("%d",&n) && n)
+    {
+        FOR(i,1,n)
+        {
+            scanf("%*[ ]%[^/]/%d",tree[i].word,&tree[i].fix);
+            tree[i].l = tree[i].r = -1;
+        }
+        sort(tree+1,tree+n+1);
+        tree[0].l = tree[0].r = -1;
+        tree[0].fix = INF;
+        FOR(i,1,n)
+        {
+            int j = i-1;
+            while(tree[j].fix<tree[i].fix)
+                j = tree[j].fa;
+            tree[i].l = tree[j].r;
+            tree[j].r = i;
+            tree[i].fa = j;
+        }
+        pr(tree[0].r);
+        printf("\n");
+    }
+    return 0;
+}
+
+
+这题是一个基础的treap题，就是把树建好然后中序遍历输出一下就好，但是我根本不知道treap是神马东西，查了一下发现treap就是一种同时满足二叉排序树和堆的性质的数据结构，也叫笛卡尔树。每个节点有两个值，一个代表关键字，一个代表优先级，主要操作有左旋和右旋，以保证treap满足其性质。这道题为了便于处理先把数据读入然后按关键字排序，然后每次都插入在前一个插入节点的右儿子处，如果不满足性质则进行右旋，只到处在正确的位置再插入下一个元素。通过这个题也见识到了C语言强大的scanf函数的功能，%*[ ]代表跳过[ ]中的元素不读入只到遇到不是括号中元素的数据，%[^/]代表读入字符串遇到‘/’停止，但不读入。
+
+
+
+

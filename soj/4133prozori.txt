@@ -1,0 +1,45 @@
+#include<stdio.h>
+#include<string.h>
+void decidetype(int line,int col);          //其实这题也挺水的。。。算了。。就当是增强熟练度吧。。。
+char block[600][600];
+int state[5];
+int main(void)
+{
+    int m,n;
+    while(EOF!=scanf("%d%d",&m,&n))
+    {
+        int i,j;
+        getchar();
+        memset(state,0,sizeof(state));
+        for(i=0;i<=5*m;i++)
+        {
+            gets(block[i]);
+        }
+        for(i=1;i<=m;i++)
+        {
+            for(j=1;j<=n;j++)
+            {
+                decidetype(i,j);
+            }
+        }
+        for(i=0;i<=4;i++)
+        {
+            printf("%d ",state[i]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+void decidetype(int line,int col)
+{
+    int i;
+    int countnum=0;
+    for(i=1;i<=4;i++)
+    {
+        if('*'==block[5*(line-1)+i][5*(col-1)+1])
+        {
+            countnum++;
+        }
+    }
+    state[countnum]++;
+}

@@ -1,0 +1,79 @@
+#include<cstdio>    //每次都二分答案。。思想见下面。。我只是把dp的方向变成了从1到N。。。
+#include<cstring>
+#include<algorithm>
+#include<deque>
+#include<climits>
+using namespace std;
+typedef pair<int,int> point;
+deque<point>q;
+int digit[50010];
+int dp[50010];
+int N,HP;
+int erfen(int x);
+int main(void)
+{
+    while(2==scanf("%d%d",&N,&HP))
+    {
+        int left=0,right=N-1;
+        int middle=((left+right)>>1);
+        int ans=N;
+        memset(digit,0,sizeof(digit));
+        for(int i=1;i<=N;i++)scanf("%d",digit+i);
+        while(left<=right)
+        {
+            int ok=erfen(middle);
+            if(ok)
+            {
+                ans=middle;
+                right=middle-1;
+            }
+            else
+            {
+                left=middle+1;
+            }
+            //printf("%d %d\n",middle,ok);
+            middle=((left+right)>>1);
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+int erfen(int x)
+{
+    q.clear();
+    memset(dp,0,sizeof(dp));
+    q.push_back(point(0,0));
+    int result=INT_MAX;
+    for(int i=1;i<=N+1;i++)
+    {
+        dp[i]=q.front().first+digit[i];
+        while(!q.empty())
+        {
+            point abc=q.back();
+            if(abc.first>=dp[i])
+            {
+                q.pop_back();
+                continue;
+            }
+            break;
+        }
+        q.push_back(point(dp[i],i));
+        if(i-q.front().second>x)q.pop_front();
+    }
+    for(int i=N-x;i<=N;i++)
+    {
+        if(dp[i]<result)result=dp[i];
+    }
+    if(result<=HP)return 1;
+    else return 0;
+}
+//二分+dp,还是第一次自己弄出来这种题
+arr是输入的那个数组，从1开始编号，把arr[0]搞成0
+
+二分答案，每次二分的结果用一个dp来进行验证，dp[i]表示从i到n最多允许mid个0连续且i
+必须选择变换的最小和。。
+每次dp都先把dp[n+1]搞成0，然后从n一直dp到0
+dp[i]=min(dp[j]&&j-i-1<=mid)+arr[i]
+配合双端队列优化，保证每次决策都能从队列头拿到满足要求的最小的dp[j]。。。
+最后如果dp[0]<=t(就是题目给那个限制）就表示mid是可行的，就可以把mid搞小点再试,
+不然就要把mid放大点了。。二分嘛，大家都懂的 

@@ -1,0 +1,125 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //建图很重要  源点---任务----时间---汇点
+#include <cstdio>     //源点对每个任务流入任务需时常的流量..任务对其可行时间流入1点流量。。代表每个时间只能处理一个一小段..时间向汇点流入m的流量..
+#include <cstring>    //代表每个时间可以处理m个片段。。然后做一次dinic。。判读是不是能处理完。。
+#include <algorithm>  //本来以为N = 1000..用dinic算法可能会超时。。但是居然过掉了。。可喜可贺。。
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 500000000
+#define maxn 1010
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt,r;
+}edge[501010];
+int headline[maxn] , E;
+int n,m,op,ed,iCase;
+inline void add(int f,int t,int r){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].r = r;
+    headline[f] = E++;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].r = 0;
+    headline[t] = E++;
+}
+struct aa{
+    int s , e , dd;
+}task[maxn];
+int dis[maxn] , q[maxn << 16] , head,tail;
+bool bfs(void){
+    FOR(i, op , ed)dis[i] = 0;
+    head = 0 , tail = 1;
+    dis[op] = 1; q[head] = op;
+    while(head < tail){
+        int u = q[head]; head++;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(!dis[v] && edge[i].r > 0){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+                if(v == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed || (!c))return c;
+    int temp = c;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(dis[v] == dis[u] + 1 && temp && edge[i].r > 0){
+            int tt = dfs(v , MIN(temp , edge[i].r));
+            edge[i].r -= tt;
+            edge[i ^ 1].r += tt;
+            temp -= tt;
+            if(!temp)break;
+        }
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op , INF);
+    return maxflow;
+}
+void solve(void){
+    scanf("%d%d",&n,&m);
+    int minr = INF , maxr = -INF;
+    rst(headline,-1); E = 0;
+    int st = 0;
+    op = 0;
+    FOR(i,1,n){
+        scanf("%d%d%d",&task[i].dd,&task[i].s,&task[i].e);
+        st += task[i].dd;
+        minr = MIN(minr , task[i].s); maxr = MAX(maxr , task[i].e);
+        add(op , i , task[i].dd);
+    }
+    ed = n + maxr - minr + 2;
+    FOR(i,1,n){
+        task[i].s -= minr; task[i].e -= minr;
+        FOR(j,task[i].s , task[i].e){
+            add(i , j+n+1 , 1);
+        }
+    }
+    maxr -= minr;
+    FOR(i,0,maxr){
+        add(i+n+1 , ed, m);
+    }
+    int ans = dinic();
+    //printf("ans is %d\n",ans);
+    printf("Case %d: ",++iCase);
+    if(ans == st)printf("Yes\n\n");
+    else printf("No\n\n");
+}
+int main(void){
+    iCase = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

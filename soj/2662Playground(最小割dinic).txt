@@ -1,0 +1,105 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //我真是个沙茶。。居然想用二分图裸分配来做。。花样作死。。
+#include <cstring>    //正解为最小割。。我们知道。。已经被染色的点最多再被染一次。。所以左右端点必被选一个。。
+#include <algorithm>  
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 510
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n ,op ,ed;
+int headline[maxn] , E;
+struct node{
+    int t,nxt;
+    int r;
+}edge[101010];
+inline void add(int f,int t,int w){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].r = w;
+    headline[f] = E++;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].r = 0;
+    headline[t] = E++;
+}
+int dis[maxn] , q[101010] , head,tail;
+bool bfs(void){
+    FOR(i,op,ed) dis[i] = 0;
+    dis[op] = 1;
+    head = 0 , tail = 1;
+    q[head] = op;
+    while(head < tail){
+        int u = q[head]; head++;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(!dis[v] && edge[i].r > 0){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+                if(v == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed || (!c))return c;
+    int temp = c;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(dis[v] == dis[u] + 1 && temp && edge[i].r){
+            int tt = dfs(v , MIN(temp , edge[i].r));
+            edge[i].r -= tt;
+            edge[i ^ 1].r += tt;
+            temp -= tt;
+            if(!temp)return c;
+        }
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op,INF);
+    return maxflow;
+}
+void solve(void){
+    scanf("%d",&n);
+    op = 0 , ed = 2*n+1;
+    rst(headline,-1);E = 0;
+    FOR(i,1,n)FOR(j,1,n){
+        int tt; scanf("%d",&tt);
+        if(tt) add(i,j+n,INF) , add(j+n,i,INF);
+    }
+    FOR(i,1,n){
+        add(op,i,1); add(i+n,ed,1);
+    }
+    printf("%d\n",dinic());
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

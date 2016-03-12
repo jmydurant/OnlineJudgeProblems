@@ -1,0 +1,107 @@
+#include <cstdio>    //今天搞明白了最长路算法和最短路算法对差分约束造成的影响。。。最长路是用来求最小值的。。最短路是用来求最大值的
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 10100
+#define rst(x) memset(x,0,sizeof(x))
+#define MAXV 101000
+#define INF 500000000
+using namespace std;
+struct node
+{
+    int s,t,nxt;
+    int w;
+}edge[MAXV];
+int headline[MAXN*3];
+int n,K,tot;
+int dis[MAXN*3];
+bool visit[MAXN*3];
+int head,tail;
+void add(int s,int t,int w)
+{
+    tot++;
+    edge[tot].s = s;
+    edge[tot].t = t;
+    edge[tot].w = w;
+    edge[tot].nxt = headline[s];
+    headline[s] = tot;
+}
+
+void spfa(void)
+{
+    for(int i = head;i<=tail;i++)
+        dis[i] = -INF;
+    memset(visit,false,sizeof(visit));
+    dis[head] = 0;
+    queue<int> q;
+    q.push(head);
+    visit[head] = true;
+    while(!q.empty())
+    {
+        int now = q.front();
+        q.pop(); visit[now] = false;
+        for(int i = headline[now]; i!= -1;i = edge[i].nxt)
+        {
+            int a = now;
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(dis[b] < dis[a] + w)
+            {
+                dis[b] = dis[a] + w;
+                if(!visit[b])
+                {
+                    visit[b] = true;
+                    q.push(b);
+                }
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    while(2 == scanf("%d%d",&K,&n))
+    {
+        memset(headline,-1,sizeof(headline));
+        tot = 0;
+        head = INF,tail = -1;
+        while(n--)
+        {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            if(a>b)
+                swap(a,b);
+            a += MAXN-1;
+            b += MAXN;
+            head = MIN(head,a);
+            tail = MAX(tail,b);
+            int c = b-a;
+            if(c < K)
+            {
+                add(a,b,c);
+                add(b,a,-c);
+            }
+            else
+            {
+                add(a,b,K);
+            }
+        }
+        for(int i = head;i<tail;i++)
+        {
+            add(i,i+1,0);
+            add(i+1,i,-1);
+        }
+        spfa();
+        printf("%d\n",dis[tail]);
+        for(int i = head+1;i<=tail;i++)
+        {
+            if(dis[i] - dis[i-1]>0)
+            {
+                printf("%d\n",i-MAXN);
+            }
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,112 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //搜索本身不难。。但是要记录父亲状态。。很麻烦的说。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+bool visit[110][110];
+int fa[20100] , way[20100] , infoa[20100] , infob[20100];
+int q[20100][2] , dis[20100] ,head,tail , v[2] , aim,ind;
+int bfs(void){
+    //if(aim == 0)return 0;
+    rst(visit,false);visit[0][0] = true;
+    while(head < tail){
+        int u[2] , dd;
+        u[0] = q[head][0] , u[1] = q[head][1] , dd = dis[head]; head++;
+        if(u[0] == aim || u[1] == aim){
+            ind = head-1; return dd;
+        }
+        if(!visit[0][u[1]]){
+            visit[0][u[1]] = true;
+            fa[tail] = head-1 , way[tail] = 2 , infoa[tail] = 1;
+            q[tail][0] = 0 , q[tail][1] = u[1] , dis[tail] = dd+1;
+            tail++;
+        }
+        if(!visit[u[0]][0]){
+            visit[u[0]][0] = true;
+            fa[tail] = head-1 , way[tail] = 2 , infoa[tail] = 2;
+            q[tail][0] = u[0] , q[tail][1] = 0 , dis[tail] = dd+1;
+            tail++;
+        }
+        if(!visit[v[0]][u[1]]){
+            visit[v[0]][u[1]] = true;
+            fa[tail] = head-1 , way[tail] = 1 , infoa[tail] = 1;
+            q[tail][0] = v[0] , q[tail][1] = u[1] , dis[tail] = dd+1;
+            tail++;
+        }
+        if(!visit[u[0]][v[1]]){
+            visit[u[0]][v[1]] = true;
+            fa[tail] = head-1 , way[tail] = 1 , infoa[tail] = 2;
+            q[tail][0] = u[0] , q[tail][1] = v[1] , dis[tail] = dd+1;
+            tail++;
+        }
+        int ss = u[0] + u[1];
+        if(ss < v[0]) u[0] = ss , u[1] = 0;
+        else u[0] = v[0] , u[1] = ss - v[0];
+        if(!visit[u[0]][u[1]]){
+            visit[u[0]][u[1]] = true;
+            fa[tail] = head-1 , way[tail] = 3 ,infoa[tail] = 2 , infob[tail] = 1;
+            q[tail][0] = u[0] , q[tail][1] = u[1] , dis[tail] = dd+1;
+            tail++;
+        }
+        if(ss < v[1]) u[0] = 0 , u[1] = ss;
+        else u[0] = ss - v[1] , u[1] = v[1];
+        if(!visit[u[0]][u[1]]){
+            visit[u[0]][u[1]] = true;
+            fa[tail] = head-1 , way[tail] = 3 ,infoa[tail] = 1 , infob[tail] = 2;
+            q[tail][0] = u[0] , q[tail][1] = u[1] , dis[tail] = dd+1;
+            tail++;
+        }
+    }return -1;
+}
+void pri(int kk){
+    if(kk == -1 || way[kk] == 0)return;
+    pri(fa[kk]);
+    if(way[kk] == 1)printf("FILL(%d)\n",infoa[kk]);
+    else if(way[kk] == 2)printf("DROP(%d)\n",infoa[kk]);
+    else printf("POUR(%d,%d)\n",infoa[kk] , infob[kk]);
+    //printf("now state is %d  %d\n",q[kk][0] , q[kk][1]);
+}
+void solve(void){
+    head = 0 , tail = 1;
+    q[head][0] = q[head][1] = way[head] = 0;
+    fa[head] = -1;
+    int ans = bfs();
+    if(ans != -1){
+        printf("%d\n",ans);
+        pri(ind);
+    }else printf("impossible\n");
+}
+int main(void){
+    while(3 == scanf("%d%d%d",v , v+1 , &aim)) solve();
+    return true;
+}

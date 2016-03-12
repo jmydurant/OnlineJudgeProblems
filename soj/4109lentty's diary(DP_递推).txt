@@ -1,0 +1,41 @@
+#include<cstdio>     // dp(k,cur,w)代表字符串长度。。进行到的地方。。到这里已经有了几个W。。然后递归即可。。。
+#include<iostream>   //其实catalan数就是答案。。作死啊。。。
+#include<cstring>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+using namespace std;
+long long dp[100][100][100];
+long long res[40];
+long long make(int k,int cur,int w)
+{
+    if(-1!=dp[k][cur][w])return dp[k][cur][w];
+    //printf("pass\n");
+    if((w<cur-w)||w>k)
+    {
+        //printf("pass1\n");
+        dp[k][cur][w]=0;
+        return dp[k][cur][w];
+    }
+    if(cur==2*k)
+    {
+        dp[k][cur][w]=1;
+        return dp[k][cur][w];
+    }
+    dp[k][cur][w]=make(k,cur+1,w)+make(k,cur+1,w+1);
+    return dp[k][cur][w];
+}
+int main(void)
+{
+    memset(dp,-1,sizeof(dp));
+    res[0]=0;
+    for(int i=1;i<=30;i++)
+    {
+        res[i]=make(i,1,1);
+    }
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;scanf("%d",&N);
+        printf("%I64d\n",res[N]);
+    }
+}

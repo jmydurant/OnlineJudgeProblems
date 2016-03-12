@@ -1,0 +1,13 @@
+#include<stdio.h>
+
+int main(void)
+{
+    long long n;
+    long long sum;
+    while(scanf("%lld",&n)!=EOF)   //和切西瓜一样的水题。。。。
+    {
+        sum=(n*n*n+5*n+6)/6;
+        printf("%lld\n",sum);
+    }
+    return 0;
+}

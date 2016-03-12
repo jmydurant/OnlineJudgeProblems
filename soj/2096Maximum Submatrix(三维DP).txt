@@ -1,0 +1,68 @@
+#include<iostream>
+#include<string>
+#include<cstdio>  //其实这道题跟那个1014很像。。原理差不多。。但是这道题还有一个N^2算法。。没有看懂。。正在学习中。。
+#include<cstring>   sum[k][i][j]表示第k列从第i到j是否是0相连的情况。。是就是1否就是0
+#include<queue>
+#include<algorithm>
+#include<climits>
+using namespace std;
+int dp[101][101][101];
+bool sum[101][101][101];
+int square[101][101];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int row,col;
+        int result=INT_MIN;
+        scanf("%d%d",&row,&col);
+        for(int i=1;i<=row;i++)
+        {
+            for(int j=1;j<=col;j++)
+            {
+                scanf("%d",&square[i][j]);
+            }
+        }
+        for(int k=1;k<=col;k++)
+        {
+            for(int i=1;i<=row;i++)
+            {
+                for(int j=i;j<=row;j++)
+                {
+                    if(1==square[j][k])sum[k][i][j]=0;
+                    else if(i==j)sum[k][i][j]=1;
+                    else
+                    {
+                        if(1==sum[k][i][j-1])sum[k][i][j]=1;
+                        else sum[k][i][j]=0;
+                    }
+                }
+            }
+        }
+        for(int i=1;i<=row;i++)
+        {
+            for(int j=i;j<=row;j++)
+            {
+                int a=0,b=0,abc;
+                for(int k=1;k<=col;k++)
+                {
+                    if(1==sum[k][i][j])
+                    {
+                        b++;
+                    }
+                    else
+                    {
+                        a=(b>a?b:a);b=0;
+                    }
+                    if(col==k)a=(b>a?b:a);
+                }
+                abc=(j-i+1)*a;
+                result=(abc>result?abc:result);
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

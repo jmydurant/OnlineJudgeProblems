@@ -1,0 +1,102 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>    //反素数可耻的打表了。。其实直接搜索就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 510000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int id[40] = {1,2,4,6,12,24,36,48,60,120,180,240,360,720,840,1260,1680,2520,5040,7560,10080,15120,20160,25200,27720,45360,50400,55440,83160,110880,166320,221760,277200,332640,498960,500001};
+int num[40] = {1,2,3,4,6,8,9,10,12,16,18,20,24,30,32,36,40,48,60,64,72,80,84,90,96,100,108,120,128,144,160,168,180,192,200,1314521};
+char name[maxn][13];
+int dis[maxn];
+int ans[maxn],n,st;
+void INIT(void){
+    num[1] = id[1] = 1;
+    FOR(i,2,500000){
+        int temp = 0;
+        for(int j = 1;j*j<=i;j++){
+            if(i % j == 0){
+                if(j*j == i)temp++;
+                else temp += 2;
+            }
+        }
+        if(temp > num[i-1]){
+            id[i] = i;
+            num[i] = temp;
+        }else{
+            id[i] = id[i-1];
+            num[i] = num[i-1];
+        }
+    }
+}
+struct node{
+    int s[maxn<<2];
+    void build(int l,int r,int ind){
+        s[ind] = (r - l + 1);
+        if(l == r)return;
+        int mid = (l+r)>>1;
+        build(l,mid,lson);
+        build(mid+1,r,rson);
+    }
+    int req(int l,int r,int ind,int pos,int k){
+        s[ind]--;
+        if(l == r){
+            //printf("no %d is out \n",l);
+            return l;
+        }
+        int mid = (l+r)>>1;
+        if(s[lson] < k){
+            k -= s[lson];
+            return req(mid+1,r,rson,pos,k);
+        }else return req(l,mid,lson,pos,k);
+    }
+}seg_tree;
+int main(void){
+    //INIT();
+    while(2 == scanf("%d%d",&n,&st)){
+        FOR(i,1,n){
+            scanf("%s%d",name[i],dis+i);
+        }
+        seg_tree.build(1,n,1);
+        int where = st,top = 0;
+        while(id[top] <= n)top++;
+        top--;
+        int abc = num[top];
+        top = id[top];
+        int pos;
+        FOR(step,1,top){
+            pos = seg_tree.req(1,n,1,step,where);
+            if(step == n)break;
+            int tt = dis[pos];
+            int re = n - step;
+            if(tt >= 0){
+                where = (where - 1 + tt - 1) % re + 1;
+            }
+            else{
+                where = ((where - 1 + tt)%re + re) % re + 1;
+            }
+        }
+        printf("%s %d\n",name[pos],abc);
+    }return 0;
+}

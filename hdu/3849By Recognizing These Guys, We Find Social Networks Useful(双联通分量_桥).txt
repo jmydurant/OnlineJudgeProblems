@@ -1,0 +1,109 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>
+#include <cstdio>     //就是字符串处理比较麻烦。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 11000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,m;
+struct node{
+    int f,t,nxt;
+}edge[410000];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+map<string,int> bst;
+map<int,string> sheet;
+int tot;
+int dfn[maxn] , low[maxn] , lalala;
+int bridge;
+vector<int> aa;
+void dfs(int u,int fa){
+    dfn[u] = low[u] = ++lalala;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            dfs(v,u);
+            low[u] = MIN(low[u] , low[v]);
+            if(low[v] > dfn[u]){
+                bridge++;
+                aa.push_back(i);
+            }
+        }else if(dfn[v] < dfn[u] && v != fa) low[u] = MIN(low[u] , dfn[v]);
+    }
+}
+void solve(void){
+    bst.clear(); sheet.clear();
+    rst(headline,-1); E = 0;
+    cin >> n >> m;
+    tot = 0;
+    FOR(i,1,m){
+        string a,b; cin >> a >> b;
+        if(bst[a] == 0){
+            tot++;
+            bst[a] = tot;
+            sheet[tot] = a;
+        }
+        if(bst[b] == 0){
+            tot++;
+            bst[b] = tot;
+            sheet[tot] = b;
+        }
+        int aa = bst[a] , bb = bst[b];
+        add(aa,bb); add(bb,aa);
+    }
+    rst(dfn,0); lalala = bridge = 0;
+    aa.clear();
+    dfs(1,-1);
+    FOR(i,1,n){
+        if(!dfn[i]){
+            cout << 0 << endl;
+            return;
+        }
+    }
+    cout << bridge << endl;
+    sort(aa.begin(),aa.end());
+    int ss = aa.size();
+    REP(i,ss){
+        int tt = aa[i];
+        if(tt % 2) tt ^= 1;
+        cout << sheet[edge[tt].f] << " " << sheet[edge[tt].t] << endl;
+    }
+}
+int main(void){
+    int casenum; cin >> casenum;
+    while(casenum--) solve();
+    return 0;
+}

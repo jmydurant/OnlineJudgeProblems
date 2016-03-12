@@ -1,0 +1,68 @@
+#include<stdio.h>
+#include<string.h>
+int small[100];
+int big[100];
+void erjinzhi(long long num);    //不知不觉又一次无耻的刷水题了。。。。
+void zhengli(void);
+int main(void)
+{
+    int n;
+    int i;
+    int count;
+    long long a;
+    scanf("%d",&n);
+    while(n--)
+    {
+        count=0;
+        memset(small,0,sizeof(small));
+        memset(big,0,sizeof(big));
+        scanf("%lld",&a);
+        erjinzhi(a);
+        zhengli();
+        for(i=0;i<99;i++)
+        {
+            if(small[i]!=big[i])
+            {
+                count++;
+            }
+        }
+        printf("%d\n",count);
+    }
+
+    return 0;
+}
+void erjinzhi(long long num)
+{
+    int i;
+    long long j;
+    j=num;
+    for(i=0;j>0;i++)
+    {
+        if(j%2)
+        {
+            small[i]=1;
+            big[i]=1;
+            j/=2;
+        }
+        else
+        {
+            j/=2;
+        }
+    }
+
+}
+void zhengli(void)
+{
+    int i;
+    big[0]++;
+    for(i=0;i<99;i++)
+    {
+        if(big[i]>=2)
+        {
+            big[i]=0;
+            big[i+1]++;
+        }
+    }
+
+}
+

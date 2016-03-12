@@ -1,0 +1,62 @@
+#include<cstdio>   //老子的第一道树状DP。。蛋疼的很。。。tree{i,p,g}分别代表第i个树。。是否有人。。是否被保护了。。（这里保护是指是自己还是父亲保护了）
+#include<cmath>    //跟儿子没有关系。。。所以如果父亲没有保护自己。。自己也没有保护自己。。且自己没有儿子。。就废了。。
+#include<cstring>   //如果有儿子。。则儿子必须有一个有人。。且这个儿子有人与没人的代价最小。。如果有人比没人还便宜。。那就太好了。。
+using namespace std;
+int MIN(int a,int b){return a<b?a:b;}
+int tree[1510][2][2],son[1510][1510],fa[1510];
+int f[1510];
+int dp(int num,int people,int guard);
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int root;
+        memset(son,0,sizeof(son));
+        memset(fa,0,sizeof(fa));
+        memset(f,0,sizeof(f));
+        memset(tree,0,sizeof(tree));
+        for(int i=1;i<=N;i++)
+        {
+            int k;
+            scanf("%d",&k);
+            scanf("%d",f+k);
+            scanf("%d",&son[k][0]);
+            for(int j=1;j<=son[k][0];j++)
+            {
+                scanf("%d",&son[k][j]);
+                fa[son[k][j]]=k;
+            }
+        }
+        for(root=1;root<=N;root++)
+        {
+            if(0==fa[root])break;
+        }
+        //printf("%d\n",root);
+        printf("%d\n",MIN(dp(root,0,0),dp(root,1,1)));
+    }
+}
+int dp(int num,int people,int guard)
+{
+    if(tree[num][people][guard])return tree[num][people][guard];
+    if(0==son[num][0])
+    {
+        if(guard)return people*f[num];
+        else return 100000000;      //没人管的残废情况。。（养儿防老啊）
+    }
+    int tihuan=0,chazhi=100000000,result=0;
+    for(int i=1;i<=son[num][0];i++)
+    {
+        result+=MIN(dp(son[num][i],0,people),dp(son[num][i],1,1));
+        int abc=dp(son[num][i],1,1)-dp(son[num][i],0,people);   //我们一直都在找那个有人比没人的最小差值情况
+        if(abc>0&&abc<chazhi)chazhi=abc;       
+        else if(abc<=0)tihuan=son[num][i];   //如果有便宜事。。肯定要上
+    }
+    if(0==tihuan&&0==guard)result+=chazhi;   //tihuan==0代表没有便宜事。。只能从最小代价里挑一个了。。。哎。。。
+    tree[num][people][guard]=result+people*f[num];
+    return tree[num][people][guard];
+}
+
+
+
+

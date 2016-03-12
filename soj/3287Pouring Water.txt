@@ -1,0 +1,64 @@
+#include<stdio.h>
+#include<string.h>
+int time_of_two[60];
+int count[60];
+int erjinzhi(void);
+int jisuancount(void);
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    for(;casenum>0;casenum--)
+    {
+        int n,k;
+        int buybottle;
+        int sum;
+
+        buybottle=0;
+        memset(count,0,sizeof(count));
+        memset(time_of_two,0,sizeof(time_of_two));
+        scanf("%d%d",&n,&k);
+        time_of_two[0]=n;
+        erjinzhi();
+        sum=jisuancount();
+
+        while(k<sum)
+        {
+
+            buybottle+=((1<<(count[2]))-(1<<(count[1])));
+            time_of_two[count[1]]=0;
+            time_of_two[count[2]]++;
+
+            erjinzhi();
+            sum=jisuancount();
+
+        }
+        printf("%d\n",buybottle);
+    }
+    return 0;
+}
+int erjinzhi(void)
+{
+    int i;
+    for(i=0;i<=58;i++)
+    {
+        time_of_two[i+1]+=(time_of_two[i]/2);
+        time_of_two[i]%=2;
+    }
+    return 1;
+}
+int jisuancount()
+{
+    int num=1;
+    int j;
+    for(j=0;j<=59;j++)
+    {
+        if(0!=time_of_two[j])
+        {
+            count[num]=j;
+            num++;
+        }
+    }
+    num--;
+    return num;
+}

@@ -1,0 +1,94 @@
+#include<cstdio>    //原理懒得写了。。。直接复制一个就行了。。。其实思路就是这样。。一般般。。。人家总结的还是不错的。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<cstdlib>
+#include<queue>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+//typedef pair<long long,int> point;
+deque<int>q;
+long long dp[1000010];
+long long sum[1000010];
+int a,b,c;
+inline long long getf(int i,int j)
+{
+    long long res;
+    res=dp[i]+a*sum[i]*sum[i]-b*sum[i]-dp[j]-a*sum[j]*sum[j]+b*sum[j];
+    return res;
+}
+inline long long getdp(int i,int k)
+{
+    long long res;
+    res=dp[k]+a*(sum[i]-sum[k])*(sum[i]-sum[k])+b*(sum[i]-sum[k])+c;
+    return res;
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        scanf("%d%d%d",&a,&b,&c);
+        sum[0]=0;
+        for(int i=1;i<=N;i++)
+        {
+            int k;scanf("%d",&k);
+            sum[i]=sum[i-1]+k;
+        }
+        q.clear();
+        q.push_back(0);
+        for(int i=1;i<=N;i++)
+        {
+            while(q.size()>1)
+            {
+                int x=q.front();q.pop_front();
+                int y=q.front();
+                if(getf(x,y)<sum[i]*2*a*(sum[x]-sum[y]))continue;
+                else
+                {
+                    q.push_front(x);
+                    break;
+                }
+            }
+            int abc=q.front();
+            dp[i]=getdp(i,abc);
+            while(q.size()>1)
+            {
+                int x=q.back();q.pop_back();
+                int y=q.back();
+                if(getf(y,x)*a*(sum[x]-sum[i])>=getf(x,i)*a*(sum[y]-sum[x]))continue;
+                else
+                {
+                    q.push_back(x);
+                    break;
+                }
+            }
+            q.push_back(i);
+        }
+        printf("%lld\n",dp[N]);
+    }
+}
+思路：n^2的算法一眼就出来，f[i]=max{f[j]+a*(sum[i]-sum[j])^2+b*(sum[i]-sum[j])+c}但是看数据，必须得用优化。
+对于j,k<i，若j比k优即f[j]+a*(sum[i]-sum[j])^2+b*(sum[i]-sum[j])+c>=f[k]+a*(sum[i]-sum[k])^2+b*(sum[i]-sum[k])+c 展开，变形得 f[j]+a*(sum[j])^2-b*(sum[j])  -  ( f[k]+a*(sum[k])^2-b*(sum[k])  ) >= 2*a*sum[i]*(sum[j]-sum[k])   将2*a*(sum[j]-sum[k]) 除到左边，得到斜率形式的式子.
+                           f[j]+a*(sum[j])^2-b*(sum[j])  -  ( f[k]+a*(sum[k])^2-b*(sum[k])  )
+令 左边=G（j,k）=   __________________________________________________
+                                                              2*a*(sum[j]-sum[k])
+则 右边=sum[i].
+当 j<k 时，sum[j]-sum[k]<0，又a<0所以符号不变。所以，当G(j,k)>=sum[i] 时 j比k优。利用
+sum[i]的单调性，利用队列可得出O(n)的算法。
+证明：
+ 
+当G(队首， 队列第2个) < sum[i], 说明对于当前状态i来说, 队列第2个决策比队首优， 这时如果要把队首出队列， 还要证明一个东西， 就是在求以后的任意状态i,   队列第2个决策也比队首优, 这时队首已经在以后也用不上了, 就可以出列.
+对于以后的状态 j,  有sum[j] > sum[i],   而G(队首， 队列第2个) < sum[i] < sum[j],  所以j状态时,  队列第2个决策也比队首优。
+对于队尾t，当G(t-1,t)>=G(t,i)时
+对于后面任意点x：
+1.当G(t,i)<=sum[x] 时i比t优,并由上面红字可知，i永远优于t
+2.当G(t,i)>sum[x]时，有G(t-1,t)>=G(t,i)>sum[x]，此时t-1比t优，而随着x增加，sum[x]增加，一旦出现G(t-1,t)>=sum[x]>=G(t,i)或sum[x]>=G(t-1,t)>=G(t,i)则就是1的情况。所以t永远不会是最优决策。
+综上所述，只要出现G(t-1,t)>=G(t,i)，队尾就无用，出队。

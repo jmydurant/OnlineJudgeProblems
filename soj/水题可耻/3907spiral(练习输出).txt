@@ -1,0 +1,54 @@
+#include<cstdio>     //哎。。他们还是soj刷的少啊。。其实没有那么蛋疼的说。。。。
+#include<cstring>
+#include<algorithm>
+using namespace std;
+int puzzle[800][800];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int x=1,y=1;
+        memset(puzzle,0,sizeof(puzzle));
+        int total=0;
+        while(total<N*N)
+        {
+            while(y<=N&&(!puzzle[x][y]))
+            {
+                total++;
+                puzzle[x][y]=total;
+                y++;
+            }
+            y--;x++;
+            while(x<=N&&(!puzzle[x][y]))
+            {
+                total++;
+                puzzle[x][y]=total;
+                x++;
+            }
+            x--;y--;
+            while(y>=1&&(!puzzle[x][y]))
+            {
+                total++;
+                puzzle[x][y]=total;
+                y--;
+            }
+            y++;x--;
+            while(x>=1&&(!puzzle[x][y]))
+            {
+                total++;
+                puzzle[x][y]=total;
+                x--;
+            }
+            x++;y++;
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                printf("%d%c",puzzle[i][j],(j==N)?'\n':' ');
+            }
+        }
+    }
+    return 0;
+}

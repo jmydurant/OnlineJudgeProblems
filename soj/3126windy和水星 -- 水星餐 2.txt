@@ -1,0 +1,59 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>   //原理讲解在水星餐3哪里。。
+#include<climits>
+using namespace std;
+int cash[50];
+int a_zuhe[1<<20];
+int b_zuhe[1<<20];
+int main(void)
+{
+    int n,HP;
+    while(EOF!=scanf("%d%d",&n,&HP))
+    {
+        int n1,n2;
+        int result=INT_MAX;
+        n1=n/2;n2=n-n1;
+        memset(a_zuhe,0,sizeof(a_zuhe));
+        memset(b_zuhe,0,sizeof(b_zuhe));
+        for(int i=0;i<n;i++)
+        {
+            scanf("%d",&cash[i]);
+            if(i<n1)a_zuhe[1<<i]=cash[i];
+            else b_zuhe[1<<(i-n1)]=cash[i];
+        }
+        for(int i=1;i<(1<<n1);i++)
+        {
+            int t=i&(-i);
+            a_zuhe[i]=a_zuhe[t]+a_zuhe[i^t];
+        }
+        for(int i=1;i<(1<<n2);i++)
+        {
+            int t=i&(-i);
+            b_zuhe[i]=b_zuhe[t]+b_zuhe[i^t];
+        }
+        sort(a_zuhe,a_zuhe+(1<<n1));
+        sort(b_zuhe,b_zuhe+(1<<n2));
+        for(int i=0;i<(1<<n1);i++)
+        {
+            int left=0,right=(1<<n2)-1;
+            int middle;int exchange=INT_MAX;
+            while(left<right)
+            {
+                middle=(left+right)>>1;
+                if(a_zuhe[i]+b_zuhe[middle]>=HP&&a_zuhe[i]+b_zuhe[middle]<exchange)
+                {
+                    exchange=a_zuhe[i]+b_zuhe[middle];
+                    right=middle;
+                }
+                else
+                {
+                    left=middle+1;
+                }
+            }
+            if(exchange<result)result=exchange;
+        }
+        printf("%d\n",(INT_MAX==result)?-1:result);
+    }
+    return 0;
+}

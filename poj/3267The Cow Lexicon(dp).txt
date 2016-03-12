@@ -1,0 +1,73 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //dp i就是以i结尾的最小除去字母数。。每个都做一下最长公共子序列就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,len;
+char ss[310];
+char a[610][30];
+int ll[610] , dp[310];
+int match(char *mmm,char *test){
+    int tlen = strlen(test);
+    int mlen = strlen(mmm);
+    int tt = 0;
+    REP(i,mlen){
+        if(mmm[i] == test[tt])tt++;
+        if(tt == tlen)return i;
+    }
+    return -1;
+}
+void solve(void){
+    rst(ss,0);
+    scanf("%s",ss);
+    REP(i,n){
+        scanf("%s",a[i]);
+        ll[i] = strlen(a[i]);
+    }
+    dp[len] = 0;
+    FORD(i,len-1,0){
+        dp[i] = len - i;
+        REP(j,n){
+            int xx = match(ss+i,a[j]);
+            if(xx != -1){
+                dp[i] = MIN(dp[i] , dp[i+xx+1] + xx+1-ll[j]);
+            }
+        }
+        dp[i] = MIN(dp[i] , dp[i+1] + 1);
+        //printf("dp%d is %d\n",i,dp[i]);
+    }
+    printf("%d\n",dp[0]);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&len)) solve();
+    return 0;
+}

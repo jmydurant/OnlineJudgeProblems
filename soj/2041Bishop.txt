@@ -1,0 +1,22 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int main(void)
+{
+    int n;
+    while(scanf("%d",&n)&&n>=1&&n<=20)
+    {
+        if(n==1)
+        {
+            printf("%d\n",1);                          //这道题如果想通了就很简单。。。要不然。。贪心算去吧。。。
+        }
+        else
+        {
+            printf("%d\n",2*n-2);
+        }
+    }
+
+    return 0;
+}

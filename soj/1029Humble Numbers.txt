@@ -1,0 +1,47 @@
+#include<cstdio>
+using namespace std;
+int main(void)
+{
+    int n;
+    int i=2;
+    int digit[6000];
+    int x2=1,x3=1,x5=1,x7=1;           //数字排序。。因为比一个数大的数字一定是由这个数之前的数字乘以2、3、5、7得到的
+    digit[1]=1;
+    for(;i<=5842;i++)
+    {
+        int tmpt1=(digit[x2]*2<digit[x3]*3)?digit[x2]*2:digit[x3]*3;
+        int tmpt2=(digit[x5]*5<digit[x7]*7)?digit[x5]*5:digit[x7]*7;
+        if(tmpt1<tmpt2)
+        {
+            digit[i]=tmpt1;
+        }
+        else
+        {
+            digit[i]=tmpt2;
+        }
+        if(digit[i]==digit[x2]*2)x2++;
+        if(digit[i]==digit[x3]*3)x3++;
+        if(digit[i]==digit[x5]*5)x5++;
+        if(digit[i]==digit[x7]*7)x7++;
+    }
+    while(EOF!=scanf("%d",&n)&&n)
+    {
+        if(1==n%10&&11!=n%100)
+        {
+            printf("The %dst humble number is %d.\n",n,digit[n]);
+        }
+        else if(2==n%10&&12!=n%100)
+        {
+            printf("The %dnd humble number is %d.\n",n,digit[n]);
+        }
+        else if(3==n%10&&13!=n%100)
+        {
+            printf("The %drd humble number is %d.\n",n,digit[n]);
+        }
+        else
+        {
+            printf("The %dth humble number is %d.\n",n,digit[n]);
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,37 @@
+#include<cstring>   //»ù´¡¸´Ï°¡£¡£¡£¡£
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+struct abc
+{
+    int x,y,z;
+    bool operator < (const abc & b) const
+    {
+        if(x!=b.x)return x<b.x;
+        else if(y!=b.y)return y<b.y;
+        return z<b.z;
+    }
+}cow[5010];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        for(int i=1;i<=N;i++)scanf("%d%d%d",&cow[i].x,&cow[i].y,&cow[i].z);
+        sort(cow+1,cow+N+1);
+        for(int i=1;i<=N;i++)printf("%d %d %d\n",cow[i].x,cow[i].y,cow[i].z);
+    }
+    return 0;
+}

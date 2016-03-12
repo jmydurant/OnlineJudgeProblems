@@ -1,0 +1,148 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //昨天花了一晚上的时间弄懂了什么是扫描线。。然后模仿者写了这个东西。。累感不爱。。但是思路还是很清楚的。。
+#include <cstring>    // 可以先离散化y方向。。然后在x方向扫描即可。。
+#include <algorithm>
+#include <queue>//推荐看：http://www.baidu.com/link?url=ul3MZaiDyRbzEknDHsHD74O-9xSwnhe1DS0cDXaBZLMiCyLGqJqLoYB5Daxz2SOnCT4VMnYDp-B6uAzz7Jw8vrnTLqx51QsIP-0iCDKxDy_
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 10100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct scanline{
+    int x;
+    int y1,y2;
+    int flag;
+    bool operator < (const scanline & temp)const{
+        if(x == temp.x)return flag > temp.flag;
+        return x < temp.x;
+    }
+}scan[maxn];
+struct node{
+    int l,r;
+    int cc;    //覆盖次数
+    int line;
+    int mm;    //被覆盖的长度
+    int lcover,rcover;  // 表示左右端点是否被覆盖
+}tree[maxn<<2];
+int n , tot;
+int y[maxn<<1];
+void build(int l,int r,int ind){   //由于是一条线。。所以更新方式有些改变
+    tree[ind].l = l ; tree[ind].r = r;
+    tree[ind].line = tree[ind].mm = tree[ind].cc = tree[ind].lcover = tree[ind].rcover = 0;
+    if(r - l <= 1) return;
+    int mid = (l+r)>>1;
+    build(l,mid,lson);
+    build(mid,r,rson);
+}
+inline void update(int ind){
+    if(tree[ind].cc > 0){
+        tree[ind].mm = y[tree[ind].r] - y[tree[ind].l];
+    }else if(tree[ind].r - tree[ind].l == 1){tree[ind].mm = 0;}   //就是因为是一条线的缘故。。好麻烦。
+    else{
+        tree[ind].mm = tree[lson].mm + tree[rson].mm;
+    }
+    if(tree[ind].cc > 0){
+        tree[ind].lcover = tree[ind].rcover = tree[ind].line = 1;
+    }else if(tree[ind].r - tree[ind].l == 1){
+        tree[ind].lcover = tree[ind].rcover = tree[ind].line = 0;
+    }else{
+        tree[ind].lcover = tree[lson].lcover;
+        tree[ind].rcover = tree[rson].rcover;
+        tree[ind].line = tree[lson].line + tree[rson].line - tree[lson].rcover*tree[rson].lcover;
+    }
+}
+void Insert(int l,int r,int ind){
+    if(l <= y[tree[ind].l] && y[tree[ind].r] <= r){
+        tree[ind].cc++;
+    }else if(tree[ind].r - tree[ind].l == 1)return;
+    else{
+        int mid = (tree[ind].l+tree[ind].r)>>1;
+        if(r <= y[mid])Insert(l,r,lson);
+        else if(l >= y[mid])Insert(l,r,rson);
+        else {
+            Insert(l,y[mid],lson);
+            Insert(y[mid],r,rson);
+        }
+    }
+    update(ind);
+}
+void Remove(int l,int r,int ind){
+    if(l <= y[tree[ind].l] && y[tree[ind].r] <= r){
+        tree[ind].cc--;
+    }else if(tree[ind].r - tree[ind].l == 1)return;
+    else{
+        int mid = (tree[ind].l+tree[ind].r)>>1;
+        if(r <= y[mid])Remove(l,r,lson);
+        else if(l >= y[mid])Remove(l,r,rson);
+        else {
+            Remove(l,y[mid],lson);
+            Remove(y[mid],r,rson);
+        }
+    }
+    update(ind);
+}
+void solve(void){
+    REP(ind,n){
+        int x1,x2,y1,y2;
+        scanf("%d%d%d%d",&x1,&y1,&x2,&y2);
+        scan[lson].x = x1;
+        scan[lson].y1 = y1;
+        scan[lson].y2 = y2;
+        scan[lson].flag = 1;
+        scan[rson].x = x2;
+        scan[rson].y1 = y1;
+        scan[rson].y2 = y2;
+        scan[rson].flag = 0;
+        y[lson] = y1; y[rson] = y2;
+    }
+    n <<= 1;
+    sort(y,y+n);
+    sort(scan,scan+n);
+    tot = unique(y,y+n) - y;
+    build(0,tot-1,1);
+    int lastline = 0 , lastmm = 0;
+    int ans = 0;
+    REP(i,n){
+        //printf("y1 is %d  y2 is %d  x is %d\n",scan[i].y1 , scan[i].y2,scan[i].x);
+        if(scan[i].flag){
+            Insert(scan[i].y1 , scan[i].y2 , 1);
+        }else {
+            Remove(scan[i].y1 , scan[i].y2 , 1);
+        }
+        if(i >= 1){
+            ans += (scan[i].x - scan[i-1].x) * 2 * lastline;
+        }
+        ans += abs(tree[1].mm - lastmm);
+        lastmm = tree[1].mm;
+        lastline = tree[1].line;
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

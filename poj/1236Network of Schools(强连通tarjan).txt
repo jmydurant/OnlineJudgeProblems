@@ -1,0 +1,109 @@
+#include <cstdio>    //找到所有强连通。。。第一个答案显然是入度为0的点的个数。。第二个答案是入度为0和出度为0的点的最小值
+#include <cstring>   //注意只有一个强连通的时候要特判一下。。。
+#define MAXN 200
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define rst(x,k) memset(x,k,sizeof(x))
+using namespace std;
+
+int stack[MAXN];
+int dnf[MAXN];
+int low[MAXN];
+int belong[MAXN];
+bool instack[MAXN];
+int in[MAXN],out[MAXN];
+int top,tot,cnt;
+struct node
+{
+    int t,nxt;
+}edge[MAXN*MAXN];
+int headline[MAXN];
+int n;
+
+void tarjan(int u)
+{
+    low[u] = dnf[u] = cnt++;
+    stack[++top] = u;
+    instack[u] = true;
+    for(int i = headline[u]; i != -1; i = edge[i].nxt)
+    {
+        int b = edge[i].t;
+        if(dnf[b] == -1)
+        {
+            tarjan(b);
+            low[u] = MIN(low[u],low[b]);
+        }
+        else if(instack[b])
+        {
+            low[u] = MIN(low[u],dnf[b]);
+        }
+    }
+    if(low[u] == dnf[u])
+    {
+        tot++;
+        while(true)
+        {
+            int j = stack[top--];
+            instack[j] = false;
+            belong[j] = tot;
+            if(j == u)
+                break;
+        }
+    }
+}
+
+int main(void)
+{
+    while(EOF!=scanf("%d",&n))
+    {
+        rst(headline,-1);
+        rst(in,0);
+        rst(out,0);
+        rst(dnf,-1);
+        rst(instack,false);
+        tot = 0;
+        for(int i = 1;i<=n;i++)
+        {
+            int k;
+            while(scanf("%d",&k) && k)
+            {
+                tot++;
+                edge[tot].t = k;
+                edge[tot].nxt = headline[i];
+                headline[i] = tot;
+            }
+        }
+        top = 0,tot = 0,cnt = 0;
+        for(int i = 1;i<=n;i++)
+        {
+            if(-1 == dnf[i])
+                tarjan(i);
+        }
+        for(int i = 1;i<=n;i++)
+        {
+            for(int j = headline[i]; j != -1; j = edge[j].nxt)
+            {
+                int a = i;
+                int b = edge[j].t;
+                if(belong[a] != belong[b])
+                {
+                    out[belong[a]]++;
+                    in[belong[b]]++;
+                }
+            }
+        }
+        int s1 = 0,s2 = 0;
+        for(int i = 1;i<=tot;i++)
+        {
+            if(in[i] == 0)
+                s1++;
+            if(out[i] == 0)
+                s2++;
+        }
+        if(tot == 1)
+            printf("1\n0\n");
+        else
+        printf("%d\n%d\n",s1,MAX(s1,s2));
+    }
+    return 0;
+}

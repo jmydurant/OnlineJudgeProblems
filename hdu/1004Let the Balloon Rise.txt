@@ -1,0 +1,40 @@
+#include<cstdio>
+#include<iostream>
+#include<string>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    int casenum;
+    while(EOF!=scanf("%d",&casenum)&&casenum)  //次奥。。白痴题还让我那么蛋疼。。。看在第一次用string的面子上。。。算了。。算法很烂
+    {
+        int i,j;
+        int visit[1010];
+        int max=-1,maxnum;
+        string note[1010];
+        memset(visit,0,sizeof(visit));
+        for(i=1;i<=casenum;i++)
+        {
+            cin >> note[i];
+        }
+        for(i=1;i<=casenum;i++)
+        {
+            for(j=1;j<=casenum;j++)
+            {
+                if(note[i]==note[j])
+                {
+                    visit[i]++;
+                }
+            }
+        }
+        for(i=1;i<=casenum;i++)
+        {
+            if(visit[i]>max)
+            {
+                max=visit[i];
+                maxnum=i;
+            }
+        }
+        cout << note[maxnum] << endl;
+    }
+}

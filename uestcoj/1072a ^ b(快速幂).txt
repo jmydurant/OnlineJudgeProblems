@@ -1,0 +1,65 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int erjinzhi[100];
+void jisuan(int n);
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);                  //原理不说了。。。现在只是练手用。。。
+    while(casenum--)
+    {
+        int a,b;
+        int i,j;
+        int result;
+        scanf("%d%d",&a,&b);
+        memset(erjinzhi,0,sizeof(erjinzhi));
+        a%=10000;
+        result=a;
+        jisuan(b);
+        for(i=99;0==erjinzhi[i];i--)
+        {
+            ;
+        }
+        i--;
+        for(;i>=0;i--)
+        {
+            if(erjinzhi[i])
+            {
+                result=(result*result)%10000;
+                result=(a*result)%10000;
+            }
+            else
+            {
+                result=(result*result)%10000;
+            }
+        }
+        if(result<1000&&result>=100)
+        {
+            printf("%c%d\n",'0',result);
+        }
+        else if(result<100&&result>=10)
+        {
+            printf("%c%c%d\n",'0','0',result);
+        }
+        else if(result<10)
+        {
+            printf("%c%c%c%d\n",'0','0','0',result);
+        }
+        else
+        {
+            printf("%d\n",result);
+        }
+    }
+    return 0;
+}
+void jisuan(int n)
+{
+    int i,j;
+    j=n;
+    for(i=0;j>0;i++)
+    {
+        erjinzhi[i]=j%2;
+        j/=2;
+    }
+}

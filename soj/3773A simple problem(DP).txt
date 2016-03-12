@@ -1,0 +1,74 @@
+#include<cstdio>
+#include<iostream>    //这个DP其实挺奇葩的。。值得学习。。dp的内容不是最小步数。。而是现在状态下。。能敲击完最长的字符串长度。。
+#include<cstring>     //然后用一个step来记录时间。。每次大循环就加一。。表明时间的流动。。。。
+#include<climits>    //如果上次能够敲击键盘。。那么这次移动到的地方击打的长度就可以加一了。。有一点延迟。。。
+#include<stack>
+#include<map>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+using namespace std;
+int k_press[5][2]={{0,0},{0,1},{0,-1},{1,0},{-1,0}};
+int k_move[9][2]={{0,0},{0,1},{0,-1},{1,0},{-1,0},{1,1},{1,-1},{-1,1},{-1,-1}};
+int dp[2][11][11];
+char str[110],alph[15];
+int main(void)
+{
+    for(int i=1;i<=9;i++)alph[i]='0'+i;
+    alph[10]='0';
+    int step;
+    bool ok;
+    int ans;
+    while(EOF!=scanf("%s",str))
+    {
+        int len=strlen(str);
+        step=0;ok=false;ans=0;
+        memset(dp,-1,sizeof(dp));
+        dp[0][5][6]=0;
+        while(1)
+        {
+            ans=1-ans;
+            for(int i=1;i<=9;i++)
+            {
+                for(int j=i+1;j<=10;j++)
+                {
+                    for(int k=0;k<5;k++)
+                    {
+                        int dx=i+k_press[k][0],dy=j+k_press[k][1];
+                        int cur=dp[1-ans][dx][dy];
+                        if(dx>0 && dx<dy && dy<11 && cur>-1 && alph[dx]== str[cur] && i==dx)
+                        {
+                            dp[ans][i][j]=MAX(dp[ans][i][j],cur+1);
+                        }
+                        if(dx>0 && dx<dy && dy<11 && cur>-1 && alph[dy]== str[cur] && j==dy)
+                        {
+                            dp[ans][i][j]=MAX(dp[ans][i][j],cur+1);
+                        }
+                        if(dp[ans][i][j]==len)ok=true;
+                    }
+                    for(int k=0;k<9;k++)
+                    {
+                        int dx=i+k_move[k][0],dy=j+k_move[k][1];
+                        int cur=dp[1-ans][dx][dy];
+                        if(dx>0 && dx<dy && dy<11)
+                        {
+                            dp[ans][i][j]=MAX(dp[ans][i][j],cur);
+                        }
+                        if(dp[ans][i][j]==len)ok=true;
+                    }
+
+                }
+            }
+            step++;
+            if(ok)break;
+        }
+        printf("%d\n",step);
+    }
+    return 0;
+}
+
+
+
+
+
+

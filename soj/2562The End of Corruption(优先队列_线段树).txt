@@ -1,0 +1,33 @@
+#include<cstdio>    //我次奥。。。怎么用stl的优先队列就直接过了。。
+#include<cmath>     //正统解法使用二叉堆来做。。或者是线段树。。。。
+#include<cstring>
+#include<deque>
+#include<queue>
+#include<algorithm>
+#include<climits>
+using namespace std;
+priority_queue<int>q;
+int main(void)
+{
+    int N,m;
+    while(EOF!=scanf("%d%d",&N,&m))
+    {
+        for(int i=1;i<=m+N;i++)
+        {
+            int k;
+            scanf("%d",&k);
+            if(k==-1)
+            {
+                printf("%d\n",q.top());
+                q.pop();
+            }
+            else
+            {
+                q.push(k);
+            }
+        }
+        while(!q.empty())q.pop();
+    }
+    return 0;
+}
+

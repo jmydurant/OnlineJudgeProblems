@@ -1,0 +1,26 @@
+#include<cstdio>
+#include<cstring>     
+using namespace std;
+/*
+首先推理一下。。设f（x）为x个数字时的解。。。则f(n)=f(1)*f(n-1)+f(2)*f(n-2)+……+f(n-1)*f(1)；且易知f（1）=1；f（2）=2；
+因为n个数列的时候可以讲数列分成连个部分。。两个部分分别有f（k）与f（n-k）种解法。。总共可以由1分到n-1。。通项公式得到之后求得化简式就很容易了。。
+catalan数十分重要。。以后还会有用。。。
+*/
+int main(void)
+{
+    double result;
+    double num;
+    while(EOF!=scanf("%lf",&num))
+    {
+        int i;
+        int j=(int) num;
+        result=1.0;
+        for(i=1;i<=j;i++)
+        {
+            result*=(i+j);
+            result/=(i+1);
+        }
+        printf("%d\n",(int)(result+0.5));
+    }
+    return 0;
+}

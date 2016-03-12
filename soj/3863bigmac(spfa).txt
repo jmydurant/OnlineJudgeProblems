@@ -1,0 +1,96 @@
+#include <cstdio>   //原来的乘法最短路现在给搞成加法的了。。只要取对数就可以了。。精度还能很好的保留。。真不错。。
+#include <cstring>
+#include <algorithm>
+#include <cmath>
+#include <queue>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = a;i<=b;i++)
+#define REP(i,n) for(int i = 0;i<n;i++)
+#define res(x,k) memset(x,k,sizeof(x))
+#define t(i) (i<<1)
+#define f(i) (i<<1|1)
+#define maxn 2100
+#define INF 999999999999999.0;
+using namespace std;
+
+int headline[maxn];
+struct node
+{
+    int t,nxt;
+    double v;
+}edge[55100];
+int tot;
+void add(int f,int t,double v){
+    tot++;
+    edge[tot].t = t;
+    edge[tot].v = v;
+    edge[tot].nxt = headline[f];
+    headline[f] = tot;
+}
+double dis[maxn];
+struct cmp
+{
+    bool operator ()(const int &x,const int &y){
+        return dis[x] > dis[y];
+    }
+};
+int in[maxn],visit[maxn];
+int n,m,a,b;
+double V;
+
+bool spfa(void)
+{
+    res(in,0);
+    res(visit,0);
+    FOR(i,0,n){
+        dis[i] = INF;
+    }
+    dis[a] = 0;
+    in[a] = 1; visit[a] = true;
+    priority_queue<int,vector<int>,cmp> q;
+    q.push(a);
+    while(!q.empty()){
+        int u = q.top(); q.pop();
+        visit[u] = false;
+        for(int i = headline[u]; i != -1;i = edge[i].nxt){
+            int b = edge[i].t;
+            double w = edge[i].v;
+            if(dis[b] > dis[u] + w){
+                dis[b] = dis[u] + w;
+                if(!visit[b]){
+                    visit[b] = true;
+                    in[b]++;
+                    if(in[b]>n) return false;
+                    q.push(b);
+                }
+            }
+        }
+    }
+    return true;
+}
+
+
+int main(void)
+{
+    while(5 == scanf("%d%d%lf%d%d",&n,&m,&V,&a,&b))
+    {
+        tot = 0;
+        res(headline,-1);
+        REP(i,m){
+            int s,t; double w;
+            scanf("%d%d%lf",&s,&t,&w);
+            add(s,t,log(w));   //原来是这样保留精度的..涨知识了
+        }
+        if(spfa()){
+            printf("%.0lf\n",V*exp(dis[b]));
+        }
+        else{
+            puts("0");
+        }
+    }
+    return 0;
+}
+
+

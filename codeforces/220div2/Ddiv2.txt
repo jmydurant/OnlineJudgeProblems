@@ -1,0 +1,152 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //果断不能熬夜写题啊啊啊啊。。。有小错误都看不出来。。treap思想很简单。。而且比splay要快很多。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 1010000
+using namespace std;
+typedef long long LL;
+int n,m;
+struct node{
+    #define ls son[x][0]
+    #define rs son[x][1]
+    int son[maxn][2];
+    int key[maxn],fix[maxn],s[maxn],word[maxn];
+    int tot , root;
+    inline void update(int x){
+        if(x){
+            s[x] = s[ls] + s[rs] + 1;
+        }
+    }
+    inline int getnew(int _key,int _size){
+        son[_size][0] = son[_size][1] = 0;
+        s[_size] = 1; word[_size] = _key;
+        key[_size] = _size;
+        fix[_size] = rand();
+        return _size;
+    }
+    void INIT(void){
+        tot = root = 0;
+        son[0][1] = son[0][0] = key[0] = s[0] = fix[0] = 0;
+        srand(time(NULL));
+    }
+    inline void rolate(int &x,int kind){    // 0代表左旋 。。1代表右旋。。
+        int y = son[x][!kind];
+        son[x][!kind] = son[y][kind];
+        son[y][kind] = x;
+        update(x); update(y);
+        x = y;
+    }
+    void Insert(int &x,int _key,int _size){
+        if(x == 0){
+            x = getnew(_key,_size);
+            return;
+        }
+        s[x]++;
+        Insert(son[x][1],_key ,_size);
+        if(fix[son[x][1]] > fix[x])
+            rolate(x,0);
+        update(x);
+    }
+    void Deletenode(int &x,int _key){
+        if(key[x] == _key){
+            if(ls == 0 && rs == 0){
+                x = 0;
+            }else if(ls == 0){
+                x = rs;
+            }else if(rs == 0){
+                x = ls;
+            }else{
+                if(fix[ls] > fix[rs]){
+                    rolate(x , 1);
+                    Deletenode(son[x][1],_key);
+                }else{
+                    rolate(x ,0);
+                    Deletenode(son[x][0],_key);
+                }
+            }
+        }
+        else if(key[x] < _key)
+            Deletenode(son[x][1],_key);
+        else
+            Deletenode(son[x][0],_key);
+        update(x);
+    }
+    int FINDK(int x,int k){
+        if(s[x] < k)return -1;
+        while(s[ls] + 1 != k){
+            if(s[ls] + 1 < k){
+                k -= (s[ls] + 1);
+                x = rs;
+            }else x = ls;
+        }
+        return key[x];
+    }
+    void Delete(int _pos){
+        int _key = FINDK(root,_pos);
+        //printf("key is %d\n",_key);
+        Deletenode(root,_key);
+    }
+    void pri(int x){
+        if(x == 0)return;
+        //printf("(");
+        pri(son[x][0]);
+        printf("%d",word[x]);
+        pri(son[x][1]);
+        //printf(")");
+    }
+}treap;
+int a[maxn];
+void solve(void){
+    FOR(i,1,m){
+        scanf("%d",a+i);
+        a[i] -= (i - 1);
+    }
+    int remain = 0;
+    treap.INIT();
+    while(n--){
+        int op; scanf("%d",&op);
+        if(op != -1){
+            remain++;
+            treap.tot++;
+            treap.Insert(treap.root,op,treap.tot);
+            //treap.pri(treap.root);printf("\n");
+            //printf("sum is %d\n",treap.s[treap.root]);
+        }else{
+            int tt = 0;
+            FOR(i,1,m){
+                if(a[i] > remain)break;
+                treap.Delete(a[i]);
+                //printf("after delete %d\n",treap.s[treap.root]);
+                //treap.pri(treap.root);printf("that a display is %d  %d\n",tt,treap.s[treap.root]);
+                remain--;
+                tt++;
+            }
+        }
+    }
+    if(remain <= 0)printf("Poor stack!\n");
+    else {treap.pri(treap.root);printf("\n");}
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m))solve();
+    return 0;
+}

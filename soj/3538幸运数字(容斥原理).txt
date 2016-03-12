@@ -1,0 +1,82 @@
+#include<iostream>     //这个容斥原理用到了剪枝优化。。。如果a是b的倍数。。那么a就可以去掉了。。。因为没有意义。。这样数组中的备选数就减少了一半以上。。
+#include<cstring>    //但是还是有900个左右。。二进制没法记录。。只能老老实实dfs。。。这里利用维恩图那个容斥原理的一个小技巧。。
+#include<cstdio>     //每次不选东西就可以不变正负号。。如果选了那就改变正负号就可以了。。。可以想到。。得到的数字是相反的。。。
+#include<algorithm>
+#define N 100005
+using namespace std;
+long long digit[3000];
+long long a[3000];
+int tot;
+long long x,y;
+inline long long gcd(long long a,long long b)
+{
+    long long tmpt;
+    while(b)
+    {
+        tmpt=a%b;
+        a=b;
+        b=tmpt;
+    }
+    return a;
+}
+long long dfs(int k,long long num)
+{
+    if(k>tot)return y/num-x/num;      //注意。。这里的num有一组一直到最后都是1.。所以答案是补集。。要和y-x相减。。
+    long long ans=dfs(k+1,num);
+    long long g=gcd(digit[k],num);
+    if(num/g<=y/digit[k])
+    {
+        ans-=dfs(k+1,(num/g)*digit[k]);
+    }
+    return ans;
+}
+int main(void)
+{
+    bool flag=false;
+    a[1]=6;a[2]=8;
+    tot=1;
+    for(int i=3;i<=2050;i++)
+    {
+        if(flag)
+        {
+            flag=false;
+            a[i]=a[tot]*10+8;
+            tot++;
+        }
+        else
+        {
+            flag=true;
+            a[i]=a[tot]*10+6;
+        }
+    }
+    //printf("%I64d\n%I64d\n",a[50],a[1500]);
+    tot=0;
+    for(int i=2050;i>=1;i--)
+    {
+        flag=true;
+        for(int j=1;j<i;j++)
+        {
+            if(a[i]%a[j]==0)
+            {
+                flag=false;
+                break;
+            }
+        }
+        if(flag)digit[++tot]=a[i];
+    }
+    //printf("%I64d\n%I64d\n",num[1],num[3]);
+    //printf("%d\n",tot);
+    while(2==scanf("%lld%lld",&x,&y))
+    {
+        x--;
+        int abc=1;
+        for(;abc<=tot;abc++)
+        {
+            if(digit[abc]<=y)break;
+        }
+        printf("%lld\n",y-x-dfs(abc,1));
+    }
+    return 0;
+
+
+}

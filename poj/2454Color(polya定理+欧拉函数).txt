@@ -1,0 +1,94 @@
+#include<cstring>  //..Ô­Àí¼ûsoj3017
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+bool visit[40010];
+int prime[4001];
+int tot;
+int mod;
+void IINT(void)
+{
+    tot=0;
+    memset(visit,false,sizeof(visit));
+    for(int i=2;i*i<=1000001000;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot]=i;
+            for(int j=i*i;j<40000 ;j+=i)visit[j]=true;
+        }
+    }
+}
+int phi(int n)
+{
+    int ans=n;
+    if(n==1)return 1%mod;
+    for(int i=1;prime[i]*prime[i]<=n && i<=tot;i++)
+    {
+        if(0==n%prime[i])
+        {
+            ans-=(ans/prime[i]);
+            while(0==n%prime[i])n/=prime[i];
+        }
+    }
+    if(n>1)ans-=(ans/n);
+    return ans;
+}
+int p_pow(int a,int n)
+{
+    a%=mod;
+    int ans=1;
+    while(n)
+    {
+        if(n%2)
+        {
+            ans*=a;
+            ans%=mod;
+        }
+        a*=a;
+        a%=mod;
+        n/=2;
+    }
+    return ans;
+}
+int main(void)
+{
+    IINT();
+   // printf("%d",prime[tot]*prime[tot]);
+   int casenum; scanf("%d",&casenum);
+   while(casenum--)
+   {
+       int ans=0;
+       int c; scanf("%d%d",&c,&mod);
+       int i;
+       for(i=1;i*i<c;i++)
+       {
+           if(0==c%i)
+           {
+               ans+=(phi(c/i)%mod)*(p_pow(c,i-1));
+               ans%=mod;
+               ans+=(phi(i)%mod)*(p_pow(c,c/i-1));
+               ans%=mod;
+           }
+       }
+       if(i*i==c)
+       {
+           ans+=(phi(i)%mod)*(p_pow(c,i-1));
+           ans%=mod;
+       }
+       printf("%d\n",ans);
+   }
+   return 0;
+}

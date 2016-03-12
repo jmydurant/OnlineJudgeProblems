@@ -1,0 +1,162 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //调试了不少时间。。注意记录边界状态。。ww为0 wb为1 bw为2 bb为3
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 201000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+struct node{
+    int l,r,mid;
+    int len,ls,rs,cnt;
+    char key;
+}tree[maxn<<2];
+char a[maxn];
+inline void update(int ind){
+    if(tree[ind].len == 2){
+        if(tree[lson].key == 'w' && tree[rson].key == 'w') tree[ind].ls = tree[ind].rs = 0;
+        else if(tree[lson].key == 'w' && tree[rson].key == 'b') tree[ind].ls = tree[ind].rs = 1;
+        else if(tree[lson].key == 'b' && tree[rson].key == 'w') tree[ind].ls = tree[ind].rs = 2;
+        else tree[ind].ls = tree[ind].rs = 3;
+        tree[ind].cnt = 0;
+        return;
+    }
+    if(tree[ind].len == 3){
+        if(tree[lson].len == 1){
+            tree[ind].rs = tree[rson].rs;
+            if(tree[lson].key == 'w' && (tree[rson].ls == 0 || tree[rson].ls == 1))tree[ind].ls = 0;
+            else if(tree[lson].key == 'w' && (tree[rson].ls == 2 || tree[rson].ls == 3))tree[ind].ls = 1;
+            else if(tree[lson].key == 'b' && (tree[rson].ls == 0 || tree[rson].ls == 1))tree[ind].ls = 2;
+            else tree[ind].ls = 3;
+        }else{
+            tree[ind].ls = tree[lson].ls;
+            if(tree[rson].key == 'w' && (tree[lson].ls == 0 || tree[lson].ls == 2))tree[ind].rs = 0;
+            else if(tree[rson].key == 'w' && (tree[lson].ls == 1 || tree[lson].ls == 3))tree[ind].rs = 2;
+            else if(tree[rson].key == 'b' && (tree[lson].ls == 0 || tree[lson].ls == 2))tree[ind].rs = 1;
+            else tree[ind].rs = 3;
+        }
+        if(tree[ind].ls == 1 && tree[ind].rs == 2)tree[ind].cnt = 1;
+        else tree[ind].cnt = 0;
+        return;
+    }
+    tree[ind].ls = tree[lson].ls;
+    tree[ind].rs = tree[rson].rs;
+    if((tree[lson].rs == 0 &&tree[rson].ls == 2) || (tree[lson].rs == 1 && tree[rson].ls == 0)
+       || (tree[lson].rs == 1 && tree[rson].ls == 1) || (tree[lson].rs == 2 && tree[rson].ls == 2)
+       ) tree[ind].cnt = tree[lson].cnt + tree[rson].cnt + 1;
+    else tree[ind].cnt = tree[lson].cnt + tree[rson].cnt;
+}
+void build(int l,int r,int ind){
+    tree[ind].l = l; tree[ind].r = r;
+    tree[ind].mid = (l+r)>>1;
+    tree[ind].len = r - l + 1;
+    if(l == r){
+        tree[ind].ls = tree[ind].rs = -1;
+        tree[ind].key = a[l];
+        tree[ind].cnt = 0;
+        return;
+    }
+    int mid = (l+r)>>1;
+    build(l,mid,lson);
+    build(mid+1,r,rson);
+    update(ind);
+}
+void change(int pos,char _v,int ind){
+    if(tree[ind].l == tree[ind].r){
+        tree[ind].key = _v;
+        return;
+    }
+    int mid = tree[ind].mid;
+    if(pos <= mid)change(pos,_v,lson);
+    else change(pos,_v,rson);
+    update(ind);
+}
+node req(int ind,int Ql,int Qr){
+    if(Ql <= tree[ind].l && tree[ind].r <= Qr)return tree[ind];
+    int mid = tree[ind].mid;
+    if(Qr <= mid)return req(lson,Ql,Qr);
+    else if(Ql > mid) return req(rson,Ql,Qr);
+    node s1 = req(lson,Ql,mid) , s2 = req(rson,mid+1,Qr);
+    node ans;
+    ans.l = s1.l; ans.r = s2.r; ans.mid = (Ql+Qr)>>1;
+    ans.len = (Qr - Ql +1);
+    if(ans.len == 2){
+        if(s1.key == 'w' && s2.key == 'w') ans.ls = ans.rs = 0;
+        else if(s1.key == 'w' && s2.key == 'b') ans.ls = ans.rs = 1;
+        else if(s1.key == 'b' && s2.key == 'w') ans.ls = ans.rs = 2;
+        else ans.ls = ans.rs = 3;
+        ans.cnt = 0;
+    }
+    else if(s1.len == 1 || s2.len == 1){
+        int flag = 0;
+        if(s1.len == 1){
+            ans.rs = s2.rs;
+            if(s1.key == 'w' && (s2.ls == 0 || s2.ls == 1))ans.ls = 0;
+            else if(s1.key == 'w' && (s2.ls == 2 || s2.ls == 3))ans.ls = 1;
+            else if(s1.key == 'b' && (s2.ls == 0 || s2.ls == 1))ans.ls = 2;
+            else ans.ls = 3;
+            if(s1.key == 'w' && (s2.ls == 2))flag = 1;
+        }else{
+            ans.ls = s1.ls;
+            if(s2.key == 'w' && (s1.rs == 0 || s1.rs == 2))ans.rs = 0;
+            else if(s2.key == 'w' && (s1.rs == 1 || s1.rs == 3))ans.rs = 2;
+            else if(s2.key == 'b' && (s1.rs == 0 || s1.rs == 2))ans.rs = 1;
+            else ans.rs = 3;
+            if(s2.key == 'w' && s1.rs == 1)flag = 1;
+        }
+        ans.cnt = s1.cnt + s2.cnt + flag;
+    }
+    else{
+        ans.ls = s1.ls; ans.rs = s2.rs;
+        if((s1.rs == 0 &&s2.ls == 2) || (s1.rs == 1 && s2.ls == 0)
+         || (s1.rs == 1 && s2.ls == 1) || (s1.rs == 2 && s2.ls == 2)
+         ) ans.cnt = s1.cnt + s2.cnt + 1;
+        else ans.cnt = s1.cnt + s2.cnt;
+    }
+    return ans;
+}
+int iCase;
+int main(void){
+    iCase = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--){
+        int n,Q; scanf("%d%d",&n,&Q);
+        scanf("%s",a+1);
+        build(1,n,1);
+        int op,x,y;
+        char sss[15];
+        printf("Case %d:\n",++iCase);
+        while(Q--){
+            scanf("%d%d",&op,&x);
+            if(op == 0){
+                scanf("%d",&y);
+                node misaka = req(1,x+1,y+1);
+                printf("%d\n",misaka.cnt);
+            }else{
+                scanf("%s",sss);
+                change(x+1,sss[0],1);
+            }
+        }
+    }return 0;
+}
+

@@ -1,0 +1,58 @@
+#include<cstdio>
+#include<cstring>   //开始真的想不出来时背包问题。。但是看了解题报告。。服了这种神奇的想法了。。还是得多做题啊。。
+#include<algorithm>  
+#include<climits>
+#define INF 1<<15
+using namespace std;
+bool dp[101][10010];    //dp[i][j]代表第i组积木可否搭出j的高度。。显然d【k】【0】=true 其他都是false。。然后对每组积木01背包即可。。
+int brick[101];     //然后开始从最高的一组积木的高度开始搜索。。一直找到一个高度所有的积木都能满足即可。。。
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int highest=0;
+        int K;scanf("%d",&K);
+        int N=K;
+        while(N--)
+        {
+            int sumhight=0;
+            int i=1;
+            for(i=1;scanf("%d",brick+i)&&(-1!=brick[i]);i++)
+            {
+                sumhight+=brick[i];
+            }
+            i--;
+            if(sumhight>highest)highest=sumhight;
+            for(int j=1;j<=10000;j++){dp[N][j]=false;}
+            dp[N][0]=true;
+            for(;i>=1;i--)
+            {
+                for(int j=sumhight;j>=brick[i];j--)
+                {
+                    dp[N][j]=dp[N][j]||dp[N][j-brick[i]];
+                }
+            }
+        }
+        //printf("pass\n");
+        for(int i=highest;i>=0;i--)
+        {
+            int ok=1;
+            for(int j=0;j<=K-1;j++)
+            {
+                if(!dp[j][i])
+                {
+                    ok=0;
+                    break;
+                }
+            }
+            if(ok)
+            {
+                printf("%d\n",i);
+                break;
+            }
+        }
+    }
+    return 0;
+}

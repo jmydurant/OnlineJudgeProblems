@@ -1,0 +1,59 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#define MAXN 1010
+using namespace std;
+typedef long long LL;
+
+bool visit[11];
+char s[11];
+int ans[MAXN];
+int main(void)
+{
+    while(~scanf("%s",s))
+    {
+        memset(visit,0,sizeof(visit));
+        for(int i = 0;i<10;i++)
+        {
+            if(s[i] == '1')
+                visit[i+1] = true;
+        }
+        int m,last = 0; scanf("%d",&m);
+        int sum[2] = {0};
+        bool ok = true;
+        for(int i = 1;i<=m;i++)
+        {
+            bool is_find = false;
+            int dis = sum[(i+1)%2]-sum[i%2];
+            for(int j = dis+1;j<=10;j++)
+            {
+                if(visit[j] && last != j)
+                {
+                    is_find = true;
+                    ans[i] = j;
+                    last = j;
+                    sum[i%2]+=j;
+                    break;
+                }
+            }
+            if(!is_find)
+            {
+                ok = false;
+                break;
+            }
+        }
+        if(ok)
+        {
+            printf("YES\n");
+            for(int i = 1;i<=m;i++)
+            {
+                printf("%d%c",ans[i],i==m?'\n':' ');
+            }
+        }
+        else
+        {
+            printf("NO\n");
+        }
+    }
+    return 0;
+}

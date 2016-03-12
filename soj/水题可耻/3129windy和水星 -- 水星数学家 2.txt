@@ -1,0 +1,12 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    long long a;                  //注意int的正负范围是不同的。。。
+    while(EOF!=scanf("%lld",&a))
+    {
+        printf("%lld\n",(-1)*a);
+    }
+    return 0;
+}

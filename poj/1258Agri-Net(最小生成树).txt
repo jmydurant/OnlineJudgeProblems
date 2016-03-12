@@ -1,0 +1,50 @@
+#include<cstdio>       //继续水。。。把poj的最小生成树都给水完。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+int puzzle[110][110];
+int dis[110];
+int visit[110];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        int ans=0;
+        memset(visit,0,sizeof(visit));
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)scanf("%d",&puzzle[i][j]);
+        }
+        for(int i=1;i<=N;i++)dis[i]=puzzle[1][i];
+        int start=1;visit[start]=1;
+        for(int abc=1;abc<N;abc++)
+        {
+            int minroad=INT_MAX,tmpt;
+            for(int i=1;i<=N;i++)
+            {
+                if(!visit[i])
+                {
+                    dis[i]=MIN(dis[i],puzzle[start][i]);
+                    if(minroad>dis[i])
+                    {
+                        minroad=dis[i];
+                        tmpt=i;
+                    }
+                }
+            }
+            ans+=minroad;
+            start=tmpt;visit[start]=1;
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

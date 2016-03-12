@@ -1,0 +1,106 @@
+#include<cstring>   //Lucas定理实在是太爽了。。。。话说真的得好好的学习数论。。。
+#include<cstdio>    //定理极其细节见下。。
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+typedef long long LL;
+const LL mod = 10007LL;
+long long a[mod+1];
+void IINT(void)
+{
+    a[1]=1LL;
+    for(int i = 2;i <= mod ;i++)
+    {
+        a[i] = (a[i-1]*i)%mod;
+    }
+}
+int gcd(int a,int b)
+{
+    int tmpt;
+    while(b)
+    {
+        tmpt = a%b;
+        a = b;b = tmpt;
+    }
+    return a;
+}
+void e_gcd(LL a,LL b,LL &d,LL &x,LL &y)
+{
+    if(!b)
+    {
+        d = a;
+        x = 1;
+        y = 0;
+    }
+    else
+    {
+        e_gcd(b, a%b ,d ,y ,x);
+        y -= x*(a/b);
+    }
+}
+long long choose(int m, int n)
+{
+    if(m == 0)return 1;
+    if(m > n)return 0;
+    if(m == n)return 1;
+    long long mm = (a[m]*a[n-m])%mod;
+    long long nn = a[n];
+    int tmpt = gcd(mm,nn);
+    mm/=(LL) tmpt;
+    nn/=(LL) tmpt;
+    long long d = 1LL;
+    long long x,y;
+    e_gcd(mm, mod, d, x, y);
+    x+=mod;
+    x%=mod;
+    long long ans= (nn*x)%mod;
+    return ans;
+}
+int main(void)
+{
+    IINT();
+    int casenum ; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n,m ;scanf("%d%d",&n,&m);
+        int up[10]={0},down[10]={0};
+        int cnt=0;
+        while(m>0)
+        {
+            down[++cnt]=m%mod;
+            m/=mod;
+        }
+        long long len=cnt;
+        cnt=0;
+        while(n>0)
+        {
+            up[++cnt]=n%mod;
+            n/=mod;
+        }
+        len = MAX(len, cnt);
+        long long ans=1;
+        for(int i=1;i<=len;i++)
+        {
+            ans = (ans*choose(down[i],up[i]))%mod;
+           // printf("%I64d %d\n",choose(down[i],up[i]),i);
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+lucas定理因为到处都是图片。。我就手敲一个吧。。
+对于C（N,M）；和质数P。。可以对m和n进行展开。。（类似于康拓展开）即N=Nk*P^k+Nk-1*P^k-1+……Nk0；
+同理M也如此展开。。然后C（N,M）=C(Nk，Mk)*……C（N0,M0）mod(P);即这是个同余等式。。这样就把非常大的数字M和N变小了。。
+然后就是求逆元了。。拓展欧几里得就可以了。。啦啦啦啦。。。
+现在需要解决的问题是求组合数C(m,n)%p其中的m和n都在10007的范围内，这个问题可以用同余模方程解决：n!/(m!*(n-m)! =x%p ,先对算出n！、m！、(n-m)!对p取模的余数，就转换为a/b=x%p;因为p为素数，所以等价于bx+py=a;然后用扩展的欧几里得定理算出bx'+py'=1的解，x=x'*a，就得到了最终的x的值，即C(m,n)%p得值。

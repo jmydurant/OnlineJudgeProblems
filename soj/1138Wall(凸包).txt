@@ -1,0 +1,71 @@
+#include<iostream>    //我次奥。。这个可是凸包啊。。。学了一晚上理论。。实现的时候还是蛋疼死了。。叉积。。是个很棒的东西。。
+#include<cstring>    //想了半天终于明白为什么要把点都扫描两次了。。。蛋疼。。。
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+using namespace std;
+struct points
+{
+    double x,y;
+}P[1010];
+int top,N;
+bool cmp(points a,points b)
+{
+    if(a.y==b.y)return a.x<b.x;
+    else return a.y<b.y;
+}
+double chacheng(points a,points b,points o)
+{
+    return (a.x-o.x)*(b.y-o.y)-(b.x-o.x)*(a.y-o.y);
+}
+double dis(int i,int j)
+{
+    return (double)sqrt((P[i].x-P[j].x)*(P[i].x-P[j].x)+(P[i].y-P[j].y)*(P[i].y-P[j].y));
+}
+int conv[1010];
+void Graham()
+{
+    top=1;
+    int i,full;
+    sort(P,P+N,cmp);
+   // for(i=0;i<N;i++){printf("%lf %lf\n",P[i].x,P[i].y);}
+    for(i=0;i<3;i++)conv[i]=i;
+    for(i=2;i<N;i++)
+    {
+        while(top && (chacheng(P[i],P[conv[top]],P[conv[top-1]])>=0))top--;
+        conv[++top]=i;
+    }
+    full=top;
+    conv[++top]=N-2;
+    for(i=N-3;i>=0;i--)
+    {
+        while((top!=full) && (chacheng(P[i],P[conv[top]],P[conv[top-1]])>=0))top--;
+        conv[++top]=i;
+    }
+}
+int main(void)
+{
+    double r;
+    while(EOF!=scanf("%d%lf",&N,&r))
+    {
+        for(int i=0;i<N;i++)
+        {
+            scanf("%lf%lf",&P[i].x,&P[i].y);
+        }
+        double result=2.0*r*3.1415926;
+        Graham();
+        for(int i=0;i<top;i++)
+        {
+            //printf("%lf\n",dis(conv[i],conv[(i+1)%top]));
+            result+=dis(conv[i],conv[(i+1)%top]);
+        }
+        printf("%d\n",(int)(result+0.5));
+    }
+    return 0;
+}
+
+
+
+
+
+

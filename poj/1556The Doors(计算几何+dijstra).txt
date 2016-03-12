@@ -1,0 +1,129 @@
+#include<cstdio>    //这次题目太经典了。。。用到了计算几何和最短路算法。。很爽。。。首先枚举所有点的距离。。中间被线段阻隔的就记为INF。最后dijstra定理。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 100000000
+#define lowbit(a) ((a)&(-(a)))
+#define MAXN 1001000
+#define esp 1e-8
+using namespace std;
+double puzzle[200][200];
+double path[200];
+bool visit[200];
+int N;
+struct point
+{
+    double x,y;
+}p[200];
+struct line
+{
+    point a,b;
+}l[200];
+int zero(double x)
+{
+    if(abs(x)<esp)
+        return 0;
+    if(x>0.0)
+        return 1;
+    return -1;
+}
+double cross(point a,point b,point c)
+{
+    return (a.x-c.x)*(b.y-c.y)-(b.x-c.x)*(a.y-c.y);
+}
+bool check(point a,point b,point c,point d)
+{
+    int f1=zero(cross(a,b,c))*zero(cross(a,b,d));
+    if(f1>=0)
+        return false;
+    int f2=zero(cross(c,d,a))*zero(cross(c,d,b));
+    if(f2>=0)
+        return false;
+    return true;
+}
+double dis(point a,point b)
+{
+    return sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
+}
+double dijstra(void)
+{
+    path[0]=0;
+    int start,maxroad;
+    for(int lap=0;lap<=4*N+1;lap++)
+    {
+        maxroad=INF+1;
+        for(int i=0;i<=4*N+1;i++)
+        {
+            if(path[i]<maxroad && (!(visit[i])))
+            {
+                maxroad=path[i];
+                start=i;
+            }
+        }
+        visit[start]=true;
+        for(int i=0;i<=4*N+1;i++)
+        {
+            if(path[i]>puzzle[i][start]+path[start])
+                path[i]=puzzle[i][start]+path[start];
+        }
+    }
+    return path[4*N+1];
+}
+int main(void)
+{
+    while(EOF!=scanf("%d",&N))
+    {
+        if(-1==N)
+            break;
+        memset(visit,false,sizeof(visit));
+        for(int i=0;i<=4*N+1;i++)
+            path[i]=INF;
+        p[0].x=0; p[0].y=5;
+        p[4*N+1].x=10; p[4*N+1].y=5;
+        for(int i=1;i<=N;i++)
+        {
+            double x; scanf("%lf",&x);
+            p[i].x=p[i+N].x=p[i+2*N].x=p[i+3*N].x=x;
+            for(int j=0;j<4;j++)
+                scanf("%lf",&p[i+j*N].y);
+            l[i].a.x=x; l[i].a.y=0; l[i].b=p[i];
+            l[i+N].a=p[i+N]; l[i+N].b=p[i+2*N];
+            l[i+2*N].a=p[i+3*N]; l[i+2*N].b.x=x; l[i+2*N].b.y=10;
+        }
+        for(int i=0;i<=4*N;i++)
+        {
+            for(int j=i+1;j<=4*N+1;j++)
+            {
+                bool ok=true;
+                for(int k=1;k<=3*N;k++)
+                {
+                    if(p[i].x != p[j].x && p[i].x != l[k].a.x && p[j].x != l[k].a.x && check(p[i],p[j],l[k].a,l[k].b))
+                    {
+                        ok=false;
+                        break;
+                    }
+                }
+                if(ok)
+                {
+                    puzzle[i][j]=puzzle[j][i]=dis(p[i],p[j]);
+                }
+                else
+                {
+                    puzzle[i][j]=puzzle[j][i]=INF;
+                }
+            }
+        }
+        double ans=dijstra();
+        printf("%.2lf\n",ans);
+    }
+    return 0;
+}

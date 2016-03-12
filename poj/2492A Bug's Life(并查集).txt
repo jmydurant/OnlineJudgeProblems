@@ -1,0 +1,70 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //关系并查集。。。0表示不喜欢。1表示喜欢。。(显然自己不会喜欢自己。。)
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,Q;
+int fa[maxn] , dis[maxn] , iCase;
+int findfa(int x){
+    if(fa[x] != x){
+        int tt = fa[x];
+        fa[x] = findfa(fa[x]);
+        dis[x] = (dis[x] + dis[tt]) % 2;
+    }return fa[x];
+}
+void solve(void){
+    scanf("%d%d",&n,&Q);
+    bool flag = false;
+    FOR(i,1,n) fa[i] = i;
+    rst(dis,0);
+    int x, y;
+    while(Q--){
+        scanf("%d%d",&x,&y);
+        if(flag)continue;
+        int fx = findfa(x) , fy = findfa(y);
+        if(fx != fy){
+            fa[fx] = fy;
+            dis[fx] = (dis[x] + dis[y] + 1) % 2;
+        }else{
+            if((dis[x] + dis[y])%2 == 0)flag = true;
+        }
+    }
+    printf("Scenario #%d:\n",++iCase);
+    if(flag) printf("Suspicious bugs found!\n\n");
+    else printf("No suspicious bugs found!\n\n");
+}
+int main(void){
+    iCase = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

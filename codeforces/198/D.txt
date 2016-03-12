@@ -1,0 +1,83 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#define MAXN 200000
+#define lson (inx<<1)
+#define rson (inx<<1|1)
+using namespace std;
+typedef long long LL;
+
+struct node
+{
+    int l,r,mid;
+    int cen;
+    int v;
+}tree[MAXN<<2];
+int num[MAXN];
+
+void build(int x,int y,int inx,int cen)
+{
+    tree[inx].l = x;
+    tree[inx].r = y;
+    tree[inx].mid = (x+y)>>1;
+    tree[inx].cen = cen;
+    if(x == y)
+    {
+        tree[inx].v = num[x];
+        return;
+    }
+    build(x,tree[inx].mid,lson,cen-1);
+    build(tree[inx].mid+1,y,rson,cen-1);
+    if(cen&1)
+    {
+        tree[inx].v = (tree[lson].v ^ tree[rson].v);
+    }
+    else
+    {
+        tree[inx].v = (tree[lson].v | tree[rson].v);
+    }
+}
+
+void change(int x,int y,int pos,int v,int inx)
+{
+    if(x == y)
+    {
+        tree[inx].v = v;
+        return;
+    }
+    int mid = tree[inx].mid;
+    if(mid>=pos)
+    {
+        change(x,mid,pos,v,lson);
+    }
+    else
+    {
+        change(mid+1,y,pos,v,rson);
+    }
+    if(tree[inx].cen&1)
+    {
+        tree[inx].v = (tree[lson].v ^ tree[rson].v);
+    }
+    else
+    {
+        tree[inx].v = (tree[lson].v | tree[rson].v);
+    }
+}
+int main(void)
+{
+    int n,Q;
+    while(2==scanf("%d%d",&n,&Q))
+    {
+        int cap = 1<<n;
+        for(int i = 1;i<=cap;i++)
+            scanf("%d",num+i);
+        build(1,1<<n,1,n+1);
+        for(int i = 1;i<=Q;i++)
+        {
+            int pos,v; scanf("%d%d",&pos,&v);
+            change(1,1<<n,pos,v,1);
+            printf("%d\n",tree[1].v);
+        }
+    }
+    return 0;
+}

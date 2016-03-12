@@ -1,0 +1,103 @@
+#include <iostream> //怒学主席树！！
+#include <cstdio>   //目前来看..其实主席树并不是特别复杂...
+#include <cstring>  //其实应该是那种离线式记忆线段树。。因为每次加点就建立一棵树。。所以非常NC。。但是美妙的满足区间减法。。哈哈哈哈
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 10100000
+#define INF 2100001000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int ls[maxn],rs[maxn];
+int c[maxn],a[100100],t[100100];
+int rt[100100];             //代表根
+int n,m,Q;
+int cnt;
+inline int _hash(int x){
+    return lower_bound(t+1,t+m+1,x) - t;
+}
+void build(int l,int r,int &rt){
+    rt = cnt++;
+    c[rt] = 0;
+    if(l < r){
+        int mid = (l+r)>>1;
+        build(l,mid,ls[rt]);
+        build(mid+1,r,rs[rt]);
+    }
+}
+int Insert(int pos,int rt){
+    int nroot = cnt++;
+    int ttt = nroot;
+    c[nroot] = c[rt] + 1;
+    int l = 1,r = m;
+    while(l < r){
+        int mid = (l+r)>>1;
+        if(pos <= mid){
+            ls[nroot] = cnt++; rs[nroot] = rs[rt];
+            nroot = ls[nroot]; rt = ls[rt];
+            r = mid;
+        }
+        else{
+            rs[nroot] = cnt++; ls[nroot] = ls[rt];
+            nroot = rs[nroot]; rt = rs[rt];
+            l = mid + 1;
+        }
+        c[nroot] = c[rt] + 1;
+    }
+    return ttt;
+}
+
+int req(int Ql,int Qr,int k){
+    int l = 1,r = m;
+    while(l<r){
+        int mid = (l+r)>>1;
+        if(c[ls[Ql]] - c[ls[Qr]] >= k){
+            Ql = ls[Ql], Qr = ls[Qr];
+            r = mid;
+        }
+        else{
+            k -= (c[ls[Ql]] - c[ls[Qr]]);
+            Ql = rs[Ql], Qr = rs[Qr];
+            l = mid+1;
+        }
+    }
+    return l;
+}
+
+void INIT(void){
+    FOR(i,1,n) scanf("%d",a+i);
+    FOR(i,1,n) t[i] = a[i];         //离散化
+    sort(t+1,t+n+1);
+    m = unique(t+1,t+n+1) - t - 1;
+    cnt = 0;
+    build(1,m,rt[n+1]);
+    FORD(i,n,1){
+        int _pos = _hash(a[i]);
+        rt[i] = Insert(_pos,rt[i+1]);
+    }
+    while(Q--){
+        int a,b,k; scanf("%d%d%d",&a,&b,&k);
+        printf("%d\n",t[req(rt[a],rt[b+1],k)]);
+    }
+}
+
+int main(void){
+    while(2 == scanf("%d%d",&n,&Q)){
+        INIT();
+    }
+}

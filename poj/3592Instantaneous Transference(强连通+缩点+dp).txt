@@ -1,0 +1,146 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //经典的最长路算法。。就是代码有点烦。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 140000000
+#define maxn 21000
+//#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int row,col;
+char puzzle[100][100];
+inline int h(int i,int j){
+    return (i*col) + j;
+}
+int headline[maxn] , E , reheadline[maxn];
+struct node{
+    int f,t,nxt;
+}edge[maxn<<4];
+inline void add(int f,int t){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+inline void addscc(int f,int t){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = reheadline[f];
+    reheadline[f] = E++;
+}
+int belong[maxn] ,scc;   //缩点...
+int dfn[maxn] , low[maxn] , tot , st[maxn] , top ;
+bool instack[maxn] , visit[maxn] , in[maxn];
+int dp[maxn];
+void dfs(int u){
+    dfn[u] = low[u] = ++tot;
+    st[top] = u; top++;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            dfs(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]){
+            low[u] = MIN(low[u] , dfn[v]);
+        }
+    }
+    if(dfn[u] == low[u]){
+        scc++;
+        while(true){
+            int j = st[--top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+void tarjan(void){
+    rst(dfn,0); tot = 0; top = 0;
+    rst(instack,false);
+    REP(i,row){
+        REP(j,col){
+            if(!dfn[h(i,j)]){
+                dfs(h(i,j));
+            }
+        }
+    }
+}
+int ddfs(int u){
+    if(in[u])return dp[u];
+    in[u] = true;
+    int ans = dp[u];
+    int tt = 0;
+    for(int i = reheadline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        int mm = ddfs(v);
+        tt = MAX(tt , mm);
+    }
+    dp[u] = ans + tt;
+    return dp[u];
+}
+void solve(void){
+    scanf("%d%d",&row,&col);
+    REP(i,row) scanf("%s",puzzle[i]);
+    rst(headline,-1); E = 0;
+    REP(i,row){
+        REP(j,col){
+            if(puzzle[i][j] == '#')continue;
+            if(j+1 < col)add(h(i,j) , h(i,j+1));
+            if(i+1 < row)add(h(i,j) , h(i+1,j));
+            if(puzzle[i][j] == '*'){
+                int a,b; scanf("%d%d",&a,&b);
+                add(h(i,j) , h(a,b));
+            }
+        }
+    }
+    tarjan();
+    rst(dp,0);
+    rst(visit,false); rst(in,false);
+    rst(reheadline,-1);
+    REP(i,row){
+        REP(j,col){
+            if(puzzle[i][j] != '#' && puzzle[i][j] != '*'){
+                dp[belong[h(i,j)]] += (puzzle[i][j] - '0');
+            }
+        }
+    }
+    int cap = E;
+    REP(i,cap){
+        int a = edge[i].f , b = edge[i].t;
+        if(belong[a] != belong[b]){
+            addscc(belong[a] , belong[b]);
+        }
+    }
+    int ans = ddfs(belong[h(0,0)]);
+    printf("%d\n",ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

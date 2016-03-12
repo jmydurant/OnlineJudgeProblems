@@ -1,0 +1,117 @@
+#include<cstdio>     //居然用map就暴力的过了。。。明天得弄一个真正trie树版本的。。。//弄好了。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+struct abc
+{
+    char word[310];
+    bool operator < (const abc & tmpt) const
+    {
+        return (strcasecmp(word,tmpt.word)<0)?1:0;
+    }
+}S[10100];
+map<abc,int>q;
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        getchar();
+        q.clear();
+        for(int i=1;i<=N;i++)
+        {
+            gets(S[i].word);
+            if(q.end()==q.find(S[i]))
+            {
+                printf("%d\n",0);
+                q[S[i]]=1;
+            }
+            else
+            {
+                printf("%d\n",q[S[i]]);
+                q[S[i]]++;
+            }
+        }
+    }
+    return 0;
+}
+//trie版本的在此。。其实很好学。。。
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+struct trie
+{
+    int term;
+    trie * son[30];
+}tree[2000000];
+struct abc
+{
+    char num[310];
+}phone[10100];
+int jishu;
+trie * new_tree(void)
+{
+    trie * tmpt = &tree[++jishu];
+    tmpt->term=0;
+    for(int i=0;i<30;i++)tmpt->son[i]=NULL;
+    return tmpt;
+}
+int insert_tree(trie * root,abc tele)
+{
+    int len=strlen(tele.num);
+    trie * tmpt= root;
+    for(int i=0;i<len;i++)
+    {
+        int k=tele.num[i]-'a';
+        if(tmpt->son[k]==NULL)
+        {
+            tmpt->son[k]= new_tree();
+            tmpt=tmpt->son[k];
+        }
+        else
+        {
+            tmpt=tmpt->son[k];
+        }
+    }
+    tmpt->term++;
+    return tmpt->term-1;
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        getchar();
+        jishu=0;
+        for(int i=1;i<=N;i++)
+        {
+            gets(phone[i].num);
+        }
+        tree[0].term=0;
+        for(int i=0;i<30;i++)tree[0].son[i]=NULL;
+        for(int i=1;i<=N;i++)
+        {
+            printf("%d\n",insert_tree(tree,phone[i]));
+        }
+    }
+    return 0;
+}
+

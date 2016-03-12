@@ -1,0 +1,93 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 11000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn * 10];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int n,m;
+int dfn[maxn] , low[maxn] , tot , st[maxn] , top ,belong[maxn] , scc;
+bool instack[maxn];
+void dfs(int u){
+    dfn[u] = low[u] = ++tot;
+    st[top] = u; top++;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            dfs(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(low[u] == dfn[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    REP(i,m){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a , b);
+    }
+    rst(dfn,0); rst(instack , false);
+    tot = top = scc = 0;
+    dfs(1);
+    FOR(i,1,n){
+        if((!dfn[i]) || belong[i] != 1){
+            printf("No\n");
+            return;
+        }
+    }
+    printf("Yes\n");
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)){
+        if(n == 0 && m == 0)return 0;
+        solve();
+    }
+    return 0;
+}

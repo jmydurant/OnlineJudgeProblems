@@ -1,0 +1,84 @@
+#include <iostream>   //我是沙茶.....直接枚举最长串就可以了。。注意字典序
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 1010000
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+char temp[70];
+char s[20][70];
+int nxt[70],row;
+char ans[70];
+void getnxt(void){
+    int len = strlen(temp);
+    nxt[0] = -1;
+    int k = -1;
+    FOR(i,1,len-1){
+        while(k>-1 && temp[i] != temp[k+1])k = nxt[k];
+        if(temp[i] == temp[k+1])k++;
+        nxt[i] = k;
+    }
+}
+bool KMP(char *a){
+    int len = strlen(temp);
+    int k = -1;
+    for(int i = 0;a[i];i++){
+        while(k>-1 && a[i] != temp[k+1]) k = nxt[k];
+        if(a[i] == temp[k+1])k++;
+        if(k == len-1)return true;
+    }return false;
+}
+bool judge(void){
+    getnxt();
+    FOR(i,2,row){
+        if(!KMP(s[i]))return false;
+    }return true;
+}
+void INIT(void){
+    scanf("%d",&row);
+    FOR(i,1,row) scanf("%s",s[i]);
+    int len = strlen(s[1]);
+    int tt = 0;
+    rst(temp,0);
+    FORD(i,len,1){                //枚举长度。。。
+        FOR(j,0,len-i){
+            strncpy(temp,s[1]+j,i);
+            if(judge())
+            {
+                int ll = strlen(temp);
+                if(ll>tt){
+                    strcpy(ans,temp);
+                    tt = ll;
+                }else if(ll == tt && strcmp(temp,ans)<0) strcpy(ans,temp);
+            }
+            rst(temp,0);
+        }
+    }
+    if(tt < 3)printf("no significant commonalities\n");
+    else printf("%s\n",ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)INIT();
+    return 0;
+}

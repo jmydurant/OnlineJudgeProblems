@@ -1,0 +1,41 @@
+#include<cstdio>   //有道难题的某一题的简化版本。。求最长两段子段和的题目。。从头扫一遍。。从尾扫一遍。。然后枚举接点就可以了。。很简单。。
+#include<cstring>
+#include<algorithm>
+#include<deque>
+#include<climits>
+using namespace std;
+int f_dp[50010],t_dp[50010];
+int digit[50010];
+inline int MAX(int a,int b){return a>b?a:b;}
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;scanf("%d",&N);
+        memset(f_dp,0,sizeof(f_dp));
+        memset(t_dp,0,sizeof(t_dp));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",digit+i);
+            f_dp[i]=MAX(digit[i],f_dp[i-1]+digit[i]);
+        }
+        for(int i=N;i>=1;i--)t_dp[i]=MAX(digit[i],t_dp[i+1]+digit[i]);
+        for(int i=2;i<=N;i++)
+        {
+            f_dp[i]=MAX(f_dp[i],f_dp[i-1]);
+        }
+        for(int i=N-1;i>=1;i--)
+        {
+            t_dp[i]=MAX(t_dp[i],t_dp[i+1]);
+        }
+        int ans=INT_MIN;
+        for(int i=1;i<=N-1;i++)
+        {
+            ans=MAX(ans,f_dp[i]+t_dp[i+1]);
+            //printf("%d %d %d\n",i,f_dp[i],t_dp[i+1]);
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

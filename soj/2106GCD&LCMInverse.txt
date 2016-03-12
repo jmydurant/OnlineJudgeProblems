@@ -1,0 +1,26 @@
+#include<stdio.h>
+#include<math.h>
+unsigned long long gcd(unsigned long long a,unsigned long long b);
+int main(void)                                                     //算法垃圾的一比。。居然还过了。。。
+{
+    unsigned long long GCD,LCM;
+    while(EOF!=scanf("%llu%llu",&GCD,&LCM))
+    {
+        unsigned long long middle=(LCM/GCD);
+        unsigned long long i;
+        for(i=sqrt(middle);i>=1;i--)
+        {
+            if(0==(middle%i)&&1==gcd(i,middle/i))
+            {
+                printf("%llu %llu\n",i*GCD,(middle/i)*GCD);
+                break;
+            }
+        }
+
+    }
+    return 0;
+}
+unsigned long long gcd(unsigned long long a,unsigned long long b)
+{
+    return b?gcd(b,a%b):a;
+}

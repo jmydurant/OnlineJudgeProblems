@@ -1,0 +1,144 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define INF 1400000000
+#define maxn 1010101
+#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int a[maxn];
+int b[maxn];
+int ss[maxn];
+int n,m;
+struct cmp{
+    bool operator () (const int i,const int j){
+        return a[i] < a[j];
+    }
+};
+struct node{
+    int l,r;
+    int ind;
+    int sl,sr;
+}pp[maxn];
+bool cmp1(const node &a,const node &b){
+    return a.l < b.l;
+}
+bool cmp2(const node &a,const node &b){
+    return a.r < b.r;
+}
+int c[maxn];
+void update(int pos,int val){
+    while(pos <= n){
+        c[pos] += val;
+        pos += lowbit(pos);
+    }
+}
+int req(int pos){
+    int ans = 0;
+    while(pos > 0){
+        ans += c[pos];
+        pos -= lowbit(pos);
+    }return ans;
+}
+priority_queue <int,vector<int>,cmp> q;
+int main(void){
+    while(EOF != scanf("%d%d",&n,&m)){
+        FOR(i,1,n) scanf("%d",a+i) , pp[i].ind = i;
+        FOR(i,1,m) scanf("%d",b+i);
+        int tt = 1;
+        FOR(i,1,n){
+            if(a[i] == b[tt]){
+                tt++;
+                ss[i] = 1;
+            }else ss[i] = 0;
+        }
+        FOR(i,1,n){
+            if(ss[i] == 1){
+                while((!q.empty()) && a[i] < a[q.top()]){
+                    pp[q.top()].r = i;
+                    q.pop();
+                }
+            }else{
+                q.push(i);
+            }
+        }
+        while(!q.empty()){
+            pp[q.top()].r = n+1;
+            q.pop();
+        }
+        FORD(i,n,1){
+            if(ss[i] == 1){
+                while((!q.empty()) && a[i] < a[q.top()]){
+                    pp[q.top()].l = i;
+                    q.pop();
+                }
+            }else{
+                q.push(i);
+            }
+        }
+        while(!q.empty()){
+            pp[q.top()].l = 0;
+            q.pop();
+        }
+        sort(pp+1,pp+n+1,cmp1);
+        tt = 0;
+        rst(c,0);
+        FOR(i,1,n){
+            while(pp[i].l > tt){
+                tt++;
+                update(a[tt],1);
+            }
+            pp[i].sl = req(a[pp[i].ind]);
+        }
+        rst(c,0);
+        sort(pp+1,pp+n+1,cmp2);
+        tt = 0;
+        FOR(i,1,n){
+            while(pp[i].r-1 > tt){
+                tt++;
+                update(a[tt],1);
+            }
+            pp[i].sr = req(a[pp[i].ind]) - 1;
+        }
+        LL ans = 0;
+        FOR(i,1,n){
+            if(!ss[pp[i].ind]){
+                ans += (pp[i].r - pp[i].l - 1 + pp[i].sl - pp[i].sr);
+                //printf("ind %d  %d  %d  %d  %d\n",pp[i].ind,pp[i].l,pp[i].r,pp[i].sl,pp[i].sr);
+            }
+        }
+        printf("%I64d\n",ans);
+    }return 0;
+}
+
+
+
+
+
+

@@ -1,0 +1,110 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;                 //一个简单的贪心排序。。然后关键优先解决排尾靠前的排尾。。。
+int visit[10100];
+struct table
+{
+    int first,second;                  //判断是否这个区间有两个点已经占过了。。如果占过。。可以直接忽略。。
+    int a;
+    int b;
+}time[10100],tmpt;
+int main(void)
+{
+    int N;
+
+    while(EOF!=scanf("%d",&N))
+    {
+        int i,j;
+        int result=0;
+        memset(visit,0,sizeof(visit));
+        for(i=1;i<=N;i++)
+        {
+            scanf("%d%d",&time[i].a,&time[i].b);
+            time[i].first=-1;time[i].second=-1;
+        }
+        for(i=1;i<N;i++)
+        {
+            for(j=1;j<N-i+1;j++)
+            {
+                if(time[j].b>time[j+1].b)
+                {
+                    tmpt=time[j];
+                    time[j]=time[j+1];
+                    time[j+1]=tmpt;
+                }
+            }
+        }
+        for(i=1;i<=N;i++)
+        {
+            if(time[i].first<0)
+            {
+                if(visit[time[i].b])
+                {
+                    time[i].first=time[i].b-1;
+                    visit[time[i].b-1]=1;
+                    result++;
+                }
+                else
+                {
+                    time[i].first=time[i].b;
+                    visit[time[i].b]=1;
+                    result++;
+                }
+                for(j=i+1;j<=N;j++)
+                    {
+                        if(time[j].a<=time[i].first&&time[j].b>=time[i].first)
+                        {
+                            if(time[j].first<0)
+                            {
+                                time[j].first=time[i].first;
+                            }
+                            else if(time[j].second<0)
+                            {
+                                time[j].second=time[i].first;
+                            }
+                        }
+                    }
+            }
+            if(time[i].second<0)
+            {
+                if(visit[time[i].b])
+                {
+                    time[i].second=time[i].b-1;
+                    visit[time[i].b-1]=1;
+                    result++;
+                }
+                else
+                {
+                    time[i].second=time[i].b;
+                    visit[time[i].b]=1;
+                    result++;
+                }
+                for(j=i+1;j<=N;j++)
+                {
+                    if(time[j].a<=time[i].second&&time[j].b>=time[i].second)
+                    {
+                        if(time[j].first<0)
+                        {
+                            time[j].first=time[i].second;
+                        }
+                        else if(time[j].second<0)
+                        {
+                            time[j].second=time[i].second;
+                        }
+                    }
+                }
+            }
+        }
+        //for(i=1;i<=4;i++)
+        //{
+          //  printf("%d %d\n",time[i].a,time[i].b);
+        //}
+        //for(i=0;i<=7;i++)
+        //{
+          //  printf("%d ",visit[i]);
+        //}
+        //printf("\n");
+        printf("%d\n",result);
+    }
+    return 0;
+}

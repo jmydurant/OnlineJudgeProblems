@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int main(void)
+{
+    int n,k;
+    while(2==scanf("%d%d",&n,&k))
+    {
+        int remain;
+        int newcigarette;
+        newcigarette=0;
+        remain=n;
+        while(remain>=k)
+        {
+            newcigarette=remain/k;
+            n+=(remain/k);
+            remain =newcigarette+remain%k;
+        }
+        printf("%d\n",n);
+    }
+    return 0;
+}

@@ -1,0 +1,60 @@
+#include<cstdio>    //原理不是很难。。但是思想很牛。。不好想到。。还是得多积累。。。
+#include<climits>   //原理见下。。。
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const double esp=1e-6;
+double a[1010],b[1010];
+double s[1010];
+int N,K;
+//bool cmp(double a,double b){return a>b;}
+bool judge(double r)
+{
+    for(int i=0;i<N;i++)
+    {
+        s[i]=a[i]-r*b[i];
+    }
+    sort(s,s+N);
+    double ans=0.0;
+    for(int i=K;i<N;i++)
+        ans+=s[i];
+    if(ans<0.0)return false;
+    else return true;
+}
+int main(void)
+{
+    while(2==scanf("%d%d",&N,&K) && (N || K))
+    {
+        for(int i=0;i<N;i++)scanf("%lf",a+i);
+        for(int i=0;i<N;i++)scanf("%lf",b+i);
+        double left=0.0,right=1.0;
+        double mid=(left+right)/2.0;
+        while(right-left>esp)
+        {
+            if(judge(mid))left=mid;
+            else right=mid;
+            mid=(left+right)/2.0;
+        }
+        mid*=100.0;
+        printf("%.0lf\n",mid);
+    }
+    return 0;
+}
+题目大意就 给定n个二元组(a,b)，扔掉k个二元组，使得剩下的a元素之和与b元素之和的比率最大
+题目求的是 max(∑a[i] * x[i] / (b[i] * x[i]))   其中a,b都是一一对应的。 x[i]取0,1  并且 ∑x[i] = n - k;
+那么可以转化一下。  令r = ∑a[i] * x[i] / (b[i] * x[i])  则必然∑a[i] * x[i] - ∑b[i] * x[i] * r= 0；（条件1）
+ 并且任意的 ∑a[i] * x[i] - ∑b[i] * x[i] * max(r) <= 0  (条件2，只有当∑a[i] * x[i] / (b[i] * x[i]) = max(r) 条件2中等号才成立)
+然后就可以枚举r , 对枚举的r， 求Q(r) = ∑a[i] * x[i] - ∑b[i] * x[i] * r  的最大值，  为什么要求最大值呢？  因为我们之前知道了条件2，所以当我们枚举到r为max(r)的值时，显然对于所有的情况Q(r)都会小于等于0，并且Q(r)的最大值一定是0.而我们求最大值的目的就是寻找Q(r)=0的可能性，这样就满足了条件1，最后就是枚举使得Q(r)恰好等于0时就找到了max(r)。而如果能Q(r)>0 说明该r值是偏小的，并且可能存在Q(r)=0,而Q(r)<0的话，很明显是r值偏大的，因为max(r)都是使Q(r)最大值为0，说明不可能存在Q(r)=0了，需要换方向搜索了、 
+然后算法框架就出来了。
+二分枚举r。对每个r。求出每个a[i] - b[i] * r; 然后排序，将最大的n-k个相加即为最Q(r)的最大值。

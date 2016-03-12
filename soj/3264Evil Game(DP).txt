@@ -1,0 +1,95 @@
+#include<iostream>    //思路见下。。。
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define INF 0x7f7f7f7f
+using namespace std;
+int dp[110][110],sum[110][110],f[110][110],b[110][110];
+int digit[110][110];
+int M,N;
+void IINT(void)
+{
+    memset(sum,0,sizeof(sum));
+    for(int i=0;i<N;i++)
+    {
+        sum[i][0]=digit[i][0];
+        for(int j=1;j<M;j++)
+        {
+            sum[i][j]=sum[i][j-1]+digit[i][j];
+        }
+    }
+    for(int i=0;i<N;i++)
+    {
+        f[i][0]=digit[i][0];
+        for(int j=1;j<M;j++)
+        {
+            int tmpt;
+            if(digit[i][j]<0)tmpt=f[i][j-1]+2*digit[i][j];
+            else tmpt=f[i][j-1];
+            f[i][j]=MAX(tmpt,digit[i][j]);
+        }
+    }
+    for(int i=0;i<N;i++)
+    {
+        b[i][M-1]=digit[i][M-1];
+        for(int j=M-2;j>=0;j--)
+        {
+            int tmpt;
+            if(digit[i][j]<0)tmpt=b[i][j+1]+2*digit[i][j];
+            else tmpt=b[i][j+1];
+            b[i][j]=MAX(tmpt,digit[i][j]);
+        }
+    }
+}
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&N,&M);
+        for(int i=0;i<N;i++)
+        {
+            for(int j=0;j<M;j++)
+            {
+                scanf("%d",&digit[i][j]);
+            }
+        }
+        IINT();
+        dp[0][0]=MAX(digit[0][0],b[0][0]);
+        for(int i=1;i<M;i++)
+        {
+            dp[0][i]=sum[0][i-1]+b[0][i];
+        }
+        for(int i=1;i<N;i++)
+        {
+            for(int j=0;j<M;j++)
+            {
+                int tmpt=-INF;
+                for(int k=0;k<M;k++)
+                {
+                    int ans;
+                    int l=MIN(k,j);
+                    int r=MAX(k,j);
+                    if(l==r)
+                    {
+                        ans=dp[i-1][k]+f[i][l]+b[i][l]-digit[i][j];
+                    }
+                    else
+                    {
+                        ans=dp[i-1][k]+f[i][l]+sum[i][r-1]-sum[i][l]+b[i][r];
+                    }
+                    if(ans>tmpt)tmpt=ans;
+                }
+                dp[i][j]=tmpt;
+            }
+        }
+        printf("%d\n",dp[N-1][M-1]);
+    }
+    return 0;
+}
+一道dp题目，从题目中的规则可以知道，人可以向左、向右、向下走，唯独不可以向上走，可以知道dp的转移方程，是从上往下转移。设dp[i][j]:表示走到(i,j)时的最大数，dp[i][j]=max(dp[i-1][k]+第i行从k走到j获得的最大值）(0<k<m).
+     现在需要解决的就是如何计算从(i,k)走到(i,j)能获得的最大值，因为可以向左和向右，有可能从i向左走后又回到i，再向右走到j，继续向右走，再回到j，这个用预处理dp解决。

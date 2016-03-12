@@ -1,0 +1,105 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //把相互矛盾的人给链接起来就好了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 1100
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[101010];
+int c,d,n;
+int headline[maxn] , E;
+struct aa{
+    int x , y;
+}pp[maxn];
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int cal(char *s){
+    int tt = 0 , len = strlen(s);
+    if(s[0] == 'D')tt = 10000;
+    int kk = 0;
+    FOR(i,1,len-1){
+        kk *= 10;
+        kk += s[i] - '0';
+    }
+    return tt + kk;
+}
+int link[maxn] , visit[maxn] , ind;
+bool Hungary(int u){
+    visit[u] = ind;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(visit[v] != ind){
+            visit[v] = ind;
+            if(link[v] == -1 || Hungary(link[v])){
+                link[v] = u;
+                link[u] = v;
+                return true;
+            }
+        }
+    }return false;
+}
+void solve(void){
+    scanf("%d%d%d",&c,&d,&n);
+    rst(headline,-1); E = 0;
+    FOR(i,1,n){
+        char op[100];
+        scanf("%s",op);
+        pp[i].x = cal(op);
+        scanf("%s",op);
+        pp[i].y = cal(op);
+    }
+    FOR(i,1,n){
+        FOR(j,i+1,n){
+            if(pp[i].x == pp[j].y || pp[i].y == pp[j].x){
+                add(i,j); add(j,i);
+            }
+        }
+    }
+    int ans = 0;
+    rst(link,-1); rst(visit,0);
+    FOR(i,1,n){
+        ind = i;
+        if(link[i] == -1){
+            if(Hungary(i)) ans++;
+        }
+    }
+    printf("%d\n",n - ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

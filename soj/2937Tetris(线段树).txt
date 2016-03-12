@@ -1,0 +1,99 @@
+#include<cstring>     //又是一个传统的线段树。。只是这次要更新的东西不是颜色。。是高度。。还有map的离散化思想。。可以把绝对距离转换成相对距离。。
+#include<algorithm>   //这种思想可以减少内存开销。。。很不错。。。而且这几天一直都在做线段树。。已经快吐了。。。
+#include<cmath>
+#include<cstdio>   //差点忘了吐槽了。。这题居然是俄罗斯积木啊。。。。什么节奏！！！！！！！
+#include<map>
+#define INF 100000000
+using namespace std;
+template<typename T>
+inline T MAX(T a,T b){return a>b?a:b;}
+struct Node
+{
+    int left,right,mid;
+    long long h;
+}tree[600000];
+map<int,int>biaohao;
+int l[200000],r[200000];
+int value[200000];
+long long h[200000];
+void build_tree(int x,int y,int num)
+{
+    tree[num].left=x;
+    tree[num].right=y;
+    tree[num].mid=(x+y)>>1;
+    tree[num].h=0;
+    if(x==y)return;
+    int middle=tree[num].mid;
+    build_tree(x,middle,num<<1);
+    build_tree(middle+1,y,num<<1|1);
+}
+void change_tree(int x,int y,int num,long long height)
+{
+    if(tree[num].left==x&&tree[num].right==y)
+    {
+        tree[num].h=height;
+        return ;
+    }
+    int middle=tree[num].mid;
+    if(tree[num].h!=-1)
+    {
+        tree[num<<1].h=tree[num].h;
+        tree[num<<1|1].h=tree[num].h;
+        tree[num].h=-1;
+    }
+    if(y<=middle)change_tree(x,y,num<<1,height);
+    else if(x>middle)change_tree(x,y,num<<1|1,height);
+    else
+    {
+        change_tree(x,middle,num<<1,height);
+        change_tree(middle+1,y,num<<1|1,height);
+    }
+}
+long long req_tree(int x,int y,int num)
+{
+    if(tree[num].h!=-1)return tree[num].h;
+    int middle=tree[num].mid;
+    if(y<=middle)return req_tree(x,y,num<<1);
+    else if(x>middle)return req_tree(x,y,num<<1|1);
+    else
+    {
+        return MAX(req_tree(x,middle,num<<1),req_tree(middle+1,y,num<<1|1));
+    }
+}
+int main(void)
+{
+    int N,weight;
+    while(2==scanf("%d%d",&N,&weight)&&(N||weight))
+    {
+        biaohao.clear();
+        memset(value,0,sizeof(value));
+        int k=0;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d%d%lld",l+i,r+i,h+i);
+            value[k++]=l[i];
+            value[k++]=r[i];
+        }
+        sort(value,value+k);
+        int nn=1;
+        for(int i=0;i<k;i++)
+        {
+            if(0==biaohao[value[i]])
+            {
+                biaohao[value[i]]=nn;
+                nn++;
+            }
+        }
+        nn--;
+        build_tree(1,nn,1);
+        for(int i=1;i<=N;i++)
+        {
+            int a=biaohao[l[i]],b=biaohao[r[i]];
+            long long dx=req_tree(a,b,1);
+            h[i]+=dx;
+            change_tree(a,b,1,h[i]);
+        }
+        printf("%lld\n",req_tree(1,nn,1));
+    }
+    return 0;
+}

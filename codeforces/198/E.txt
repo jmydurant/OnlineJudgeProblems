@@ -1,0 +1,45 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define MAXN 1010
+#define lson (inx<<1)
+#define rson (inx<<1|1)
+using namespace std;
+typedef long long LL;
+
+int num[MAXN];
+int n;
+int l[4],r[4];
+int tot;
+int main(void)
+{
+    while(EOF!=scanf("%d",&n))
+    {
+        tot = 0;
+        for(int i = 1;i<=n;i++)
+            scanf("%d",num+i);
+        for(int i = n;i>=1;i--)
+        {
+            if(num[i] != i)
+            {
+                tot ++;
+                l[tot] = num[i];
+                r[tot] = i;
+                int mid = (r[tot]-l[tot])/2;
+                for(int j = 0;j<=mid;j++)
+                    swap(num[l[tot]+j],num[r[tot]-j]);
+            }
+        }
+        printf("%d\n",tot);
+        for(;tot;tot--)
+        {
+            printf("%d %d\n",l[tot],r[tot]);
+        }
+    }
+    return 0;
+}
+
+
+
+

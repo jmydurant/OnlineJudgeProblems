@@ -1,0 +1,55 @@
+#include<cstring>
+#include<cstdio>    // 讨教到这个算法的强大了。。。O（N）算法。。。而且思路还很清楚。。很好学。。。
+#include<algorithm> //具体思路就是把字符串给扩充了。。中间插入'#'字符。。然后就可以不用考虑奇偶的情况了。。用P数组记录每个字符扩展的半径。。
+#include<climits>   //最后P-1就是答案。。。这里稍微优化了下比较方法。。使得可以减少不必要的匹配次数。。。
+#include<queue>
+#include<cstdlib>   //id是拓展最长的序列的序号。。maxid是拓展到最右的位置。。。
+#include<stack>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MOD 19871118LL
+using namespace std;
+char a[100100],b[200200];
+int p[200200];
+int main(void)
+{
+    while(EOF!=scanf("%s",a))
+    {
+        b[0]='.';
+        int len=strlen(a);
+        int tot=0;
+        for(int i=1;i<=len;i++)
+        {
+            b[++tot]='#';
+            b[++tot]=a[i-1];
+        }
+        b[++tot]='#';
+        b[tot+1]='*';b[tot+2]='\0';
+        int maxid=1,id;
+        for(int i=1;i<=tot;i++)
+        {
+            if(i<maxid)
+            {
+                p[i]=MIN(maxid-i,p[id*2-i]);
+            }
+            else
+            {
+                p[i]=1;
+            }
+            while(b[i-p[i]]==b[i+p[i]])p[i]++;
+            if(maxid<i+p[i])
+            {
+                id=i;
+                maxid=i+p[i];
+            }
+        }
+        int res=-1;
+        for(int i=1;i<=tot;i++)
+        {
+            if(res<p[i]-1)res=p[i]-1;
+        }
+        printf("%d\n",res);
+    }
+    return 0;
+}

@@ -1,0 +1,100 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //二分图匹配。。把横着连着的块缩成一个点。。竖着的也缩成一个点。。然后又公共部分就相连。。最后匈牙利一下就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 5000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn];
+int headline[500] , E;
+char puzzle[60][60];
+int _hasha[60][60] , _hashb[60][60] , link[500];
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int row,col,nr,nc,ind;
+int visit[500];
+bool Hungary(int u){
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(visit[v] != ind){
+            visit[v] = ind;
+            if(link[v] == -1 || Hungary(link[v])){
+                link[v] = u;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+void solve(void){
+    rst(headline,-1) ; E = 0 ; rst(visit,0); rst(link,-1);
+    REP(i,row) scanf("%s",puzzle[i]);
+    nr = nc = 0;
+    REP(i,row){
+        REP(j,col){
+            if(puzzle[i][j] == '.')continue;
+            _hasha[i][j] = nr;
+            if(j == col - 1 || puzzle[i][j+1] == '.')nr++;
+        }
+    }
+    REP(j,col){
+        REP(i,row){
+            if(puzzle[i][j] == '.')continue;
+            _hashb[i][j] = nc;
+            if(i == row - 1 || puzzle[i+1][j] == '.')nc++;
+        }
+    }
+    //REP(i,row){
+    //    REP(j,col)printf("%d ",_hasha[i][j]);printf("\n");
+    //}
+    //REP(i,row){
+    //    REP(j,col)printf("%d ",_hashb[i][j]);printf("\n");
+    //}
+    REP(i,row)REP(j,col){
+        if(puzzle[i][j] != '.'){
+            add(_hasha[i][j] , _hashb[i][j]);
+        }
+    }
+    int ans = 0;
+    REP(i,nr){
+        ind = i+1;
+        if(Hungary(i))ans++;
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&row,&col)) solve();
+    return 0;
+}

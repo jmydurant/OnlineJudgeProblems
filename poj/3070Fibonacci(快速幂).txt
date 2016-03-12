@@ -1,0 +1,107 @@
+#include<cstdio>   //一道基本的快速幂。。我居然调了半个小时。。擦。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+struct matrix
+{
+    int digit[2][2];
+    matrix(){memset(digit,0,sizeof(digit));}
+}A,B;
+void m_pow(int n)
+{
+    B.digit[0][0]=1;B.digit[0][1]=1;
+    B.digit[1][0]=0;B.digit[1][1]=0;
+    while(n)
+    {
+        if(n&1)
+        {
+            matrix tmpt;
+            for(int i=0;i<2;i++)
+            {
+                for(int j=0;j<2;j++)
+                {
+                    for(int k=0;k<2;k++)
+                    {
+                        tmpt.digit[i][j]+=B.digit[i][k]*A.digit[k][j];
+                        tmpt.digit[i][j]%=10000;
+                    }
+                }
+            }
+            for(int i=0;i<2;i++)
+            {
+                for(int j=0;j<2;j++)
+                {
+                    B.digit[i][j]=tmpt.digit[i][j];
+                }
+            }
+        }
+        matrix tmpt;
+        for(int i=0;i<2;i++)
+        {
+            for(int j=0;j<2;j++)
+            {
+                for(int k=0;k<2;k++)
+                {
+                    tmpt.digit[i][j]+=A.digit[i][k]*A.digit[k][j];
+                    tmpt.digit[i][j]%=10000;
+                }
+            }
+        }
+        for(int i=0;i<2;i++)
+        {
+            for(int j=0;j<2;j++)
+            {
+                A.digit[i][j]=tmpt.digit[i][j];
+            }
+        }
+        n>>=1;
+    }
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        if(-1==N)break;
+        if(1==N || 0==N)
+        {
+            printf("%d\n",N);
+            continue;
+        }
+        if(2==N)
+        {
+            printf("%d\n",1);
+            continue;
+        }
+        N-=2;
+        A.digit[0][0]=1;A.digit[0][1]=1;
+        A.digit[1][0]=1;A.digit[1][1]=0;
+        m_pow(N);
+        int ans=(B.digit[0][0])%10000;
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+void Debug(void)
+{
+    for(int i=0;i<2;i++)
+    {
+        for(int j=0;j<2;j++)
+        {
+            printf("%d ",B.digit[i][j]);
+        }
+        printf("\n");
+    }
+}

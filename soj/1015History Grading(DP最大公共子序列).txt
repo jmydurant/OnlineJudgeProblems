@@ -1,0 +1,47 @@
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<algorithm>   //原来很简单。。但是有一个小细节。。虐人啊。。
+#include<climits>
+using namespace std;
+int MAX(int a,int b,int c);
+int dp[50][50];
+int a[50];int b[50];
+int main(void)
+{
+    int length;
+    while(EOF!=scanf("%d",&length))
+    {
+        int t;
+        for(int i=1;i<=length;i++)
+        {
+            scanf("%d",&t);    //来。。看这里看这里。。是第t个事件发生于第i位。。不是第i个事件发生在地t位。。所以这里蛋疼了好长时间。。
+            a[t]=i;
+        }
+        while(EOF!=scanf("%d",&t))
+        {
+            b[t]=1;
+            for(int i=0;i<=length;i++){memset(dp[i],0,sizeof(dp[i]));}
+            for(int i=2;i<=length;i++){scanf("%d",&t);b[t]=i;}
+            for(int i=1;i<=length;i++)
+            {
+                for(int j=1;j<=length;j++)
+                {
+                    int k=dp[i-1][j-1];
+                    if(a[i]==b[j])k++;
+                    dp[i][j]=MAX(k,dp[i-1][j],dp[i][j-1]);
+                }
+            }
+            printf("%d\n",dp[length][length]);
+        }
+    }
+    return 0;
+}
+int MAX(int a,int b,int c)
+{
+    if(a<b)a=b;
+    if(a<c)a=c;
+    return a;
+}

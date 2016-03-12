@@ -1,0 +1,85 @@
+#include<cstdio>  //原理不想多讲。。因为没什么难度。。就是对每一个小置换群进行取模。。。然后找规律直接作出。。思路见下。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+char word[210];
+char ans[210];
+int zhihuan[210];
+bool visit[210];
+int K,N;
+int main(void)
+{
+    while(EOF!=scanf("%d",&N))
+    {
+        if(!N)break;
+        for(int i=0;i<N;i++)
+        {
+            scanf("%d",zhihuan+i);
+            zhihuan[i]--;
+        }
+        while(1)
+        {
+            scanf("%d,",&K);getchar();
+            if(!K)break;
+            gets(word);
+            int len=strlen(word);
+            for(int i=len;i<=N-1;i++)word[i]=' ';
+            word[N]='\0';
+            memset(visit,false,sizeof(visit));
+            for(int i=0;i<N;i++)
+            {
+                if(!visit[i])
+                {
+                    visit[i]=true;
+                    int len=0;
+                    int tmpt[210];
+                    tmpt[0]=i;
+                    int j=zhihuan[i];
+                    while(j!=i)
+                    {
+                        len++;
+                        tmpt[len]=j;
+                        j=zhihuan[j];
+                        visit[j]=true;
+                    }
+                    int mod=K%(len+1);
+                    for(int i=0;i<=len;i++)
+                    {
+                        ans[tmpt[(i+mod)%(len+1)]]=word[tmpt[i]];
+                    }
+                }
+            }
+            ans[N]='\0';
+            puts(ans);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+说下题目大意。首先输入长度为n的数字串，设为key[i]，表示第i个字符置换一次后跑到key[i]的位置。然后输入若干字符序列，设字符序列为Src(若长度不足n则后面用空格补齐)，求Src中的每个字符进行m次置换后的字符序列Dst。
+
+加密方式如题中所给:
+1 2 3 4 5 6 7 8 9 10
+4 5 3 7 2 8 1 6 10 9
+
+对于第一个字符，加密3次的结果如下:
+
+1 --> 4 --> 7 -->1
+
+对于第二个字符，加密2次的结果如下:
+
+2 --> 5 --> 2
+
+可以看到，加密一定次数后，结果会构成一个循环，如果我们求出这个循环周期，那么加密的次数就可以使用取余运算进行缩减了。

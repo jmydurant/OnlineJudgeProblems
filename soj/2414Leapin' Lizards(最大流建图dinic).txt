@@ -1,0 +1,147 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //写成狗啊。。挺麻烦的。。
+#include <cstring>    //简单说一下建图思路。。对于每个柱子拆点a和b。。如果有蜥蜴。就让源点指向他流量无限。。a到b流量为本身的那个值
+#include <algorithm>  //如果从某个柱子能出去。。就指向汇点流量无限。。然后如果柱子u能到v。。则让他们的出点连另一个的进点。。
+#include <queue>      //这样答案就是蜥蜴数减去最大流。。
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 500000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+    int cap,flow;
+}edge[maxn];
+int headline[1010] , E;
+inline void add(int f,int t,int ww){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].cap = ww;
+    edge[E].flow = 0;
+    headline[f] = E++;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].cap = edge[E].flow = 0;
+    headline[t] = E++;
+}
+int row,lim,col;
+char puzzle[25][25] , liz[25][25];
+int dis[1010];
+int _hash[25][25] , tot , op , ed , n , iCase;
+inline int cal(int x1,int y1,int x2,int y2){
+    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+}
+int q[5000] , head,tail;
+bool bfs(void){
+    head = 0 , tail = 1;
+    q[head] = op;
+    rst(dis,0); dis[op] = 1;
+    while(head < tail){
+        int u = q[head]; head++;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(!dis[v] && edge[i].cap > edge[i].flow){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+            }
+        }
+        if(u == ed)return true;
+    }return false;
+}
+int dfs(int u,int c){
+    //printf("u is %d\n",u);
+    //system("pause");
+    if(u == ed)return c;
+    int temp = c;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(dis[v] == dis[u] + 1 && temp && edge[i].cap > edge[i].flow){
+            int tt = dfs(v,MIN(temp , (edge[i].cap - edge[i].flow)));
+            edge[i].flow += tt;
+            edge[i ^ 1].flow -= tt;
+            temp -= tt;
+        }
+    }
+    if(c == temp)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op,INF);
+    return maxflow;
+}
+void solve(void){
+    int nliz = 0;
+    scanf("%d%d",&row,&lim);
+    REP(i,row) scanf("%s",puzzle[i]);
+    REP(i,row) scanf("%s",liz[i]);
+    col = strlen(puzzle[0]);
+    tot = 0;
+    rst(_hash,0);
+    REP(i,row){
+        REP(j,col){
+            if(puzzle[i][j] != '0'){
+                tot++; _hash[i][j] = tot;
+            }
+        }
+    }
+    op = 0 , ed = 2 * tot + 1;
+    E = 0; rst(headline,-1);
+    REP(i,row){
+        REP(j,col){
+            if(puzzle[i][j] != '0'){
+                int cc = puzzle[i][j] - '0';
+                int u = _hash[i][j];
+                if(liz[i][j] == 'L'){add(op,u,1);nliz++;}
+                if(lim > i || lim > j || (lim >= row - i) || (lim >= col - j)){
+                    add(u+tot,ed,INF);
+                }
+                add(u,u+tot,cc);
+                REP(ii,row){
+                    REP(jj,col){
+                        if((lim*lim >= cal(i,j,ii,jj) ) && _hash[ii][jj]){
+                            int v = _hash[ii][jj];
+                            if(v == u)continue;
+                            //printf("u is %d  v is %d\n",u,v);
+                            add(u+tot,v,INF);
+                            add(v+tot,u,INF);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    int ans = nliz - dinic();
+    printf("Case #%d: ",++iCase);
+    if(ans == 0)printf("no lizard was left behind.\n");
+    else if(ans == 1)printf("1 lizard was left behind.\n");
+    else printf("%d lizards were left behind.\n",ans);
+}
+int main(void){
+    iCase = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

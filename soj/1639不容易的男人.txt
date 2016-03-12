@@ -1,0 +1,84 @@
+#include<stdio.h>
+
+int main(void)
+{
+
+    int bullet[20];
+    int loop,n;
+    int i,j;
+    int x,y,fly;
+    int step;
+    int direction[20];
+
+    scanf("%d",&loop);
+    i=0;j=0;step=0;
+    for(;loop>0;loop--)
+    {   scanf("%d",&n);
+         for(i=0;i<n;i++)
+      {
+        scanf("%d%d",&bullet[i],&direction[i]);
+
+
+
+      }
+       scanf("%d%d%d",&y,&x,&fly);
+
+       while((bullet[y]!=x)&&(step<n))
+       {
+           for(i=0;i<n;i++)
+           {
+               if(direction[i]==2)
+               {
+                   bullet[i]++;
+               }
+                if(direction[i]==1)
+               {
+                   bullet[i]--;
+               }
+               if(bullet[i]<0)
+               {
+                   bullet[i]=(n-1);
+               }
+               if(bullet[i]>=n)
+               {
+                   bullet[i]=0;
+               }
+         }
+               if(fly==1)
+               {
+                   y--;
+               }
+                if(fly==2)
+                 {
+                      y++;
+                 }
+               if(y<0)
+               {
+                   y=(n-1);
+               }
+               if(y>=n)
+               {
+                   y=0;
+               }
+
+
+           step++;
+
+           }
+
+
+           if(step<n)
+           {
+               printf("Are you blind or something? You got shot after %d step(s).\n",step);
+           }
+
+           else
+           {
+               printf("I don't look like a ghost, do I?\n");
+           }
+           step=0;
+
+    }
+
+  return 0;
+}

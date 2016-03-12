@@ -1,0 +1,58 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <cstdlib>
+#define FOR(i,a,b) for(int i = (int)a ;i<=(int)b;i++)
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 22000
+using namespace std;
+int v[15];
+int main(void)
+{
+    int hp;
+    while(EOF != scanf("%d",&hp))
+    {
+        for(int i = 1;i<=9;i++)
+            scanf("%d",v+i);
+        int temp = 9,minr = v[9];
+        for(int i = 9;i>=1;i--)
+        {
+            if(v[i]<minr)
+            {
+                minr = v[i];
+                temp = i;
+            }
+        }
+        if(minr > hp)
+        {
+            printf("-1\n");
+            continue;
+        }
+        int mincut = 100000000;
+        for(int i = temp+1;i<=9;i++)
+        {
+            mincut = MIN(mincut,v[i] - minr);
+        }
+        int num = hp / minr;
+        int remain = hp % minr;
+        while(remain >= mincut)
+        {
+            for(int i = 9;i>=temp+1;i--)
+            {
+                if(v[i] - minr <= remain)
+                {
+                    printf("%d",i);
+                    remain -= (v[i] - minr);
+                    num--;
+                    break;
+                }
+            }
+        }
+        for(int i = 1;i<=num;i++)
+            printf("%d",temp);
+        printf("\n");
+    }
+    return 0;
+}

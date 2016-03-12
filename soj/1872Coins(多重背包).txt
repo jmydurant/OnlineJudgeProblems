@@ -1,0 +1,53 @@
+#include <iostream>   //多重背包判断可行性的方法O（VN）
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int dp[100010];
+int V[110];    //容量
+int C[110];    //个数
+int main(void)
+{
+    int n,m;
+    while(2 == scanf("%d%d",&n,&m))
+    {
+        if(n == 0 && m == 0)
+            break;
+        for(int i = 1;i<=n;i++)
+            scanf("%d",V+i);
+        for(int i = 1;i<=n;i++)
+            scanf("%d",C+i);
+        memset(dp,-1,sizeof(dp));
+        dp[0] = 0;
+        for(int i = 1;i<=n;i++)
+        {
+            for(int j = 0;j<=m;j++)
+            {
+                if(dp[j] >=0)
+                    dp[j] = C[i];
+                else
+                    dp[j] = -1;
+            }
+            for(int j = 0;j<=m-V[i];j++)
+            {
+                if(dp[j]>0)
+                dp[j+V[i]] = MAX(dp[j+V[i]],dp[j]-1);
+            }
+        }
+        int ans = 0;
+        for(int i = 1;i<=m;i++)
+            if(dp[i]>=0)
+            ans++;
+        printf("%d\n",ans);
+    }
+}

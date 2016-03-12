@@ -1,0 +1,73 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //这题如何转化成强连通的呢。。
+#include <cstdio>   //首先是a(i,j) 表示i到j的方法数。。显然矩阵乘就有定义了。。
+#include <cstring>   //因为这个矩阵一定保证有自环。。所以如果强连通的话。那么一定存在一个足够大的k使得a(i,x)都不为0，因为可以靠自环消耗多余的次数
+#include <algorithm> //然后其他的点就可以靠这个点为中转点来联通。。当然也可以靠这个自环来消耗多余的次数。。
+#include <queue>     //如果不连通显然no。。因为不连通的点不管怎么乘还是0.。。
+#include <stack>     //怎么说呢。。出题质量真是高啊。。
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 500000000
+#define maxn 10100
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int puzzle[2010][2010];
+int n;
+int low[2010] , dfn[2010] , scc , tot;
+int st[20000] , top , instack[2010];
+void tarjan(int u){
+    dfn[u] = low[u] = ++tot;
+    instack[u] = true;
+    st[top++] = u;
+    for(int v = 1;v<=n;v++){
+        if(!puzzle[u][v]) continue;
+        if(dfn[v] == -1){
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]){
+            low[u] = MIN(low[u] , dfn[v]);
+        }
+    }
+    if(dfn[u] == low[u]){
+        scc++;
+        while(true){
+            int j = st[--top];
+            instack[j] = false;
+            if(j == u)break;
+        }
+    }
+}
+void solve(void){
+    FOR(i,1,n)FOR(j,1,n) scanf("%d",puzzle[i] + j);
+    scc = tot = top = 0; rst(dfn,-1); rst(instack,false);
+    FOR(i,1,n){
+        if(dfn[i] == -1)tarjan(i);
+    }
+    if(scc == 1) printf("YES\n");
+    else printf("NO\n");
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

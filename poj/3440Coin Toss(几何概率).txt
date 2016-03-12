@@ -1,0 +1,85 @@
+#include<cstdio>   //不解释。。直接算面积。。。方法如下。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const double Pi=2.0*asin(1.0);
+double m,n,len,d,s;
+double s1,s2,s3,s4;
+double a1(void)
+{
+    s1=0.0;
+    if(1.0==m && 1.0==n)
+    {
+        s1=len*len;
+        return s1;
+    }
+    if(1.0==m || 1.0==n)
+    {
+        double a=MAX(m,n);
+        s1=2.0*len*(len-d/2.0)+(a-2.0)*len*(len-d);
+    }
+    else
+    {
+        s1=4.0*(len-d/2.0)*(len-d/2.0)+(m-2.0)*(n-2.0)*(len-d)*(len-d)+2.0*(m-2.0)*(len-d/2.0)*(len-d)+2.0*(n-2.0)*(len-d/2.0)*(len-d);
+    }
+    return s1;
+}
+double a2(void)
+{
+    s2=s-s1-s3-s4;
+    return s2;
+}
+double a3(void)
+{
+    s3=0.0;
+    s3=(m-1.0)*(n-1.0)*d*d-(m-1.0)*(n-1.0)*Pi*d*d/4.0;
+    return s3;
+}
+double a4(void)
+{
+    s4=0.0;
+    s4=(m-1.0)*(n-1.0)*Pi*d*d/4.0;
+    return s4;
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    int iCase=1;
+    for(;iCase<=casenum;iCase++)
+    {
+        scanf("%lf%lf%lf%lf",&m,&n,&len,&d);
+        s=m*n*len*len;
+        double p1=a1()/s*100.0;
+        double p3=a3()/s*100.0;
+        double p4=a4()/s*100.0;
+        double p2=a2()/s*100.0;
+        printf("Case %d:\n",iCase);
+        printf("Probability of covering 1 tile  = %.4lf%%\n",p1);
+        printf("Probability of covering 2 tiles = %.4lf%%\n",p2);
+        printf("Probability of covering 3 tiles = %.4lf%%\n",p3);
+        printf("Probability of covering 4 tiles = %.4lf%%\n",p4);
+        printf("\n");
+    }
+}
+这道题需要分别算出覆盖1,2,3,4个格子的对应的面积,从而算出对应的的概率.
+ __________________
+|e     |_b|b_|      |
+|___ __|d_|d_|      |
+|b__|c_|a_|a_|______|
+|b__|c_|a_|a_|      |
+|         |         |
+| _______ |_________|
+如下图:
+圆心在b,c,d区可以覆盖两个格子,圆心在e区可以覆盖一个格子,圆心在a区可以覆盖3或4个格子,其中在以中心点为圆心,半径为C/2的圆内部的区域可以覆盖4个格子,剩下的可以覆盖3个格子.

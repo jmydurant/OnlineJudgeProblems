@@ -1,0 +1,70 @@
+#include<cstdio>     // 这道题目目的不是求最短路。。而是判断负环。。本来spfa也可以的。。但是老是WA。。我次奥。。我已经集齐7个WA了。。。神龙呢。。
+#include<cstring>    //bellman ford算法就不说了。。不算难。。就是不断松弛就可以了。。然后松弛了N次后再看能不能松弛。。如果能。。那么就存在负环。。
+#include<algorithm>
+#include<deque>
+#include<climits>
+#include<queue>
+#define INF 200000000
+using namespace std;
+struct abc
+{
+    int x,y,len;
+}road[6000];
+int N,sum;
+bool BellmanFord(void)
+{
+    int d[6000];
+    for(int i=0;i<=N;i++)d[i]=INF;
+    d[1]=0;
+    for(int i=1;i<=N;i++)
+    {
+        for(int j=1;j<=sum;j++)
+        {
+            if(d[road[j].y]>d[road[j].x]+road[j].len)
+            {
+                d[road[j].y]=d[road[j].x]+road[j].len;
+            }
+        }
+    }
+    for(int j=1;j<=sum;j++)
+    {
+        if(d[road[j].y]>d[road[j].x]+road[j].len)
+            return true;
+    }
+    return false;
+}
+int main(void)
+{
+    int casenum;
+    while(1==scanf("%d",&casenum))
+{
+    while(casenum--)
+    {
+        int P,Q;
+        scanf("%d%d%d",&N,&P,&Q);
+        sum=0;
+        for(int i=1;i<=P;i++)
+        {
+            int x,y,z;
+            scanf("%d%d%d",&x,&y,&z);
+            road[++sum].x=x;
+            road[sum].y=y;
+            road[sum].len=z;
+            road[++sum].x=y;
+            road[sum].y=x;
+            road[sum].len=z;
+        }
+        for(int i=1;i<=Q;i++)
+        {
+            int x,y,z;
+            scanf("%d%d%d",&x,&y,&z);
+            road[++sum].x=x;
+            road[sum].y=y;
+            road[sum].len=-z;
+        }
+        bool ok=BellmanFord();
+        if(ok)printf("YES\n");
+        else printf("NO\n");
+    }
+}
+}

@@ -1,0 +1,146 @@
+#include <iostream>  //开始学习LCT
+#include <cstdio>       //居然是因为EOF的原因ole..我了个大槽！！
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 500100
+#define INF 100001000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+struct LCT
+{
+    int fa[maxn],son[maxn][2];
+    int bef[maxn];
+    void INIT(void)
+    {
+        rst(fa,0);
+        rst(son,0);
+    }
+    void rolate(int x,int kind)         //旋转 0为左旋1为右旋
+    {
+        int y = fa[x];
+        int z = fa[y];
+        son[y][!kind] = son[x][kind];
+        fa[son[x][kind]] = y;
+        son[x][kind] = y;
+        fa[x] = z;
+        son[z][son[z][1] == y] = x;
+        fa[y] = x;
+    }
+    void splay(int x)
+    {
+        int root = x;
+        while(fa[root]) root = fa[root];
+        if(root != x)
+        {
+            bef[x] = bef[root];
+            bef[root] = 0;
+            while(fa[x])
+            {
+                if(son[fa[x]][0] == x)
+                    rolate(x,1);
+                else
+                    rolate(x,0);
+            }
+        }
+    }
+    void access(int x)
+    {
+        int last = 0;
+        while(x)
+        {
+            splay(x);
+            fa[son[x][1]] = 0;
+            bef[son[x][1]] = x;
+            son[x][1] = last;
+            bef[last] = 0;
+            fa[last] = x;
+            last = x;
+            x = bef[x];
+        }
+    }
+    void cut(int x)
+    {
+        access(x);
+        splay(x);
+        fa[son[x][0]] = 0;
+        bef[son[x][0]] = bef[x];
+        bef[x] = 0;
+        son[x][0] = 0;
+    }
+    void join(int x,int y)         //让x成为y的下属
+    {
+        if(y == 0)
+        {
+            cut(x);
+            return;
+        }
+        access(y);
+        splay(y);
+        int temp = x;
+        while(fa[temp]) temp = fa[temp];
+        if(temp != y)
+        {
+            cut(x);
+            bef[x] = y;
+        }
+    }
+    int req(int x)
+    {
+        access(x);
+        splay(x);
+        while(son[x][0]) x = son[x][0];
+        return x;
+    }
+}cry;
+
+
+int main(void)
+{
+    int n;
+    bool flag = true;
+    while(EOF != scanf("%d",&n))
+    {
+        if (flag)
+             flag = false;
+        else
+             putchar('\n');
+        cry.INIT();
+        FOR(i,1,n)
+        scanf("%d",&cry.bef[i]);
+        int Q; scanf("%d",&Q);
+        while(Q--)
+        {
+            char op[10];
+            scanf("%s",op);
+            if(op[0] == 'Q')
+            {
+                int a;
+                scanf("%d",&a);
+                printf("%d\n",cry.req(a));
+            }
+            else
+            {
+                int a,b; scanf("%d%d",&a,&b);
+                cry.join(a,b);
+            }
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,94 @@
+#include<cstdio>    //每个区间维护这个一段的最大长度。。每次改变的时候也进行维护。。。因为点的个数过多。。所以。果断离散化。。感觉这种题很好。。
+#include<cstring>   //如果没有结题报告还能做出来就令人欣慰了。。不过也说明。。还得继续努力。。最近刷题状态非常好。。
+#include<algorithm> //或许能早一天变强。。至少不会拖qw4990的后腿。。。
+#include<deque>     //关键是algorithm函数学到了不少东西。。也算是意外收获吧。。。
+#include<climits>
+#include<queue>
+#define INF 200000000
+using namespace std;
+inline int MAX(int a,int b){return a>b?a:b;}
+int s[100010],t[100010];
+int N;
+struct Node
+{
+    int left,right,mid;
+    int len;
+}tree[400000];
+void build_tree(int x,int y,int num)
+{
+    tree[num].left=x;
+    tree[num].right=y;
+    tree[num].mid=(x+y)>>1;
+    tree[num].len=0;
+    if(x==y)return;
+    int middle=tree[num].mid;
+    build_tree(x,middle,num<<1);
+    build_tree(middle+1,y,num<<1|1);
+}
+void change_tree(int loc,int v,int num)
+{
+    if(tree[num].left==tree[num].right)
+    {
+        tree[num].len=MAX(tree[num].len,v);
+        return;
+    }
+    int middle=tree[num].mid;
+    if(loc<=middle)change_tree(loc,v,num<<1);
+    else change_tree(loc,v,num<<1|1);
+    tree[num].len=MAX(tree[num<<1].len,tree[num<<1|1].len);
+}
+int req_tree(int x,int y,int num)
+{
+    if(tree[num].left==x&&tree[num].right==y)return tree[num].len;
+    int middle=tree[num].mid;
+    if(y<=middle)return req_tree(x,y,num<<1);
+    else if(x>middle)return req_tree(x,y,num<<1|1);
+    else return MAX(req_tree(x,middle,num<<1),req_tree(middle+1,y,num<<1|1));
+}
+int lisan(int x)
+{
+    int l=0,r=N-1;
+    int middle=(l+r)>>1;
+    while(l<=r)
+    {
+        middle=(l+r)>>1;
+        if(x>t[middle])l=middle+1;
+        else if(x<t[middle])r=middle-1;
+        else break;
+    }
+    return middle+1;
+}
+int main(void)
+{
+    int m,HP;
+    while(2==scanf("%d%d",&m,&HP))
+    {
+        for(int i=0;i<m;i++)
+        {
+            scanf("%d",s+i);
+            t[i]=s[i];
+        }
+        sort(t,t+m);
+        N=unique(t,t+m)-t;
+        build_tree(1,N,1);
+        int result=0;
+        for(int i=0;i<m;i++)
+        {
+            int tt=lisan(s[i]);
+            int x=lower_bound(t,t+m,s[i]-HP)-t;
+            int y=upper_bound(t,t+m,s[i]+HP)-t-1;
+            int l=lisan(t[x]);
+            int r=lisan(t[y]);
+            int tmpt=req_tree(l,r,1)+1;
+            result=MAX(result,tmpt);
+            change_tree(tt,tmpt,1);
+           // printf("%d\n",result);
+        }
+        printf("%d\n",result);
+    }
+}
+
+
+
+
+

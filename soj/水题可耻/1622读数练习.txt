@@ -1,0 +1,14 @@
+#include<stdio.h>
+
+
+int main(void)
+{   /*对不起党，我又做水题了*/
+    int a;
+    int sum=0;
+    while(scanf("%d", &a) == 1)
+    {
+        sum+=a;
+    }
+    printf("%d",sum);
+    return 0;
+}

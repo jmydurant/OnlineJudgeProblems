@@ -1,0 +1,33 @@
+#include<iostream>     //这次不是练习DP的。。其实是练习lower_bound函数的。。很好用的说。。。
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#include<climits>
+#define INF 0x7f7f7f7f
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+using namespace std;
+int g[1000100];
+int dp[1000100];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        memset(g,INF,sizeof(g));
+        for(int i=0;i<N;i++)
+        {
+            int k;scanf("%d",&k);
+            int j=lower_bound(g,g+N,k)-g;
+            dp[i]=j+1;
+            g[j]=k;
+        }
+        int result=-1;
+        for(int i=0;i<N;i++)
+        {
+            if(result<dp[i])result=dp[i];
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

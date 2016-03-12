@@ -1,0 +1,82 @@
+#include <cstdio>     //水题。。两个球如果相交就距离为0  否则为 d - r1 - r2 然后prim计算之。。
+#include <cstring>
+#include <cmath>
+#define INF 10000000
+#define mod 1000000007LL
+using namespace std;
+
+struct node
+{
+    double x,y,z;
+    double r;
+}ball[110];
+double dis(int i,int j)
+{
+    double x = ball[i].x - ball[j].x;
+    double y = ball[i].y - ball[j].y;
+    double z = ball[i].z - ball[j].z;
+    return sqrt(x*x+y*y+z*z);
+}
+double realdis(int i ,int j)
+{
+    double d = dis(i,j);
+    if(d - ball[i].r - ball[j].r >0.0)
+        return d - ball[i].r - ball[j].r;
+    else
+        return 0.0;
+}
+double path[110];
+double puzzle[110][110];
+bool visit[110];
+int n;
+double prim(void)
+{
+    double ans = 0.0;
+    int start = 1;
+    visit[start] = true;
+    for(int step = 1;step<n;step++)
+    {
+        int temp; double minr = INF;
+        for(int i = 1;i<=n;i++)
+        {
+            if((!visit[i]) && minr>path[i])
+            {
+                temp = i;
+                minr = path[i];
+            }
+        }
+        ans += minr;
+        start = temp;
+        visit[start] = true;
+        for(int i = 1;i<=n;i++)
+        {
+            if((!visit[i]) && path[i]>puzzle[start][i])
+                path[i] = puzzle[start][i];
+        }
+    }
+    return ans;
+}
+int main(void)
+{
+    while(EOF!=scanf("%d",&n) && n)
+    {
+        for(int i = 1;i<=n;i++)
+            scanf("%lf%lf%lf%lf",&ball[i].x,&ball[i].y,&ball[i].z,&ball[i].r);
+        for(int i = 1;i<=n;i++)
+            for(int j = i+1;j<=n;j++)
+            puzzle[i][j] = puzzle[j][i] = realdis(i,j);
+        for(int i = 2;i<=n;i++)
+            path[i] = puzzle[1][i];
+        memset(visit,false,sizeof(visit));
+        double ans = prim();
+        printf("%.3lf\n",ans);
+    }
+}
+
+
+
+
+
+
+
+

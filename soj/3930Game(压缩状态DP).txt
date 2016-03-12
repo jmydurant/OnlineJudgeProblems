@@ -1,0 +1,66 @@
+#include<cstdio>    //做了这题之后。。我对压缩状态DP有了更好的理解。。。
+#include<cstring>   //dp【i】【j】是i状态的以j串开头的最大值。。。字母接龙说的好玄乎啊。。。
+#include<climits>
+#include<algorithm>
+#include<stack>
+#define INF 0x7f7f7f7f
+using namespace std;
+int dp[1<<16][16];
+bool link[16][16];
+char str[16][110];
+int len[16];
+inline int MAX(int a,int b){return a>b?a:b;}
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        memset(link,false,sizeof(link));
+        memset(dp,-1,sizeof(dp));
+        int N;scanf("%d",&N);
+        getchar();
+        for(int i=0;i<N;i++)
+        {
+            gets(str[i]);
+            len[i]=strlen(str[i]);
+        }
+        //for(int i=0;i<N;i++)puts(str[i]);
+        for(int i=0;i<N;i++)
+        {
+            for(int j=0;j<N;j++)
+            {
+                if(i!=j)
+                {
+                    if(str[i][0]==str[j][len[j]-1])link[i][j]=true;
+                }
+            }
+        }
+        for(int i=0;i<N;i++)dp[1<<i][i]=len[i];
+        for(int i=0;i<(1<<N);i++)
+        {
+            for(int j=0;j<N;j++)
+            {
+                if(dp[i][j]!=-1)
+                {
+                    for(int k=0;k<N;k++)
+                    {
+                        if(link[j][k]&&(!(i&(1<<k))))
+                        {
+                            dp[i|(1<<k)][k]=MAX(dp[i|(1<<k)][k],dp[i][j]+len[k]);
+                        }
+                    }
+                }
+            }
+        }
+        int ans=-1;
+        for(int i=0;i<(1<<N);i++)
+        {
+            for(int j=0;j<N;j++)
+            {
+                if(ans<dp[i][j])ans=dp[i][j];
+            }
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

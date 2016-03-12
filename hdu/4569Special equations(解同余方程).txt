@@ -1,0 +1,73 @@
+#include <cstdio>          //方法妙不可言。。详见初等数论及其应用p123...考虑f(x) == 0 (mod p)的解必然在[0,p-1]区间内。。然后找到他设为m则对于f(x) == 0(modp*p)
+#include <cstring>         //的解显然都是原式的解..设x = pt+m 然后带人方程f(pt+m)解出t然后答案就是pt+m...
+#include <algorithm>
+using namespace std;
+typedef long long LL;
+LL p;
+LL a[5];
+int iCase;
+LL power(LL x,LL n,LL mod){
+    LL ans = 1;
+    while(n > 0){
+        ans *= x;
+        ans %= mod;
+        n--;
+    }return ans;
+}
+LL f(LL x,LL mod){
+    LL ans = 0;
+    for(LL i = 0;i<=4;i++){
+        ans += a[i]*power(x,i,mod);
+        ans %= mod;
+    }return ans;
+}
+int n;
+void solve(void){
+    scanf("%d",&n);
+    memset(a,0,sizeof(a));
+    for(int i = n;i>=0;i--){
+        scanf("%I64d",a+i);
+    }
+    scanf("%I64d",&p);
+    bool ok = false;
+    LL m;
+    for(LL i = 0;i<p;i++){
+        if(f(i,p) == 0){
+            ok = true;
+            m = i;
+            break;
+        }
+    }
+    LL ans = 0;
+    if(ok){
+        ok = false;
+        LL t = 0;
+        for(LL i = 4;i>0;i--){
+            t += a[i]*i*power(m,i-1,p*p)*p;
+            t %= (p*p);
+        }
+        LL k = f(m,p*p);
+        t /= p; k /= p;
+        for(LL i = 0;i<p;i++){
+            if((i*t+k)%p == 0){
+                ok = true;
+                ans = i*p+m;
+                ans = (ans % (p*p) + (p*p) ) %(p * p);
+                break;
+            }
+        }
+    }
+    printf("Case #%d: ",++iCase);
+    if(ok){
+        printf("%I64d\n",ans);
+    }else{
+        printf("No solution!\n");
+    }
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    iCase = 0;
+    while(casenum--){
+        solve();
+    }
+}

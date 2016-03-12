@@ -1,0 +1,51 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //把两个相邻的块看成一堆石子。。中间隔多少空间就是有多少石子。。然后nim博弈。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 500000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int a[1010] , n;
+void solve(void){
+    scanf("%d",&n);
+    a[0] = 0;
+    FOR(i,1,n) scanf("%d",a+i);
+    sort(a,a+n+1);
+    int ans = 0;
+    FORD(i,n,1){
+        ans ^= (a[i] - a[i-1] - 1);
+        i--;
+    }
+    if(ans)printf("Georgia will win\n");
+    else printf("Bob will win\n");
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

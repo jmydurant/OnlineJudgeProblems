@@ -1,0 +1,55 @@
+#include<cstdio>
+#include<iostream>    //一道非常裸的并查集。。。基本功罢了。。可以先把组给设成元素。。然后让组员和组进行合并。。。
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<cstdlib>
+#include<queue>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+int fa[30510];
+inline int fa_find(int x)
+{
+    if(fa[x]==x)return x;
+    else
+    {
+        fa[x]=fa_find(fa[x]);
+    }
+    return fa[x];
+}
+inline void fa_union(int x,int y)
+{
+    int fx=fa_find(x),fy=fa_find(y);
+    if(fx!=fy)fa[fx]=fy;
+}
+int main(void)
+{
+    int N,M;
+    while(EOF!=scanf("%d%d",&N,&M)&&(N||M))
+    {
+        for(int i=0;i<N;i++)fa[i]=i;
+        for(int i=30000;i<=35000;i++)fa[i]=i;
+        for(int i=1;i<=M;i++)
+        {
+            int num;scanf("%d",&num);
+            for(int j=1;j<=num;j++)
+            {
+                int tmpt;scanf("%d",&tmpt);
+                fa_union(30000+i,tmpt);
+            }
+        }
+        int ans=1;
+        for(int i=1;i<N;i++)
+        {
+            if(fa_find(0)==fa_find(i))ans++;
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

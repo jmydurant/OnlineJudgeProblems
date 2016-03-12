@@ -1,0 +1,34 @@
+#include <iostream>    //其实有一个很好的性质。。。对于k  那么k<<1  和  k<<1|1 中有且只有一个有偶数个1(二进制表示).。那么这题就。。 
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 10010
+#define INF 100000000
+#define lowbit(x) ((x)&(-(x)))
+using namespace std;
+bool check(int k)
+{
+    int ans = 0;
+    while(k)
+    {
+        ans++;
+        k -= lowbit(k);
+    }
+    return ans&1;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n; scanf("%d",&n);
+        if(check(n))
+            printf("%d\n",n<<1|1);
+        else
+            printf("%d\n",n<<1);
+    }
+    return 0;
+}

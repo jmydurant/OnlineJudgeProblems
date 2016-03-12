@@ -1,0 +1,98 @@
+#include <cstdio>   //记录出度为0的强连通块。。。输出其中的点就可以了。。
+#include <cstring>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 5100
+#define MAXV 100100
+#define INF 100000000
+using namespace std;
+
+struct node
+{
+    int s,t;
+    int nxt1,nxt2;
+}edge[MAXV];
+int headline1[MAXN],headline2[MAXN];
+int n,m;
+bool visit[MAXN];
+int tot,floor;
+int order[MAXN],belong[MAXN];
+int out[MAXN];
+void dfs(int u)
+{
+    visit[u] = true;
+    for(int i = headline1[u];i != -1; i = edge[i].nxt1)
+    {
+        int b = edge[i].t;
+        if(!visit[b])
+            dfs(b);
+    }
+    order[++tot] = u;
+}
+
+void ndfs(int u,int k)
+{
+    visit[u] = true;
+    belong[u] = k;
+    for(int i = headline2[u];i != -1; i = edge[i].nxt2)
+    {
+        int a = edge[i].s;
+        if(!visit[a])
+            ndfs(a,k);
+    }
+}
+
+void kosaraju(void)
+{
+    memset(visit,false,sizeof(visit));
+    tot = 0;
+    for(int i = 1;i<=n;i++)
+    {
+        if(!visit[i])
+            dfs(i);
+    }
+    memset(visit,false,sizeof(visit));
+    floor = 0;
+    for(int i = n;i>0;i--)
+    {
+        if(!visit[order[i]])
+            ndfs(order[i],++floor);
+    }
+}
+
+int main(void)
+{
+    while(EOF!=scanf("%d",&n) && n)
+    {
+        scanf("%d",&m);
+        memset(headline1,-1,sizeof(headline1));
+        memset(headline2,-1,sizeof(headline2));
+        for(int i = 1;i<=m;i++)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            edge[i].s = a;
+            edge[i].t = b;
+            edge[i].nxt1 = headline1[a];
+            edge[i].nxt2 = headline2[b];
+            headline1[a] = i;
+            headline2[b] = i;
+        }
+        kosaraju();
+        memset(out,0,sizeof(out));
+        for(int i = 1;i<=m;i++)
+        {
+            int a = edge[i].s;
+            int b = edge[i].t;
+            if(belong[a] != belong[b])
+            {
+                out[belong[a]]++;
+            }
+        }
+        for(int i = 1;i<=n;i++)
+        {
+            if(out[belong[i]] == 0)
+                printf("%d ",i);
+        }
+        printf("\n");
+    }
+    return 0;
+}

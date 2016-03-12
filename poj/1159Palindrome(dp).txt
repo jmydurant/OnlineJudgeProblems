@@ -1,0 +1,53 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //本来方程是dp i , j 即从i到j的最小添加数可以有dp i,j = MIN(dpi+1 j , dp i j+1) + 1;和si == sj两种情况讨论的。。
+#include <cstring>    //但是超空间了。。就把dp变成滚动数组了。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int dp[5010] , n;
+int f[5010];
+char ss[5010];
+void solve(void){
+    scanf("%s",ss);
+    rst(dp,0);
+    rst(f,0);
+    FORD(i,n-1,0){
+        FOR(j,i+1,n-1){
+            dp[j] = MIN(f[j] , dp[j-1]) + 1;
+            if(ss[i] == ss[j]) dp[j] = MIN(dp[j] , f[j-1]);
+        }
+        memcpy(f,dp,sizeof(dp));
+    }printf("%d\n",dp[n-1]);
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

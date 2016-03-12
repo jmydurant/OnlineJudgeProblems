@@ -1,0 +1,77 @@
+#include<cstdio>
+#include<cstring>  // 又是一个以矩阵为模型的dp。。要注意上下界是联通的。。要想打印路径。。那就从反方向dp。。然后什么都不需要记录了。。
+#include<algorithm>
+#include<climits>
+#define INF 1<<15
+using namespace std;
+int MIN(int a,int b,int c)
+{
+    if(a>b)a=b;
+    if(a>c)a=c;
+    return a;
+}
+int bricks[15][105];
+int dp[15][105];
+int main(void)
+{
+    int row,col;
+    while(EOF!=scanf("%d%d",&row,&col))
+    {
+        int result=INT_MAX;
+        int biaohao;
+        int now;
+        for(int i=1;i<=row;i++)
+        {
+            for(int j=1;j<=col;j++)
+            {
+                scanf("%d",&bricks[i][j]);
+            }
+        }
+        for(int i=1;i<=row;i++){dp[i][col]=bricks[i][col];}
+        dp[0][col]=bricks[row][col];dp[row+1][col]=bricks[1][col];
+        for(int j=col-1;j>=1;j--)
+        {
+            for(int i=1;i<=row;i++)
+            {
+                dp[i][j]=MIN(dp[i-1][j+1],dp[i][j+1],dp[i+1][j+1])+bricks[i][j];
+            }
+            dp[0][j]=dp[row][j];dp[row+1][j]=dp[1][j];
+        }
+        for(int i=1;i<=row;i++){if(result>dp[i][1]){result=dp[i][1];biaohao=i;}}
+        now=result;
+        now-=bricks[biaohao][1];
+        printf("%d%c",biaohao,1%col==0?'\n':' ');
+        for(int j=2;j<=col;j++)
+        {
+            int a=biaohao-1,b=biaohao,c=biaohao+1;
+            if(a<=0&&c>row)
+            {
+                printf("%d%c",biaohao,j%col==0?'\n':' ');
+            }
+            else if(a<=0)
+            {
+                a=row;
+                if(now==dp[b][j])biaohao=b;
+                else if(now==dp[c][j])biaohao=c;
+                else if(now==dp[a][j])biaohao=a;
+            }
+            else if(c>row)
+            {
+                c=1;
+                if(now==dp[c][j])biaohao=c;
+                else if(now==dp[a][j])biaohao=a;
+                else if(now==dp[b][j])biaohao=b;
+            }
+            else
+            {
+                if(now==dp[a][j])biaohao=a;
+                else if(now==dp[b][j])biaohao=b;
+                else if(now==dp[c][j])biaohao=c;
+            }
+            printf("%d%c",biaohao,j%col==0?'\n':' ');
+            now-=bricks[biaohao][j];
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

@@ -1,0 +1,121 @@
+#include<cstring>     //相当好的一道单调队列的经典题目。。。真是考察功底。。改了一个小时才算完成，。。
+#include<algorithm>  //先对每一列维护。。记录每列到某点的最大值最小值。。每列都用单调队列维护。。
+#include<cmath>      //然后在对记录的点横向展开单调队列。。维护的最大值最小值就是这点往上往左部分的最大值最小值。。。
+#include<cstdio>     //然后暴力枚举这些点就ok了。。。deque做确实效率稍微有点低。。不过还好。。。
+#include<climits>
+#include<deque>
+using namespace std;
+typedef pair<int,int> point;
+deque<point> maxn,minn;
+int puzzle[1010][1010];
+int line_max[1010][1010];
+int line_min[1010][1010];
+int row_max[1010][1010];
+int row_min[1010][1010];
+int main(void)
+{
+    int row,col,K;
+    while(EOF!=scanf("%d%d%d",&row,&col,&K))
+    {
+        for(int i=1;i<=row;i++)
+        {
+            for(int j=1;j<=col;j++)
+            {
+                scanf("%d",&puzzle[i][j]);
+            }
+        }
+        for(int j=1;j<=col;j++)
+        {
+            for(int i=1;i<=row;i++)
+            {
+                while(!maxn.empty())
+                {
+                    point tmpt=maxn.back();
+                    if(tmpt.first<=puzzle[i][j])
+                    {
+                        maxn.pop_back();
+                        //printf("pass\n");
+                        continue;
+                    }
+                    break;
+                }
+                maxn.push_back(point(puzzle[i][j],i));
+                if(i-maxn.front().second>=K){maxn.pop_front();}
+                line_max[i][j]=maxn.front().first;
+            }
+            maxn.clear();
+        }
+        for(int j=1;j<=col;j++)
+        {
+            for(int i=1;i<=row;i++)
+            {
+                while(!minn.empty())
+                {
+                    point tmpt=minn.back();
+                    if(tmpt.first>=puzzle[i][j])
+                    {
+                        minn.pop_back();
+                        continue;
+                    }
+                    break;
+                }
+                minn.push_back(point(puzzle[i][j],i));
+                if(i-minn.front().second>=K)minn.pop_front();
+                line_min[i][j]=minn.front().first;
+            }
+            minn.clear();
+        }
+        for(int i=1;i<=row;i++)
+        {
+            for(int j=1;j<=col;j++)
+            {
+                while(!maxn.empty())
+                {
+                    point tmpt=maxn.back();
+                    if(tmpt.first<=line_max[i][j])
+                    {
+                        maxn.pop_back();
+                        continue;
+                    }
+                    break;
+                }
+                maxn.push_back(point(line_max[i][j],j));
+                if(j-maxn.front().second>=K)maxn.pop_front();
+                row_max[i][j]=maxn.front().first;
+            }
+            maxn.clear();
+        }
+        for(int i=1;i<=row;i++)
+        {
+            for(int j=1;j<=col;j++)
+            {
+                while(!minn.empty())
+                {
+                    point tmpt=minn.back();
+                    if(tmpt.first>=line_min[i][j])
+                    {
+                        minn.pop_back();
+                        continue;
+                    }
+                    break;
+                }
+                minn.push_back(point(line_min[i][j],j));
+                if(j-minn.front().second>=K)minn.pop_front();
+                row_min[i][j]=minn.front().first;
+            }
+            minn.clear();
+        }
+        int result=INT_MAX;
+        for(int i=K;i<=row;i++)
+        {
+            for(int j=K;j<=col;j++)
+            {
+                if(result>row_max[i][j]-row_min[i][j])
+                    result=row_max[i][j]-row_min[i][j];
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}
+

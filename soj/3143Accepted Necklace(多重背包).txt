@@ -1,0 +1,50 @@
+#include<cstring>   //他妹的。。其实可以搜索。。但是鉴于我的搜索水平爆烂。。还是乖乖的背包吧。。。
+#include<cstdio>    //注意外面是01背包。。。最里面的循环限制k的次数。。。
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int dp[1011][25];
+int w[25],p[25];
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N,K,HP;
+        memset(dp,0,sizeof(dp));
+        scanf("%d%d",&N,&K);
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d%d",p+i,w+i);
+        }
+        scanf("%d",&HP);
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=HP;j>=w[i];j--)
+            {
+                for(int k=1;k<=K;k++)
+                {
+                    dp[j][k]=MAX(dp[j][k],dp[j-w[i]][k-1]+p[i]);
+                }
+            }
+        }
+        int ans=-1;
+        for(int i=1;i<=HP;i++)
+        {
+            ans=MAX(dp[i][K],ans);
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

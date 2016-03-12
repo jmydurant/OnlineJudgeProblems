@@ -1,0 +1,44 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+using namespace std;                  //保证小矩形正确后。。两个小矩形共边形成的大矩形也就满足关系了。。。
+int rectangle[1010][1010];
+int main(void)
+{
+    int x,y;
+    while(EOF!=scanf("%d%d",&x,&y))
+    {
+        int i,j;
+        int ok=1;
+        for(i=0;i<x;i++)
+        {
+            for(j=0;j<y;j++)
+            {
+                scanf("%d",&rectangle[i][j]);
+            }
+        }
+        for(i=0;i<x-1;i++)
+        {
+            for(j=0;j<y-1;j++)
+            {
+                if(rectangle[i][j]+rectangle[i+1][j+1]>rectangle[i+1][j]+rectangle[i][j+1])
+                {
+                    ok=0;break;
+                }
+            }
+            if(0==ok)
+            {
+                break;
+            }
+        }
+        if(ok)
+        {
+            printf("Yes\n");
+        }
+        else
+        {
+            printf("No\n");
+        }
+    }
+    return 0;
+}

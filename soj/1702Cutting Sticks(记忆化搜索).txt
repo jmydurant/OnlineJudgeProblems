@@ -1,0 +1,129 @@
+#include<cstdio>
+#include<cstring>    //dp[i][j]表示ij两点切点之间的最优切法所用的费用。。
+#include<algorithm>
+#include<climits>   //不管怎么说。。花的时间还是太长了。。。
+#define INF 10000000
+using namespace std;
+int dp[55][55];
+int length;
+int point[55];
+int find_way(int x,int y);
+int MIN(int a,int b){return a<b?a:b;}
+int main(void)
+{
+    while(EOF!=scanf("%d",&length)&&length)
+    {
+        int N;scanf("%d",&N);
+        for(int i=1;i<=N;i++)scanf("%d",point+i);
+        for(int i=0;i<=N+1;i++)
+            for(int j=0;j<=N+1;j++)dp[i][j]=INF;
+        point[0]=0;point[N+1]=length;
+        for(int i=0;i<=N;i++)dp[i][i+1]=0;
+        printf("The minimum cutting is %d.\n",find_way(0,N+1));
+    }
+    return 0;
+}
+int find_way(int x,int y)
+{
+    if(dp[x][y]!=INF)return dp[x][y];
+    for(int i=x+1;i<y;i++)
+    {
+        dp[x][y]=MIN(dp[x][y],find_way(x,i)+find_way(i,y)+point[y]-point[x]);  //状态转移方程。。。
+    }
+    return dp[x][y];
+}
+//另一种。。把函数去掉。。一次一次找太费时间。。直接用循环做。。果断时间省了一半。。
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#define INF 10000000
+using namespace std;
+int dp[55][55];
+int length;
+int point[55];
+int find_way(int x,int y);
+int MIN(int a,int b){return a<b?a:b;}
+int main(void)
+{
+    while(EOF!=scanf("%d",&length)&&length)
+    {
+        int N;scanf("%d",&N);
+        for(int i=1;i<=N;i++)scanf("%d",point+i);
+        for(int i=0;i<=N+1;i++)
+            for(int j=0;j<=N+1;j++)dp[i][j]=INF;
+        point[0]=0;point[N+1]=length;
+        for(int i=0;i<=N;i++)dp[i][i+1]=0;
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=0;j<=N-i;j++)
+            {
+                for(int k=j+1;k<=j+i;k++)
+                {
+                    dp[j][j+i+1]=MIN(dp[j][j+i+1],dp[j][k]+dp[k][j+i+1]+point[j+i+1]-point[j]);
+                }
+            }
+        }
+        printf("The minimum cutting is %d.\n",dp[0][N+1]);
+    }
+    return 0;
+}
+//利用四边形不等式。。再次缩短了时间。。只有120ms了。。。
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#define INF 10000000
+using namespace std;
+int dp[55][55];
+int gx[55][55];
+int length;
+int point[55];
+int find_way(int x,int y);
+int main(void)
+{
+    while(EOF!=scanf("%d",&length)&&length)
+    {
+        int N;scanf("%d",&N);
+        for(int i=1;i<=N;i++)scanf("%d",point+i);
+        for(int i=0;i<=N+1;i++)
+            for(int j=0;j<=N+1;j++)dp[i][j]=INF;
+        for(int i=0;i<=N;i++){gx[i][i+1]=i+1;gx[i][i]=i;}
+        point[0]=0;point[N+1]=length;
+        for(int i=0;i<=N;i++){dp[i][i+1]=0;dp[i][i]=0;}
+        int len=1;
+        for(int i=0;i<=N-len;i++)
+            {
+                int j=i+2;
+                for(int k=gx[i][j-1];k<gx[i+1][j];k++)
+                {
+                   // printf("%d %d %d %d %d\n",i,k,j,dp[i][j],dp[i][k]+dp[k][j]+point[j]-point[i]);
+                    if(dp[i][j]>=dp[i][k]+dp[k][j]+point[j]-point[i])
+                    {
+                        dp[i][j]=dp[i][k]+dp[k][j]+point[j]-point[i];
+                        gx[i][j]=k;
+                        //printf("%d %d %d %d\n",i,k,j,dp[i][j]);
+                    }
+                }
+            }
+        for(len=2;len<=N;len++)
+        {
+            for(int i=0;i<=N-len;i++)
+            {
+                int j=i+len+1;
+                for(int k=gx[i][j-1];k<=gx[i+1][j];k++)
+                {
+                    if(dp[i][j]>=dp[i][k]+dp[k][j]+point[j]-point[i])
+                    {
+                        dp[i][j]=dp[i][k]+dp[k][j]+point[j]-point[i];
+                        gx[i][j]=k;
+                       // printf("%d %d %d %d\n",i,k,j,dp[i][j]);
+                    }
+                }
+            }
+        }
+       // printf("%d %d\n",dp[0][2],dp[2][4]);
+        printf("The minimum cutting is %d.\n",dp[0][N+1]);
+    }
+    return 0;
+}

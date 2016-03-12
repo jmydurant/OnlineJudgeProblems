@@ -1,0 +1,60 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //开一个visit数组判重就可以了。。水。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+bool visit[3030];
+char ss[110];
+void solve(void){
+    bool flag = true;
+    int len = strlen(ss);
+    FOR(i,0,len-3){
+        rst(visit,false);
+        FOR(j,0,len-i-2){
+            int tt = (ss[j] - 'A')*100 + (ss[j+i+1] - 'A');
+            if(visit[tt]){
+                flag = false;
+                break;
+            }
+            visit[tt] = true;
+        }
+        if(!flag)break;
+    }
+    if(flag)printf("%s is surprising.\n",ss);
+    else printf("%s is NOT surprising.\n",ss);
+}
+int main(void){
+    while(~scanf("%s",ss)){
+        if(!strcmp(ss,"*"))break;
+        solve();
+    }return 0;
+}

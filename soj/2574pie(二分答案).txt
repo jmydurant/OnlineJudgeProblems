@@ -1,0 +1,59 @@
+#include<cstdio>   //poj上面的题目保留4位。。这个不保留。。作死啊。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const double Pi=2.0*asin(1.0);
+const double eps=1e-8;
+double R[10010];
+int N,F;
+bool judge(double C)
+{
+    int tot=0;
+    for(int i=1;i<=N;i++)
+    {
+        double S=R[i]*R[i];
+        while(S>=C)
+        {
+            S-=C;
+            tot++;
+        }
+    }
+    if(tot>=F+1)return true;
+    return false;
+}
+int main(void)
+{
+    //printf("%lf\n",Pi);
+    int casenum;  scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&N,&F);
+        double left=0.0,right=0.0;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%lf",R+i);
+            right=MAX(right,R[i]*R[i]);
+        }
+        double mid=(left+right)/2.0;
+        while(right-left>eps)
+        {
+            if(judge(mid))left=mid;
+            else right=mid;
+            mid=(left+right)/2.0;
+        }
+        printf("%lf\n",mid*Pi);
+    }
+    return 0;
+}

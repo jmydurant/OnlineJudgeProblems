@@ -1,0 +1,59 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //慢慢递推就可以了。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 110000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+LL dp[2100][2100];
+int n , k;
+void solve(void){
+    rst(dp,0);
+    FOR(i,1,n)dp[i][1] = 1;
+    FOR(i,1,k-1){
+        FOR(j,1,n){
+            for(int k = 1 ; j*k <= n;k++){
+                dp[j*k][i+1] += dp[j][i];
+                dp[j*k][i+1] %= mod;
+            }
+        }
+    }
+    LL ans = 0;
+    FOR(i,1,n){
+        ans += dp[i][k];
+        ans %= mod;
+    }
+    printf("%I64d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&k)) solve();
+    return 0;
+}

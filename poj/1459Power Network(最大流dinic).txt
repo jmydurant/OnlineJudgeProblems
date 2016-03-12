@@ -1,0 +1,107 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>    //裸的网络流。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 10100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int capable , flow;
+}puzzle[110][110];
+int n , n1,n2,m;
+int op , ed;
+void INIT(void){
+    FOR(i,0,n+3)FOR(j,0,n+3){
+        puzzle[i][j].capable = puzzle[i][j].flow = 0;
+    }
+}
+int dis[110];
+bool bfs(void){
+    queue<int> q;
+    rst(dis,0);
+    dis[op] = 1;
+    q.push(op);
+    while(!q.empty()){
+        int u = q.front(); q.pop();
+        for(int i = 1;i<=n;i++){
+            if( !dis[i] && puzzle[u][i].capable > puzzle[u][i].flow){
+                q.push(i);
+                dis[i] = dis[u] + 1;
+            }
+        }
+        if(u == ed)return true;
+    }return false;
+}
+int dfs(int u , int c){
+    if(u == ed)return c;
+    int temp = c;
+    FOR(v,1,n){
+        if(dis[v] == dis[u] + 1 && c && puzzle[u][v].capable > puzzle[u][v].flow){
+            int tt = dfs(v , MIN(temp , puzzle[u][v].capable - puzzle[u][v].flow));
+            puzzle[u][v].flow += tt;
+            puzzle[v][u].flow -= tt;
+            temp -= tt;
+        }
+    }
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op , INF);
+    return maxflow;
+}
+void solve(void){
+    INIT();
+    int a,b,c;
+    char xx,yy,zz;
+    REP(i,m){
+        scanf(" %c%d %c%d %c%d",&xx,&a,&yy,&b,&zz,&c);
+        a++; b++;
+        puzzle[a][b].capable = c;
+    }
+    op = n+2 , ed = n+3;
+    n += 3;
+    REP(i,n1){
+        scanf(" %c %d %c %d",&xx,&a,&yy,&b);
+        a++;
+        puzzle[op][a].capable = b;
+    }
+    REP(i,n2){
+        scanf(" %c %d %c %d",&xx,&a,&yy,&b);
+        a++;
+        puzzle[a][ed].capable = b;
+    }
+    int ans = dinic();
+    printf("%d\n",ans);
+}
+int main(void){
+    while(4 == scanf("%d%d%d%d",&n , &n1 , &n2 ,&m)) solve();
+    return 0;
+}

@@ -1,0 +1,72 @@
+#include <cstdio>     //裸的二分图匹配。。不解释。。。
+#include <cstring>
+#include <cmath>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#define INF 100000000
+#define mod 1000000007LL
+#define MAXN 510
+#define eps  1e-3
+#define abs(x) ((x)>0?(x):(-(x)))
+#define link fasldfjasoif
+using namespace std;
+typedef long long LL;
+bool puzzle[MAXN][MAXN];
+bool visit[MAXN];
+int link[MAXN];
+int n,p;
+bool dfs(int u)
+{
+    for(int i = 1;i<=n;i++)
+    {
+        if(puzzle[u][i] && (!visit[i]))
+        {
+            int j = link[i];
+            visit[i] = true;
+            link[i] = u;
+            if(-1 == j || dfs(j))
+                return true;
+            link[i] = j;
+        }
+    }
+    return false;
+}
+
+int Hungary(void)
+{
+    memset(link,-1,sizeof(link));
+    for(int i = 1;i<=p;i++)
+    {
+        for(int j = 1;j<=n;j++)visit[j] = false;
+        if(!dfs(i))
+            return false;
+    }
+    return true;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&p,&n);
+        memset(puzzle,false,sizeof(puzzle));
+        for(int i = 1;i<=p;i++)
+        {
+            int tot; scanf("%d",&tot);
+            while(tot--)
+            {
+                int k; scanf("%d",&k);
+                puzzle[i][k] = true;
+            }
+        }
+        if(Hungary())
+        {
+            printf("YES\n");
+        }
+        else
+            printf("NO\n");
+    }
+    return 0;
+}

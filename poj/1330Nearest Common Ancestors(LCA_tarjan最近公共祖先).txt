@@ -1,0 +1,126 @@
+#include <stdio.h>   //第一次用tarjan算法来做LCA问题。。好激动。。。咱图论也算稍微入点门道了吧。。。思路见下
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <cmath>
+#include <map>
+#include <string>
+#define INF 100000000
+#define MAXN 51000
+#define eps 1e-10
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+int ancestor[10100];
+int fa[10100];
+int in[10100],r[10100];
+bool visit[10100];
+int N;
+vector<int> tree[10100];
+vector<int> Q[10100];
+void INIT(void)
+{
+    for(int i=1;i<=N;i++)
+    {
+        ancestor[i]=i;
+        fa[i]=i;
+        r[i]=1;
+        in[i]=0;
+        visit[i]=false;
+        tree[i].clear();
+        Q[i].clear();
+    }
+}
+int find_fa(int x)
+{
+    if(fa[x]==x)
+        return x;
+    else
+    {
+        fa[x]=find_fa(fa[x]);
+        return fa[x];
+    }
+}
+void union_fa(int x,int y)
+{
+    int a=find_fa(x);
+    int b=find_fa(y);
+    if(a==b)
+        return ;
+    if(r[a]<=r[b])
+    {
+        fa[a]=b;
+        r[b]+=r[a];
+    }
+    else
+    {
+        fa[b]=a;
+        r[a]+=r[b];
+    }
+}
+void tarjan(int u)
+{
+    ancestor[u]=u;
+    int n=tree[u].size();
+    for(int i=0;i<n;i++)
+    {
+        tarjan(tree[u][i]);
+        union_fa(u,tree[u][i]);
+        ancestor[find_fa(u)]=u;
+    }
+    visit[u]=true;
+    n=Q[u].size();
+    for(int i=0;i<n;i++)
+    {
+        if(visit[Q[u][i]])
+        {
+            printf("%d\n",ancestor[find_fa(Q[u][i])]);
+            return ;
+        }
+    }
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d",&N);
+        INIT();
+        int x,y;
+        for(int i=1;i<N;i++)
+        {
+            scanf("%d%d",&x,&y);
+            in[y]++;
+            tree[x].push_back(y);
+        }
+        scanf("%d%d",&x,&y);
+        Q[x].push_back(y);
+        Q[y].push_back(x);
+        for(int i=1;i<=N;i++)
+        {
+            if(0==in[i])
+            {
+                tarjan(i);
+                break;
+            }
+        }
+    }
+    return 0;
+}
+1,并查集+dfs 
+对整个树进行深度优先遍历，并在遍历的过程中不断地把一些目前可能查询到的并且结果相同的节点用并查集合并. 
+
+2,分类，使每个结点都落到某个类中，到时候只要执行集合查询，就可以知道结点的LCA了。 
+对于一个结点u.类别有: 
+以u为根的子树、除类一以外的以f(u)为根的子树、除前两类以外的以f(f(u))为根的子树、除前三类以外的以f(f(f(u)))为根的子树…… 
+
+类一的LCA为u,类二为f(u),类三为f(f(u)),类四为f(f(f(u)))。这样的分类看起来好像并不困难。 
+但关键是查询是二维的，并没有一个确定的u。接下来就是这个算法的巧妙之处了。 
+利用递归的LCA过程。 
+当lca(u)执行完毕后，以u为根的子树已经全部并为了一个集合。而一个lca的内部实际上做了的事就是对其子结点，依此调用lca. 
+当v1(第一个子结点)被lca，正在处理v2的时候，以v1为根的子树＋u同在一个集合里，f(u)+编号比u小的u的兄弟的子树　同在一个集合里，f(f(u))　+　编号比f(u)小的　f(u)的兄弟　的子树　同在一个集合里……　 
+而这些集合，对于v2的LCA都是不同的。因此只要查询x在哪一个集合里，就能知道LCA(v2,x) 
+
+还有一种可能，x不在任何集合里。当他是v2的儿子，v3,v4等子树或编号比ｕ大的ｕ的兄弟的子树（等等）时，就会发生这种情况。即还没有被处理。还没有处理过的怎么办？把一个查询(x1,x2)往查询列表里添加两次，一次添加到x1的列表里，一次添加到x2的列表里，如果在做x1的时候发现 x2已经被处理了，那就接受这个询问。（两次中必定只有一次询问被接受）. 

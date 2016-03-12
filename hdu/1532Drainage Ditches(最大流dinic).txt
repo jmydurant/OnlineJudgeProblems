@@ -1,0 +1,100 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //入门2b题目。。现在随意水。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 500000000
+#define maxn 210
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int m,n,op,ed;
+struct node{
+    int t,nxt,r;
+}edge[maxn << 2];
+int headline[maxn] , E;
+inline void add(int f,int t,int r){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].r = r;
+    headline[f] = E++;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].r = 0;
+    headline[t] = E++;
+}
+int dis[maxn] , q[maxn << 4] , head,tail;
+bool bfs(void){
+    FOR(i,op,ed) dis[i] = 0;
+    head = 0 , tail = 1;
+    q[head] = op; dis[op] = 1;
+    while(head < tail){
+        int u = q[head]; head++;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(!dis[v] && edge[i].r > 0){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+                if(v == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed || (!c))return c;
+    int temp = c;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(dis[v] == dis[u] + 1 && temp && edge[i].r > 0){
+            int tt = dfs(v , MIN(edge[i].r , temp));
+            edge[i].r -= tt;
+            edge[i ^ 1].r += tt;
+            temp -= tt;
+            if(!temp)break;
+        }
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op , INF);
+    return maxflow;
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    op = 1 , ed = n;
+    REP(i,m){
+        int a,b,r; scanf("%d%d%d",&a,&b,&r);
+        add(a,b,r);
+    }
+    printf("%d\n",dinic());
+}
+int main(void){
+    while(2 == scanf("%d%d",&m,&n)) solve();
+    return 0;
+}

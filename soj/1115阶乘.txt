@@ -1,0 +1,38 @@
+#include<stdio.h>
+#include<string.h>
+int main(void)
+{
+    int casenum;
+    int digit;
+    scanf("%d",&casenum);
+    for(;casenum>0;casenum--)
+    {
+        int N,K;
+        int i;
+        int result;
+        int j;
+
+        digit=1;
+        scanf("%d%d",&N,&K);
+        for(i=N;i>=1;i--)
+        {
+            digit*=i;
+            while(0==(digit%10))
+            {
+                digit/=10;
+            }
+            while(digit>100000000)
+            {
+                digit%=100000000;
+            }
+        }
+
+        for(j=1;j<K;j++)
+        {
+            digit/=10;
+        }
+        result=(digit%10);
+       printf("%d\n",result);
+    }
+    return 0;
+}

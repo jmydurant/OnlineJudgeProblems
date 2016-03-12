@@ -1,0 +1,86 @@
+#include<cstdio>     //今天soj挂掉了。。。所以在poj上搞完之后再无耻的粘到soj上面。。。其实实现起来并不难。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+struct trie
+{
+    bool term;
+    trie * son[11];
+}tree[1000000];
+struct abc
+{
+    char num[15];
+    int len;
+    bool operator < (const abc & tmpt) const
+    {
+        return len<tmpt.len;
+    }
+}phone[10100];
+int jishu;
+trie * new_tree(void)
+{
+    trie * tmpt = &tree[++jishu];
+    tmpt->term=false;
+    for(int i=0;i<11;i++)tmpt->son[i]=NULL;
+    return tmpt;
+}
+bool insert_tree(trie * root,abc tele)
+{
+    int len=strlen(tele.num);
+    trie * tmpt= root;
+    for(int i=0;i<len;i++)
+    {
+        int k=tele.num[i]-'0';
+        if(tmpt->son[k]==NULL)
+        {
+            tmpt->son[k]= new_tree();
+            tmpt=tmpt->son[k];
+        }
+        else
+        {
+            tmpt=tmpt->son[k];
+            if(true==tmpt->term)return false;
+        }
+    }
+    tmpt->term=true;
+    return true;
+}
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;scanf("%d",&N);
+        getchar();
+        jishu=0;
+        for(int i=1;i<=N;i++)
+        {
+            gets(phone[i].num);
+            phone[i].len=strlen(phone[i].num);
+        }
+        sort(phone+1,phone+N+1);
+        int flag=true;
+        tree[0].term=0;
+        for(int i=0;i<11;i++)tree[0].son[i]=NULL;
+        for(int i=1;i<=N;i++)
+        {
+            flag=insert_tree(tree,phone[i]);
+            if(!flag)
+            {
+                break;
+            }
+        }
+        if(flag)printf("YES\n");
+        else printf("NO\n");
+    }
+    return 0;
+}

@@ -1,0 +1,32 @@
+#include<cstdio>       //这个是对next数组的一次利用。。。我现在已经对求next数组比较熟悉了。。其实就是利用前面已经求得的推现在的。。效率还不错。。
+#include<cstring>
+using namespace std;
+char word[400100];
+int P[400100];
+void output(int n);
+int main(void)
+{
+    while(EOF!=scanf("%s",word))
+    {
+        int len=strlen(word);
+        int j=-1;
+        P[0]=-1;
+        for(int i=0;i<len;)
+        {
+            while(j>-1 && word[j]!=word[i])j=P[j];
+            j++;i++;
+            P[i]=j;
+        }
+        output(len);
+        printf("%d\n",len);
+    }
+   return 0;
+}
+void output(int n)
+{
+    if(P[n]>0)
+    {
+        output(P[n]);
+        printf("%d ",P[n]);
+    }
+}

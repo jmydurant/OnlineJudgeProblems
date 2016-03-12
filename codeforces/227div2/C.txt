@@ -1,0 +1,61 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //贪心即可。。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define INF 1400000000
+#define maxn 101100
+#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+using namespace std;
+typedef long long LL;
+int n,len;
+int a[maxn],head[maxn];
+char s[maxn];
+int main(void){
+    while(~scanf("%s",s)){
+        len = strlen(s);
+        n = 0;
+        REP(i,len){
+            if(s[i] == '0'){
+                a[n]++;
+            }else{
+                n++;
+                a[n] = 1;
+                head[n] = s[i] - '0';
+            }
+        }
+        int ans = 1;
+        int last = a[1] , lasthead = head[1];
+        FOR(i,2,n){
+            if((a[i] > last) || (a[i] == last && lasthead < head[i])){
+                ans = 1;
+            }else{
+                ans++;
+            }
+            last += a[i];
+        }
+        printf("%d\n",ans);
+    }return 0;
+}

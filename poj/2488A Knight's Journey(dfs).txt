@@ -1,0 +1,68 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>   //一个纯的dfs。。裸搜即可。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int xx[maxn] , yy[maxn];
+int dx[] = {-1,1,-2,2,-2,2,-1,1};
+int dy[] = {-2,-2,-1,-1,1,1,2,2};
+int puzzle[50][50] , row,col , iCase;
+bool dfs(int sx,int sy,int step){
+    puzzle[sx][sy] = true;
+    xx[step] = sx , yy[step] = sy;
+    if(step == row*col - 1)return true;
+    REP(k,8){
+        int x = sx + dx[k] , y = sy + dy[k];
+        if(x > 0 && x <= row && y > 0 && y <= col && (!puzzle[x][y])){
+            if(dfs(x,y,step+1))return true;
+        }
+    }
+    puzzle[sx][sy] = false;
+    return false;
+}
+void solve(void){
+    scanf("%d%d",&row,&col);
+    rst(puzzle,0);
+    printf("Scenario #%d:\n",++iCase);
+    if(dfs(1,1,0)){
+        REP(i,row*col){
+            printf("%c%d",yy[i]-1+'A',xx[i]);
+        }printf("\n");
+    }else printf("impossible\n");
+    printf("\n");
+}
+int main(void){
+    iCase = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+}

@@ -1,0 +1,48 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int MIN(int x,int y){return x>y?y:x;}
+char trangle[1010][2010];
+int dp[1010][2010];
+int main(void)
+{
+    int N;
+    while(scanf("%d",&N)&&N)           //我一直没看到是倒三角。。。错了6次。。。
+    {                                     //原理很简单。。dp【i】【j】代表（i，j）为顶点的最大三角形大小。。注意三角形方向。。
+        int result=0;
+        getchar();
+        for(int i=1;i<=N;i++)
+        {
+            memset(dp[i],0,sizeof(dp[i]));
+            for(int j=1;j<=2*N-i;j++)
+            {
+                trangle[i][j]=getchar();
+            }
+            getchar();
+        }
+        for(int i=1;i<=2*N-1;i+=2)       //第一行。。
+        {
+            if('X'!=trangle[1][i]){dp[1][i]=1;result=1;}
+        }
+        for(int i=2;i<=N;i++)
+        {
+            for(int j=i;j<=2*N-i;j+=2)
+            {
+                if('X'!=trangle[i][j])
+                {
+                    if('X'!=trangle[i-1][j])
+                    {
+                        dp[i][j]=MIN(dp[i-1][j-1],dp[i-1][j+1])+1;
+                    }
+                    else
+                    {
+                        dp[i][j]=1;
+                    }
+                }
+                if(dp[i][j]>result)result=dp[i][j];
+            }
+        }
+        printf("%d\n",result*result);
+    }
+    return 0;
+}

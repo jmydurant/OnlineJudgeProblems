@@ -1,0 +1,190 @@
+#include<cstdio>   //本来想弄个欧几里得拓展公式的。。狂错。。还是用最简单的方法吧。。解析见下。。老子这种矩阵乘法都做过了。。还怕你这个渣渣！！
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const long long mod=9901LL;
+bool visit[7600];
+long long prime[1000];
+int tot;
+struct abc
+{
+    long long digit;
+    long long sum;
+}p[1000];
+long long p_pow(long long a,long long n)
+{
+    long long ans=1;
+    a%=mod;
+    while(n)
+    {
+        if(n&1)
+        {
+            ans*=a;
+            ans%=mod;
+        }
+        a*=a;
+        a%=mod;
+        n>>=1;
+    }
+    return ans;
+}
+long long sum(long long a,long long n)
+{
+    if(0==n)return 1;
+    if(1==n)return (1+a)%mod;
+    if(2==n)return (1+a+a*a)%mod;
+    long long ans;
+    if(n%2)
+    {
+        long long tmpt1=(sum(a,n/2)%mod);
+        long long tmpt2=(p_pow(a,n/2+1)*tmpt1)%mod;
+        ans=tmpt1+tmpt2;
+        ans%=mod;
+    }
+    else
+    {
+        long long tmpt1=(sum(a,n/2))%mod;
+        long long tmpt2=(p_pow(a,n/2+1)*(sum(a,n/2-1))%mod);
+        ans=tmpt1+tmpt2;
+        ans%=mod;
+    }
+    return ans;
+}
+void IINT(void)
+{
+    memset(visit,false,sizeof(visit));
+    tot=0;
+    for(int i=2;i<=7500;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot]=i;
+            for(int j=i*i;j<=7500;j+=i)visit[j]=true;
+        }
+    }
+    //printf("%d %I64d %I64d\n",tot,prime[5],prime[tot]);
+}
+int main(void)
+{
+    IINT();
+    long long N,K;
+    //printf("%I64d\n",sum(2,3));
+    while(2==scanf("%I64d%I64d",&N,&K))
+    {
+        if(0==N)
+        {
+            printf("%d\n",0);
+            continue;
+        }
+        else if(1==N || 0==K)
+        {
+            printf("%d\n",1);
+            continue;
+        }
+        int cnt=0;
+        for(int i=1;i<=tot && prime[i]*prime[i]<=N;i++)
+        {
+            if(0==N%prime[i])
+            {
+                p[++cnt].digit=prime[i];
+                p[cnt].sum=0;
+                while(0==N%prime[i])
+                {
+                    N/=prime[i];
+                    p[cnt].sum++;
+                }
+            }
+        }
+        if(N>1)
+        {
+            p[++cnt].digit=N;
+            p[cnt].sum=1;
+        }
+        //printf("%d %I64d\n",cnt,p[cnt].sum);
+        long long ans=1;
+        for(int i=1;i<=cnt;i++)
+        {
+            long long tmpt=sum(p[i].digit,K*p[i].sum);
+            tmpt%=mod;
+            ans*=tmpt;
+            ans%=mod;
+        }
+        printf("%I64d\n",ans);
+    }
+    return 0;
+}
+大致题意：
+求A^B的所有约数（即因子）之和，并对其取模 9901再输出。
+ 
+解题思路：
+要求有较强 数学思维 的题
+应用定理主要有三个：
+要求有较强 数学思维 的题
+应用定理主要有三个：
+（1）   整数的唯一分解定理：
+      任意正整数都有且只有一种方式写出其素因子的乘积表达式。
+      A=(p1^k1)*(p2^k2)*(p3^k3)*....*(pn^kn)   其中pi均为素数
+（2）   约数和公式：
+对于已经分解的整数A=(p1^k1)*(p2^k2)*(p3^k3)*....*(pn^kn)
+有A的所有因子之和为
+    S = (1+p1+p1^2+p1^3+...p1^k1) * (1+p2+p2^2+p2^3+….p2^k2) * (1+p3+ p3^3+…+ p3^k3) * .... * (1+pn+pn^2+pn^3+...pn^kn)
+（3）   同余模公式：
+(a+b)%m=(a%m+b%m)%m
+(a*b)%m=(a%m*b%m)%m
+ 
+有了上面的数学基础，那么本题解法就很简单了：
+1: 对A进行素因子分解
+分解A的方法：
+A首先对第一个素数2不断取模，A%2==0时 ，记录2出现的次数+1，A/=2；
+当A%2!=0时，则A对下一个连续素数3不断取模...
+以此类推，直到A==1为止。
+ 
+注意特殊判定，当A本身就是素数时，无法分解，它自己就是其本身的素数分解式。
+ 
+最后得到A = p1^k1 * p2^k2 * p3^k3 *...* pn^kn.
+      故 A^B = p1^(k1*B) * p2^(k2*B) *...* pn^(kn*B);
+
+2：A^B的所有约数之和为：
+     sum = [1+p1+p1^2+...+p1^(a1*B)] * [1+p2+p2^2+...+p2^(a2*B)] *...* [1+pn+pn^2+...+pn^(an*B)].
+
+3: 用递归二分求等比数列1+pi+pi^2+pi^3+...+pi^n：
+（1）若n为奇数,一共有偶数项，则：
+      1 + p + p^2 + p^3 +...+ p^n
+      = (1+p^(n/2+1)) + p * (1+p^(n/2+1)) +...+ p^(n/2) * (1+p^(n/2+1))
+      = (1 + p + p^2 +...+ p^(n/2)) * (1 + p^(n/2+1))
+上式红色加粗的前半部分恰好就是原式的一半，那么只需要不断递归二分求和就可以了，后半部分为幂次式，将在下面第4点讲述计算方法。
+ 
+（2）若n为偶数,一共有奇数项,则:
+      1 + p + p^2 + p^3 +...+ p^n
+      = (1+p^(n/2+1)) + p * (1+p^(n/2+1)) +...+ p^(n/2-1) * (1+p^(n/2+1)) + p^(n/2)
+      = (1 + p + p^2 +...+ p^(n/2-1)) * (1+p^(n/2+1)) + p^(n/2);
+   上式红色加粗的前半部分恰好就是原式的一半，依然递归求解
+ 
+4：反复平方法计算幂次式p^n
+   这是本题关键所在，求n次幂方法的好坏，决定了本题是否TLE。
+   以p=2，n=8为例
+   常规是通过连乘法求幂，即2^8=2*2*2*2*2*2*2*2
+   这样做的要做8次乘法
+ 
+   而反复平方法则不同，
+   定义幂sq=1，再检查n是否大于0，
+While，循环过程若发现n为奇数，则把此时的p值乘到sq
+{
+   n=8>0 ，把p自乘一次， p=p*p=4     ，n取半 n=4
+   n=4>0 ，再把p自乘一次， p=p*p=16   ，n取半 n=2
+n=2>0 ，再把p自乘一次， p=p*p=256  ，n取半 n=1，sq=sq*p
+n=1>0 ，再把p自乘一次， p=p*p=256^2  ，n取半 n=0，弹出循环
+}
+则sq=256就是所求，显然反复平方法只做了3次乘法

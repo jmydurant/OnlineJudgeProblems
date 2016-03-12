@@ -1,0 +1,89 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //区间连续最大值如果是个环形结构可以用最大值和（sum - 最小值）比较之后获得。。
+#include <cstring>    //维护过程就不废话了。。左右端都要维护比较麻烦。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int a[maxn];
+struct node{
+    int lmin[maxn<<2] , rmin[maxn<<2] , lmax[maxn<<2] , rmax[maxn<<2] , ma[maxn<<2] , mi[maxn<<2] , sum[maxn<<2];
+    inline void update(int ind){
+        sum[ind] = sum[lson] + sum[rson];
+        lmin[ind] = MIN(lmin[lson] , sum[lson] + lmin[rson]);
+        rmin[ind] = MIN(rmin[rson] , sum[rson] + rmin[lson]);
+        lmax[ind] = MAX(lmax[lson] , sum[lson] + lmax[rson]);
+        rmax[ind] = MAX(rmax[rson] , sum[rson] + rmax[lson]);
+        mi[ind] = MIN(mi[lson] , mi[rson]);
+        mi[ind] = MIN(mi[ind] , rmin[lson] + lmin[rson]);
+        ma[ind] = MAX(ma[lson] , ma[rson]);
+        ma[ind] = MAX(ma[ind] , rmax[lson] + lmax[rson]);
+    }
+    void init(int l,int r,int ind){
+        if(l == r){
+            lmin[ind] = rmin[ind] = lmax[ind] = rmax[ind] = sum[ind] = mi[ind] = ma[ind] = a[l];
+            return;
+        }
+        int mid = (l+r)>>1;
+        init(l,mid,lson);
+        init(mid+1,r,rson);
+        update(ind);
+    }
+    void change(int l,int r,int ind,int pos,int val){
+        if(l == r){
+            lmin[ind] = rmin[ind] = lmax[ind] = rmax[ind] = sum[ind] = mi[ind] = ma[ind] = val;
+            return;
+        }
+        int mid = (l+r)>>1;
+        if(pos <= mid) change(l,mid,lson,pos,val);
+        else change(mid+1,r,rson,pos,val);
+        update(ind);
+    }
+}sb;
+int n,Q;
+void solve(void){
+    FOR(i,1,n) scanf("%d",a+i);
+    sb.init(1,n,1);
+    scanf("%d",&Q);
+    while(Q--){
+        int x , y; scanf("%d%d",&x,&y);
+        sb.change(1,n,1,x,y);
+        if(sb.ma[1] == sb.sum[1]){
+            printf("%d\n",sb.sum[1] - sb.mi[1]);
+        }else {
+            int aa = sb.ma[1] , bb = sb.sum[1] - sb.mi[1];
+            int ans = MAX(aa,bb);
+            printf("%d\n",ans);
+        }
+    }
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+}

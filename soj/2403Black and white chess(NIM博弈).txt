@@ -1,0 +1,50 @@
+#include <iostream>    //这个题目隐藏的比较深。。可以把两个棋子之间的距离看成是石子数。。每次可以取走一些。。然后就可以了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 51010
+//#define MAXV 101000   
+#define INF 500000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+char puzzle[110][110];
+int main(void)
+{
+    int row,col;
+    while(2 == scanf("%d%d",&row,&col))
+    {
+        for(int i = 0;i<row;i++)
+            scanf("%s",puzzle[i]);
+        int ans = 0;
+        for(int i = 0;i<row;i++)
+        {
+            int s = -1,t;
+            for(int j = 0;j<col;j++)
+            {
+                if(puzzle[i][j] != 'e')
+                {
+                    if(s == -1)
+                    {
+                        s = j;
+                    }
+                    else
+                    {
+                        t = j;
+                    }
+                }
+            }
+            ans ^= (t-s-1);
+        }
+        if(ans == 0)
+            printf("gg wins\n");
+        else
+            printf("mm wins\n");
+    }
+    return 0;
+}

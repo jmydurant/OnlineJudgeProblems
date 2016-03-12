@@ -1,0 +1,30 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    int num;
+    while(EOF!=scanf("%d",&num))
+    {
+        int i;
+        int ok=0;
+        for(i=num/5;i>=0;i--)
+        {
+            if(0==(num-5*i)%3)
+            {
+                printf("%d\n",i+(num-5*i)/3);
+                ok=1;
+                break;
+            }
+        }
+        if(ok)
+        {
+            ;
+        }
+        else
+        {
+            printf("%d\n",-1);
+        }
+    }
+    return 0;
+}

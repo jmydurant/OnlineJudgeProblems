@@ -1,0 +1,34 @@
+#include<cstdio>    //有一点数学思想。。因为目标数是出现一半以上的。。所以现在开始输入数。。如果数字不同则抵消。。最后存活下的数就是目标数。。
+#include<cmath>
+#include<cstring>
+#include<deque>
+using namespace std;
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int i=1,count=1;
+        int num;
+        scanf("%d",&num);
+        while(i<N)
+        {
+            i++;
+            int k;
+            scanf("%d",&k);
+            if(0==count)
+            {
+                num=k;
+            }
+            else
+            {
+                if(num==k)count++;
+                else count--;
+            }
+        }
+        printf("%d\n",num);
+    }
+    return 0;
+}
+
+

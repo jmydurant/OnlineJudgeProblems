@@ -1,0 +1,326 @@
+#include <iostream>   //喜大普奔啊。。。splay树终于过了。。居然比treap慢。。作死的节奏啊。。。
+#include <cstdio>     // 原来写删除节点的时候写错了。。费了半天劲才看出来。。作死啊。。。
+#include <cstring>    //学大牛的一句话 ：‘这题其实不难。。。’
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define maxn 21000
+using namespace std;
+typedef long long LL;
+struct node
+{
+    node *fa;
+    node *l , *r;
+    int key,s;
+    node(int _key,node *_fa)
+    {
+        fa = _fa;
+        l = r = NULL;
+        key = _key;
+        s = 1;
+    }
+    void update(void)
+    {
+        s = 1;
+        if(l != NULL) s += l->s;
+        if(r != NULL) s += r->s;
+    }
+};
+node *root[maxn];
+int w[maxn],fa[maxn],fr[61000],to[61000];
+bool die[61000];
+int n,m,Q;
+LL reqtime,reqvalue;
+struct command
+{
+    char op;
+    int x,k;
+    command(char _op = '\0',int _x = 0,int _k = 0):op(_op),x(_x),k(_k){}
+}cmd[510000];
+int Find(int x)
+{
+    if(fa[x] != x)
+        fa[x] = Find(fa[x]);
+    return fa[x];
+}
+void test(node *x,int kind)
+{
+    if(x == NULL)return;
+    printf("(");
+    test(x->l,kind);
+    if(kind == 1)printf("%d",x->key);
+    else printf("%d",x->s);
+    test(x->r,kind);
+    printf(")");
+}
+
+void ro_r(node *x)  //ZIG
+{
+    node *y = x->fa;
+    y->l = x->r;
+    if(x->r != NULL) x->r->fa = y;
+    x->r = y;
+    x->fa = y->fa;
+    if(y->fa != NULL)
+    {
+        if(y->fa->l == y) y->fa->l = x;
+        else y->fa->r = x;
+    }
+    y->fa = x;
+    y->update();
+    x->update();
+}
+void ro_l(node *x)
+{
+    node *y = x->fa;
+    y->r = x->l;
+    if(x->l != NULL) x->l->fa = y;
+    x->l = y;
+    x->fa = y->fa;
+    if(y->fa != NULL)
+    {
+        if(y->fa->l == y)y->fa->l = x;
+        else y->fa->r = x;
+    }
+    y->fa = x;
+    y->update();
+    x->update();
+}
+void splay(node *x,node* &troot)
+{
+    while(true)
+    {
+        node *fa = x->fa;
+        if(fa == NULL)break;
+        if(fa->fa == NULL)
+        {
+            if(fa->l == x) ro_r(x);
+            else           ro_l(x);
+        }
+        else
+        {
+            node *gfa = fa->fa;
+            if(gfa->l == fa)
+            {
+                if(fa->l == x) ro_r(fa) , ro_r(x);
+                else           ro_l(x)  , ro_r(x);
+            }
+            else
+            {
+                if(fa->l == x) ro_r(x)  , ro_l(x);
+                else           ro_l(fa) , ro_l(x);
+            }
+        }
+    }
+    troot = x;
+}
+
+void Insert(node *x,int key,node* &troot)
+{
+    if(x == NULL)
+    {
+        x = new node(key,NULL);
+        troot = x;
+        return;
+    }
+    while(true)
+    {
+        if(x->key > key)
+        {
+            (x->s)++;
+            if(x->l == NULL)
+            {
+                x->l = new node(key,x);
+                x = x->l;
+                break;
+            }
+            else
+            {
+                x = x->l;
+            }
+        }
+        else
+        {
+            (x->s)++;
+            if(x->r == NULL)
+            {
+                x->r = new node(key,x);
+                x = x->r;
+                break;
+            }
+            else
+            {
+                x = x->r;
+            }
+        }
+    }
+    splay(x,troot);
+}
+
+node* findmax(node *x)
+{
+    while(x->r != NULL)x = x->r;
+    return x;
+}
+
+void Delete(node* x,int key,node* &troot)
+{
+    while(true)
+    {
+        if(x == NULL) return;
+        if(x->key == key)
+        {
+            splay(x,troot);
+            if(x->l != NULL && x->r != NULL)
+            {
+                x->l->fa = NULL;
+                node *lt = findmax(x->l);
+                splay(lt,troot);
+                lt->r = x->r;
+                x->r->fa = lt;
+                lt->update();
+            }
+            else if(x->l != NULL)
+            {
+                troot = x->l;
+                x->l->fa = NULL;
+            }
+            else if(x->r != NULL)
+            {
+                troot = x->r;
+                x->r->fa = NULL;
+            }
+            else
+            {
+                troot = NULL;
+            }
+            delete x;
+            x = NULL;
+            break;
+        }
+        else if(x->key > key) x = x->l;
+        else x = x->r;
+    }
+}
+void Merge(node* &root1,node* &root2)  //把root1的东西全部转移到root2中去
+{
+    if(root1->l != NULL) Merge(root1->l,root2);
+    if(root1->r != NULL) Merge(root1->r,root2);
+    Insert(root2,root1->key,root2);
+    delete root1;
+    root1 = NULL;
+}
+void add(int i)
+{
+    int x = fr[i], y = to[i];
+    int fx = Find(x), fy = Find(y);
+    if(fx != fy)
+    {
+        if(root[fx]->s < root[fy]->s)
+        {
+            fa[fx] = fy;
+            Merge(root[fx],root[fy]);
+        }
+        else
+        {
+            fa[fy] = fx;
+            Merge(root[fy],root[fx]);
+        }
+    }
+}
+
+void changew(int i,int key)
+{
+    int fi = Find(i);
+    Delete(root[fi],w[i],root[fi]);
+    w[i] = key;
+    Insert(root[fi],key,root[fi]);
+}
+
+int FINDK(node *x,int k,node* &troot)
+{
+    if(x == NULL || x->s <k || k<=0) return 0;
+    int rsum = 0;
+    if(x->r != NULL) rsum = x->r->s;
+    if(rsum+1 == k) {splay(x,troot); return x->key;}
+    if(rsum+1 < k) return FINDK(x->l,k-rsum-1,troot);
+    return FINDK(x->r,k,troot);
+}
+
+int main(void)
+{
+    int iCase = 0;
+    while(2 == scanf("%d%d",&n,&m))
+    {
+        if(n == 0 && m == 0) break;
+        Q = 0; reqtime = reqvalue = 0;
+        FOR(i,1,n)
+        {
+            fa[i] = i;
+            scanf("%d",w+i);
+            root[i] = new node(w[i],NULL);
+        }
+        FOR(i,1,m)
+        {
+            die[i] = false;
+            scanf("%d%d",fr+i,to+i);
+        }
+        while(true)
+        {
+            char op; int X,K;
+            scanf(" %c",&op);
+            if(op == 'E') break;
+            if(op == 'D')
+            {
+                scanf("%d",&X);
+                die[X] = true;
+            }
+            else if(op == 'Q')
+            {
+                scanf("%d%d",&X,&K);
+            }
+            else
+            {
+                scanf("%d%d",&X,&K);
+                int temp = K;
+                K = w[X];
+                w[X] = temp;
+                root[X]->key = temp;
+            }
+            cmd[++Q] = command(op,X,K);
+        }
+        FOR(i,1,m)
+        {
+            if(!die[i])
+                add(i);
+        }
+        FORD(i,Q,1)
+        {
+            if(cmd[i].op == 'D')
+                add(cmd[i].x);
+            else if(cmd[i].op == 'Q')
+            {
+                reqtime++;
+                int ttt = Find(cmd[i].x);
+                reqvalue += FINDK(root[ttt],cmd[i].k,root[ttt]);
+            }
+            else
+            {
+                changew(cmd[i].x,cmd[i].k);
+            }
+        }
+        //FOR(i,1,m)test(root[i],1),printf("\n");
+        //FOR(i,1,m)test(root[i],2),printf("\n");
+        printf("Case %d: %.6lf\n",++iCase,(double)reqvalue/reqtime);
+    }
+    return 0;
+}

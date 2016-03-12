@@ -1,0 +1,73 @@
+#include<stdio.h>
+
+int num[52][52];
+void putcase(int n);
+int putnum(int x ,int y,int n);
+int main(void)
+{
+    int length;
+    while(scanf("%d",&length)&&length!=0)              //坐标操控好麻烦。。。还是用递归做的
+    {
+        int i,j;
+        for(i=1;i<=length;i++)
+        {
+            for(j=1;j<=length;j++)
+            {
+                scanf("%d",&num[i][j]);
+            }
+        }
+        putcase(length);
+    }
+    return 0;
+}
+int putnum(int x ,int y ,int n)
+{
+    printf("%d",num[x][y]);
+    if(n==x&&n==y)
+    {
+        printf("\n");
+        return 1;
+    }
+    if((x+y)%2)
+    {
+        if(1==y&&x<n)
+        {
+            printf(" ");
+            putnum(x+1,y,n);
+        }
+        else if(n==x)
+        {
+            printf(" ");
+            putnum(x,y+1,n);
+        }
+        else
+        {
+            printf(" ");
+            putnum(x+1,y-1,n);
+        }
+    }
+    else
+    {
+        if(n==y)
+        {
+            printf(" ");
+            putnum(x+1,y,n);
+        }
+        else if(1==x&&y<n)
+        {
+            printf(" ");
+            putnum(x,y+1,n);
+        }
+        else
+        {
+            printf(" ");
+            putnum(x-1,y+1,n);
+        }
+    }
+    return 0;
+}
+void putcase(int length)
+{
+    putnum(1,1,length);
+
+}

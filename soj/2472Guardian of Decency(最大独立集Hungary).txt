@@ -1,0 +1,79 @@
+#include <cstdio>   //可以转换成二分匹配。。。就是建图稍微麻烦了点。。。
+#include <cstring>
+#include <cmath>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cstring>
+#define INF 100000000
+#define mod 1000000007LL
+#define MAXN 550
+#define eps  1e-3
+#define abs(x) ((x)>0?(x):(-(x)))
+#define link fadsfasdfasf
+using namespace std;
+typedef long long LL;
+
+bool puzzle[MAXN][MAXN];
+bool visit[MAXN];
+int link[MAXN];
+int n;
+int height[MAXN];
+char music[MAXN][110],sport[MAXN][110],sex[MAXN][110];
+bool dfs(int u)
+{
+    for(int i = 1;i<=n;i++)
+    {
+        if(puzzle[u][i] && (!visit[i]) && i!=u)
+        {
+            int j = link[i];
+            visit[i] = true;
+            link[i] = u;
+            if(-1 == j || dfs(j))
+                return true;
+            link[i] = j;
+        }
+    }
+    return false;
+}
+
+int Hungary(void)
+{
+    int ans = 0;
+    memset(link,-1,sizeof(link));
+    for(int i = 1;i<=n;i++)
+    {
+        for(int j = 1;j<=n;j++) visit[j] = false;
+        if(dfs(i))
+            ans++;
+    }
+    return n - ans/2;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d",&n);
+        memset(puzzle,false,sizeof(puzzle));
+        for(int i = 1;i<=n;i++)
+        {
+            scanf("%d%s%s%s",height+i,sex[i],music[i],sport[i]);
+        }
+        for(int i = 1;i<=n;i++)
+        {
+            for(int j = i+1;j<=n;j++)
+            {
+                if(abs(height[i]-height[j])<=40 && 0==strcmp(music[i],music[j]) && 0!=strcmp(sport[i],sport[j]) &&0!=strcmp(sex[i],sex[j]))
+                    puzzle[i][j] = puzzle[j][i] = true;
+            }
+        }
+        int ans = Hungary();
+        printf("%d\n",ans);
+    }
+}
+
+
+
+

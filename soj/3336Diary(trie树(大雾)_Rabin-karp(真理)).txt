@@ -1,0 +1,80 @@
+#include<cstdio>      //我次奥。。。最后还是用map猥琐的过的。。话说这题trie怎么想算法。。。KMP超时。。他大爷的。。
+#include<iostream>    //我觉的这种R_K算法和kmp的复杂度是一样的。。都是MN。。但是kmp就光荣超时了。。我这个还TM的用了搜索。。次奥。。。什么神逻辑。。
+#include<cstring>     //差点忘了说一下自己做的原理了。。。首先把字符串变成26进制。。然后把S母串跟分解用map记录。。然后查找就行了。。作死啊 。。
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<cstdlib>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+char girl_name[100100][15];
+char S[1000010];
+map<long long,int>q;
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);getchar();
+    while(casenum--)
+    {
+       bool flag=true;
+       q.clear();
+       scanf("%s",S);
+       int len=strlen(S);
+       if(len<10)flag=false;
+       long long tmpt=0;
+       long long power=1;
+       for(int i=1;i<10;i++)power*=26;
+       if(flag)
+       {
+           for(int i=0;i<10;i++)
+           {
+               tmpt*=26;
+               tmpt+=(S[i]-'a');
+           }
+           q[tmpt]++;
+           for(int i=10;i<len;i++)
+           {
+               tmpt%=power;
+               tmpt*=26;
+               tmpt+=(S[i]-'a');
+               q[tmpt]++;
+           }
+       }
+       int N;scanf("%d",&N);getchar();
+       int res=-1,biaohao,rep=0;
+       for(int i=1;i<=N;i++)
+       {
+           char cmp[15];
+           scanf("%s",girl_name[i]);
+           scanf("%s",cmp);
+           if(flag)
+           {
+               long long tmpt=0;
+               for(int j=0;j<10;j++)
+               {
+                   tmpt*=26;
+                   tmpt+=(cmp[j]-'a');
+               }
+               int k=q[tmpt];
+               if(k>res)
+               {
+                   res=k;
+                   rep=1;
+                   biaohao=i;
+               }
+               else if(k==res)
+               {
+                   rep++;
+               }
+           }
+       }
+       if(false==flag || rep>1 || res == 0)puts("No-solution!");
+       else puts(girl_name[biaohao]);
+    }
+    return 0;
+}

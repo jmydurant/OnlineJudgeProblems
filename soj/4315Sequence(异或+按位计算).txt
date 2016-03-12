@@ -1,0 +1,45 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>   //由于Ai^......Aj = Sj^Si-1所以可以对这个进行数位统计。。所有产生一的办法就是一的个数乘上零的个数
+#include <climits> //注意。。1可以不用和任何数异或就成为一。。。
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 100
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+int bit[32];
+int n;
+int main(void)
+{
+    while(EOF != scanf("%d",&n))
+    {
+        int sum = 0;
+        rst(bit,0);
+        REP(i,n)
+        {
+            int k; scanf("%d",&k);
+            sum ^= k;
+            FOR(i,0,31)
+            {
+                bit[i] += ((sum>>i)&1);
+            }
+        }
+        LL ans = 0;
+        FOR(i,0,31)
+        {
+            ans += (((long long)bit[i]*(n+1-bit[i]))<<i);
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}

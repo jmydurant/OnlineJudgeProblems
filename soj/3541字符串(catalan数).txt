@@ -1,0 +1,61 @@
+#include <iostream>  //因为没有用求逆元的方法。。慢成狗。。。
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <deque>
+#include <climits>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 2010
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 20100403LL
+#define h(i,j) (i*col+j)
+#define eps 1e-10
+using namespace std;
+typedef long long LL;
+
+LL pow(LL a,LL n)
+{
+    LL ans = 1;
+    while(n)
+    {
+        if(a%2)
+        {
+            ans *= a;
+            ans %= mod;
+        }
+        a *= a;
+        a %= mod;
+        n /= 2;
+    }
+    return ans;
+}
+LL n,m;
+int main(void)
+{
+    while(cin >> n >> m)
+    {
+        LL ans = (n-m+1);
+        for(LL i = n+m;i>n+1;i--)
+            ans *= i,ans %= mod;
+        LL t = 1;
+        for(LL i = 1;i<=m;i++)
+            t *= i, t %= mod;
+        for(LL i = 0;i<=mod-1;i++)
+        {
+            if(ans == (i*t)%mod)
+            {
+                ans = i;break;
+            }
+        }
+        cout << ans << endl;
+    }
+    return 0;
+}

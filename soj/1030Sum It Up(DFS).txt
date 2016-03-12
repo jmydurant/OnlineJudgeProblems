@@ -1,0 +1,64 @@
+#include<cstdio>     //又是一个练习深搜的题目。。。调试了好多边。。注意搜索的细节。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<cstdlib>
+#include<queue>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+bool cmp(int a,int b)
+{
+    return a>b;
+}
+int res[15];
+int num[15];
+int len,N,HP;
+bool flag;
+void dfs(int remain,int n);
+int main(void)
+{
+    while(EOF!=scanf("%d%d",&HP,&N)&&(0!=HP||N!=0))
+    {
+        flag=false;
+        for(int i=1;i<=N;i++)scanf("%d",num+i);
+        sort(num+1,num+N+1,cmp);
+        len=-1;
+        printf("Sums of %d:\n",HP);
+        dfs(HP,0);
+        if(!flag)printf("NONE\n");
+    }
+    return 0;
+}
+void dfs(int remain,int n)
+{
+    remain-=num[n];
+    if(remain<0||n>N)return;
+    if(0==remain)
+    {
+        flag=true;
+        res[len+1]=num[n];
+        for(int i=1;i<=len+1;i++)
+        {
+            printf("%d%c",res[i],(i==(len+1))?'\n':'+');
+        }
+        remain+=num[n];
+        return;
+    }
+    {
+        len++;
+        res[len]=num[n];
+        for(int i=n+1;i<=N;i++)
+        {
+            if(i==n+1||num[i]!=num[i-1])dfs(remain,i);
+        }
+        len--;remain+=num[n];
+        return;
+    }
+}

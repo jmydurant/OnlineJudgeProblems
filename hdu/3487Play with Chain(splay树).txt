@@ -1,0 +1,205 @@
+#include <iostream>         //这题写的太销魂了。。从早上零零散散的写到现在。。。感觉伸展树的功能太强大了。。
+#include <cstdio>           //对于一个序列  很轻松就调出了a-b的序列。。然后各种维护就好了。。
+#include <cstring>          //这题lazy标记是个亮点。。我终于知道lazy标记在伸展树上怎么用了。。好感动。。。
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 310000
+#define INF 1000000000
+using namespace std;
+typedef long long LL;
+struct spl
+{
+    int fa[maxn],son[maxn][2];
+    int key[maxn];
+    int s[maxn];
+    int root,tot;
+    bool lazy[maxn],space;
+    void getnew(int &x,int _fa,int v)
+    {
+        x = ++tot;
+        fa[x] = _fa;
+        son[x][0] = son[x][1] = 0;
+        key[x] = v;
+        s[x] = 1;
+        lazy[x] = false;
+    }
+    void update(int x)
+    {
+        s[x] = s[son[x][0]] + s[son[x][1]] + 1;
+    }
+    void build(int l,int r,int &x,int _fa)
+    {
+        if(l<=r)
+        {
+            int mid = (l+r)>>1;
+            getnew(x,_fa,mid);
+            build(l,mid-1,son[x][0],x);
+            build(mid+1,r,son[x][1],x);
+            update(x);
+        }
+    }
+    void INIT(int n)
+    {
+        root = tot = 0;
+        space = false;
+        getnew(root,0,-1);
+        getnew(son[root][1],root,-1);
+        s[root]++;
+        build(1,n,son[son[root][1]][0],son[root][1]);
+        update(son[root][1]);
+        update(root);
+    }
+    void pushdown(int x)
+    {
+        if(lazy[x])
+        {
+            lazy[x] = false;
+            lazy[son[x][0]] ^= 1;
+            lazy[son[x][1]] ^= 1;
+            swap(son[x][0],son[x][1]);
+        }
+    }
+    void rolate(int x,int kind)  //0代表左旋 1代表右旋
+    {
+        int y = fa[x];
+        int z = fa[y];
+        pushdown(y);
+        son[y][!kind] = son[x][kind];
+        fa[son[x][kind]] = y;
+        son[x][kind] = y;
+        fa[x] = z;
+        son[z][son[z][1] == y] = x;
+        fa[y] = x;
+        update(y);
+        update(x);
+    }
+    void splay(int x,int aim)
+    {
+        if(x != aim)
+        {
+            pushdown(x);
+            while(fa[x] != aim)
+            {
+                if(son[fa[x]][0] == x)
+                    rolate(x,1);
+                else
+                    rolate(x,0);
+            }
+        }
+        if(!aim)
+            root = x;
+    }
+    int FINDK(int k)
+    {
+        int x;
+        pushdown(root);
+        for(x = root;s[son[x][0]]+1 != k;)
+        {
+            if(s[son[x][0]]+1 > k)
+                x = son[x][0];
+            else
+            {
+                k -= (s[son[x][0]]+1);
+                x = son[x][1];
+            }
+            pushdown(x);
+        }
+        return x;
+    }
+    int FINDMIN(int x)
+    {
+        pushdown(x);
+        while(son[x][0] != 0)
+        {
+            x = son[x][0];
+            pushdown(x);
+        }
+        return x;
+    }
+    void cut(int a,int b,int c)
+    {
+        a = FINDK(a);
+        b = FINDK(b+2);
+        splay(a,0);
+        splay(b,a);
+        int temp = son[b][0];
+        son[b][0] = 0;
+        update(b);
+        update(a);
+        c = FINDK(c+1);
+        splay(c,0);
+        int d = FINDMIN(son[c][1]);
+        splay(d,c);
+        fa[temp] = d;
+        son[d][0] = temp;
+        update(d);
+        update(c);
+    }
+    void rev(int a,int b)
+    {
+        a = FINDK(a);
+        b = FINDK(b+2);
+        splay(a,0);
+        splay(b,a);
+        lazy[son[b][0]] ^= 1;
+    }
+    void out(int x)
+    {
+        if(x)
+        {
+            pushdown(x);
+            out(son[x][0]);
+            if(key[x] > 0)
+            {
+                if(space)
+                    printf(" ");
+                else
+                    space = true;
+                printf("%d",key[x]);
+            }
+            out(son[x][1]);
+        }
+    }
+}splaytree;
+
+
+int main(void)
+{
+    int n,Q;
+    while(2 == scanf("%d%d",&n,&Q))
+    {
+        if(n<0)break;
+        splaytree.INIT(n);
+        //splaytree.out(splaytree.root);
+        while(Q--)
+        {
+            char op[10];
+            int a,b; scanf("%s%d%d",op,&a,&b);
+            if(op[0] == 'C')
+            {
+                int c; scanf("%d",&c);
+                splaytree.cut(a,b,c);
+                //splaytree.out(splaytree.root);
+            }
+            else
+            {
+                splaytree.rev(a,b);
+            }
+        }
+        splaytree.out(splaytree.root);
+        printf("\n");
+    }
+    return 0;
+}

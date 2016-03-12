@@ -1,0 +1,143 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //构图超神。。。没话可说。。
+#include <cstdio>     //首先建立一个源点-----人-----比赛----汇点的图。。每个比赛的两个人向比赛连一条边。必败的就不用了。。比赛向汇点连一条。
+#include <cstring>    //源点向每个人连边的容量为那个人的胜利数。。因为最佳情况就是k大的人是king。。所以每次枚举k。。对于v[i] >　v[j] 的。。
+#include <algorithm>  //就把相应的比赛边给删掉就ok了。。每次最大流如果为入流之和就可以输出了。。
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 140000000
+#define maxn 21000
+//#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+char ss[maxn];
+int r[110][110] ;
+int n , op , ed;
+int v[maxn];
+bool cmp(int a,int b){
+    return a > b;
+}
+inline int game(int i,int j){
+    if(i > j){
+        int temp = i;
+        i = j;
+        j = temp;
+    }
+    return i * n + j;
+}
+void buildg(void){
+    FOR(i,1,n) r[op][i] = v[i];
+    FOR(i,1,n){
+        FOR(j,i+1,n){
+            r[i][game(i,j)] = 1;
+            r[j][game(i,j)] = 1;
+            r[game(i,j)][ed] = 1;
+        }
+    }
+}
+int dis[maxn] , q[maxn<<2] , head,tail;
+bool bfs(void){
+    FOR(i,op,ed) dis[i] = 0;
+    dis[op] = 1;
+    head = 0 , tail = 1;
+    q[head] = op;
+    while(head < tail){
+        int u = q[head]; head++;
+        for(int v = op;v<=ed;v++){
+            if(r[u][v] > 0 && (!dis[v])){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+                if(v == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed || (!c))return c;
+    int temp = c;
+    for(int v = op;v <= ed;v++){
+        if(dis[v] == dis[u] + 1 && temp && r[u][v] > 0){
+            int tt = dfs(v , MIN(temp , r[u][v]));
+            r[u][v] -= tt;
+            r[v][u] += tt;
+            temp -= tt;
+            if(!temp)break;
+        }
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op,INF);
+    return maxflow;
+}
+void solve(void){
+    gets(ss);
+    n = 0;
+    int len = strlen(ss) , temp = 0;
+    bool finish = true;
+    REP(i,len){
+        if(ss[i] == ' ' && finish == false){
+            finish = true;
+            n++;
+            v[n] = temp;
+            temp = 0;
+        }else if(ss[i] <= '9' && ss[i] >= '0'){
+            temp *= 10;
+            temp += ss[i] - '0';
+            finish = false;
+        }
+    }
+    if(!finish){
+        n++;
+        v[n] = temp;
+    }
+    sort(v+1,v+n+1,cmp);
+    int sum = 0;
+    FOR(i,1,n) sum+=v[i];
+    rst(r,0);
+    op = 0 , ed = n*n+1;
+    buildg();
+    int ans = 0;
+    FORD(i,n,1){
+        FOR(j,1,i){
+            FOR(k,j+1,i){
+                if(v[j] > v[k]){
+                    r[j][game(j,k)] = 0;
+                }
+            }
+        }
+        if(sum == dinic()){
+            ans = i;
+            break;
+        }
+        buildg();
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum); getchar();
+    while(casenum--) solve();
+}

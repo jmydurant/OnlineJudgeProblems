@@ -1,0 +1,58 @@
+#include<cstring>    // 算法同soj3075.。。这里就不说了。。。
+#include<cstdio>
+#include<algorithm>
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<stack>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MOD 19871118LL
+using namespace std;
+char a[111111],b[222222];
+int p[222222];
+int main(void)
+{
+    while(EOF!=scanf("%s",a))
+    {
+        getchar();
+        int len=strlen(a);
+        int tot=0;
+        b[0]='.';
+        for(int i=1;i<=len;i++)
+        {
+            b[++tot]='#';
+            b[++tot]=a[i-1];
+        }
+        b[++tot]='#';
+        b[tot+1]='*';
+        b[tot+2]='\0';
+        int id,maxid=1;
+        for(int i=1;i<=tot;i++)
+        {
+            if(i<maxid)
+            {
+                p[i]=MIN(maxid-i,p[2*id-i]);
+            }
+            else
+            {
+                p[i]=1;
+            }
+            while(b[i+p[i]]==b[i-p[i]])p[i]++;
+            if(maxid<p[i]+i)
+            {
+                maxid=p[i]+i;
+                id=i;
+            }
+        }
+        int res=-1;
+        for(int i=1;i<=tot;i++)
+        {
+            if(res<p[i]-1)
+                res=p[i]-1;
+        }
+        printf("%d\n",res);
+    }
+    return 0;
+}

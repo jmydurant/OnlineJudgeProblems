@@ -1,0 +1,23 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+unsigned long long sum[510];   //又是一个压缩DP。。然后循环滚动数组即可。。注意数据太大。。要用unsigned long long。。
+using namespace std;
+int main(void)
+{
+    int i,j,n;
+    memset(sum,0,sizeof(sum));
+    sum[0]=1;
+    for(i=1;i<=500;i++)
+    {
+        for(j=i;j<=500;j++)
+        {
+            sum[j]+=sum[j-i];
+        }
+    }
+    while(EOF!=scanf("%d",&n)&&n)
+    {
+        printf("%llu\n",sum[n]);
+    }
+    return 0;
+}

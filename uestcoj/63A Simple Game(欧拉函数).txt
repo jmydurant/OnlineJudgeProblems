@@ -1,0 +1,64 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //原理简单。。如果是a，b不互质。可以用打开 a/gcd 和 b/gcd来完成。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 140000000
+#define maxn 21000
+//#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int phi[maxn];
+bool visit[maxn];
+int sum[maxn];
+void INIT(void){
+    rst(visit,false);
+    FOR(i,2,10000) phi[i] = i;
+    for(int i = 2;i<=10000;i++){
+        if(!visit[i]){
+            for(int j = i;j <= 10000;j += i){
+                visit[j] = true;
+                phi[j] /= i;
+                phi[j] *= (i-1);
+            }
+        }
+    }
+    sum[1] = 0;
+    for(int i = 2;i<=10000;i++) sum[i] = sum[i-1] + phi[i];
+}
+void solve(void){
+    int n; scanf("%d",&n);
+    if(n == 1)printf("1\n");
+    else {
+        printf("%d\n",sum[n] * 2 + 1);
+    }
+}
+int main(void){
+    INIT();
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

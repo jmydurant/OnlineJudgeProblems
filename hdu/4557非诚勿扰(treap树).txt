@@ -1,0 +1,159 @@
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <ctime>
+#include <algorithm>
+#include <string>
+#include <climits>
+#define lowbit(x) ((x)&(-(x)))
+#define rst(x,k) memset(x,k,sizeof(x))
+#define maxn 34010
+using namespace std;
+typedef long long LL;
+struct node
+{
+    int l,r;
+    string s;
+    int fix,key;
+}tree[maxn];
+int cnt,root;
+void INIT(void)
+{
+    cnt = root = 0;
+    tree[0].l = tree[0].r = -1;
+    tree[0].fix = -1;
+    tree[0].key = INT_MIN;
+    tree[0].s = "FUCK!!\n";
+}
+string name;
+void ro_l(int &x)
+{
+    int y = tree[x].r;
+    tree[x].r = tree[y].l;
+    tree[y].l = x;
+    x = y;
+}
+void ro_r(int &x)
+{
+    int y = tree[x].l;
+    tree[x].l = tree[y].r;
+    tree[y].r = x;
+    x = y;
+}
+
+void Insert(int &x,int key)
+{
+    if(x == -1)
+    {
+        x = ++cnt;
+        tree[x].l = tree[x].r = -1;
+        tree[x].s = name;
+        tree[x].fix = cnt;
+        tree[x].key = key;
+        return;
+    }
+    if(key<tree[x].key)
+    {
+        Insert(tree[x].l,key);
+        if(tree[tree[x].l].fix<tree[x].fix)
+            ro_r(x);
+    }
+    else
+    {
+        Insert(tree[x].r,key);
+        if(tree[tree[x].r].fix<tree[x].fix)
+            ro_l(x);
+    }
+}
+
+void Delete(int &x)
+{
+    if(x == -1) return;
+    if(tree[x].l == -1 && tree[x].r == -1)
+    {
+        x = -1;
+        return;
+    }
+    if(tree[x].l == -1)
+    {
+        x = tree[x].r;
+        return;
+    }
+    if(tree[x].r == -1)
+    {
+        x = tree[x].l;
+        return;
+    }
+    if(tree[tree[x].l].fix>tree[tree[x].r].fix)
+    {
+        ro_l(x);
+        Delete(tree[x].l);
+    }
+    else
+    {
+        ro_r(x);
+        Delete(tree[x].r);
+    }
+}
+
+bool Find(int &x,int key)
+{
+    if(x == -1) return false;
+    if(tree[x].key == key)
+    {
+        cout << tree[x].s << endl;
+        Delete(x);
+        return true;
+    }
+    if(tree[x].key>key)
+    {
+        if(Find(tree[x].l,key))
+            return true;
+        else
+        {
+            cout << tree[x].s << endl;
+            Delete(x);
+            return true;
+        }
+    }
+    else
+        return Find(tree[x].r,key);
+
+}
+
+int main(void)
+{
+    int casenum; cin >> casenum;
+    int iCase = 0;
+    while(casenum--)
+    {
+        INIT();
+        int tot = 0;
+        int Q; cin >> Q;
+        cout << "Case #" << ++iCase << ":" << endl;
+        while(Q--)
+        {
+            string op;
+            cin >> op;
+            if(op[0] == 'A')
+            {
+                name.clear();
+                int kk; cin >> name >> kk;
+                Insert(root,kk);
+                tot++;
+                cout << tot << endl;
+            }
+            else
+            {
+                int kk; cin >> kk;
+                bool ok = Find(root,kk);
+                if(ok)tot--;
+                else
+                {
+                    cout << "WAIT..." << endl;
+                }
+            }
+        }
+    }
+    return 0;
+}

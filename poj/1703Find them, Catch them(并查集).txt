@@ -1,0 +1,74 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //增加一个距离表示关系。比食物链简单多了。。1代表敌对。0代表朋友。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,Q;
+int fa[maxn] , dis[maxn];
+int findfa(int x){
+    if(fa[x] != x){
+        int tt = fa[x];
+        fa[x] = findfa(fa[x]);
+        dis[x] = (dis[tt] + dis[x]) % 2;
+    }
+    return fa[x];
+}
+void solve(void){
+    scanf("%d%d",&n , &Q);
+    rst(dis,0);
+    FOR(i,1,n) fa[i] = i;
+    char op[10];
+    int a,b;
+    while(Q--){
+        scanf("%s%d%d",op,&a,&b);
+        if(op[0] == 'A'){
+            if(n == 2 && a != b)printf("In different gangs.\n");
+            int fx = findfa(a);
+            int fy = findfa(b);
+            if(fx != fy)printf("Not sure yet.\n");
+            else{
+                if((dis[a] + dis[b]) % 2)printf("In different gangs.\n");
+                else printf("In the same gang.\n");
+            }
+        }else{
+            int fx = findfa(a) , fy = findfa(b);
+            if(fx == fy)continue;
+            fa[fx] = fy;
+            dis[fx] = (dis[a] + dis[b] + 1) % 2;
+        }
+    }
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

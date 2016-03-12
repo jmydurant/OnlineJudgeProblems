@@ -1,0 +1,92 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //不能再基础的2SAT。。i和j的话就连接i和j'。。。 j 和 i'
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 50000000
+#define maxn 2010
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,m;
+struct node{
+    int t,nxt;
+}edge[2010000];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int dfn[maxn] , low[maxn] , st[maxn<<2] , top , instack[maxn] , tot , scc;
+int belong[maxn];
+void tarjan(int u){
+    dfn[u] = low[u] = ++tot;
+    st[top] = u; top++;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(low[u] == dfn[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+void solve(void){
+    scanf("%d",&m);
+    rst(headline,-1); E = 0;
+    REP(i,m){
+        int a,b,ra,rb; scanf("%d%d%d%d",&a,&b,&ra,&rb);
+        add(a + n*ra , b + n * (1 - rb));
+        add(b + n*rb , a + n * (1 - ra));
+    }
+    rst(dfn,0); top = 0; scc = 0; tot = 0;
+    rst(instack , false);
+    FOR(i,0,2*n-1)if(!dfn[i])tarjan(i);
+    bool ok = true;
+    REP(i,n){
+        if(belong[i] == belong[i + n]){
+            ok = false; break;
+        }
+    }
+    if(ok)printf("YES\n");
+    else printf("NO\n");
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

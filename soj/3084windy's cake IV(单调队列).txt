@@ -1,0 +1,76 @@
+#include<cstring>   //先往左扫一下所以数的端点。。然后是右边的端点。。。找到第一个小于他的数。。用单调队列维护一个上升的区间。。然后就可以求值了
+#include<cstdio>   //注意结果用long long 保存。。因为这个wa了一次。。。蛋疼。。。
+#include<algorithm>
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<stack>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MOD 19871118LL
+using namespace std;
+typedef pair<int,int> point;
+int digit[100010];
+long long sum[100010];
+int left[100010];
+int right[100010];
+stack<point>q;
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        while(!q.empty())q.pop();
+        sum[0]=0;
+        digit[N+1]=-1;
+        digit[0]=-1;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",digit+i);
+            sum[i]=sum[i-1]+digit[i];
+        }
+        for(int i=1;i<=N+1;i++)
+        {
+            while(!q.empty())
+            {
+                point tmpt=q.top();
+                if(tmpt.first>digit[i])
+                {
+                    right[tmpt.second]=i;
+                    q.pop();
+                    continue;
+                }
+                break;
+            }
+            q.push(point(digit[i],i));
+        }
+        while(!q.empty())q.pop();
+        for(int i=N;i>=0;i--)
+        {
+            while(!q.empty())
+            {
+                point tmpt=q.top();
+                if(tmpt.first>digit[i])
+                {
+                    left[tmpt.second]=i;
+                    q.pop();
+                    continue;
+                }
+                break;
+            }
+            q.push(point(digit[i],i));
+        }
+        while(!q.empty())q.pop();
+        long long ans=-1;
+        for(int i=1;i<=N;i++)
+        {
+            if(ans<(sum[right[i]-1]-sum[left[i]])*digit[i])
+            {
+                ans=(sum[right[i]-1]-sum[left[i]])*digit[i];
+            }
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}

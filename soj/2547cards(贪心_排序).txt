@@ -1,0 +1,40 @@
+#include<cstring>
+#include<algorithm>   //随便想想排序关系就出来了。。。和普通的贪心证明差不多。。
+#include<cmath>
+#include<cstdio>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define INF 0x7f7f7f7f
+using namespace std;
+struct abc
+{
+    int x,y;
+    bool operator < (const abc b) const
+    {
+        return (x+y)<(b.x+b.y);
+    }
+}cow[100100];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        for(int i=1;i<=N;i++)scanf("%d%d",&cow[i].x,&cow[i].y);
+        sort(cow+1,cow+N+1);
+        int res=0;
+        for(int i=1;i<=N;i++)
+        {
+            if(i<=(N+1)/2)
+            {
+                res+=MIN(cow[i].x,cow[i].y);
+            }
+            else
+            {
+                res-=MAX(cow[i].x,cow[i].y);
+            }
+        }
+        printf("%d\n",res);
+    }
+    return 0;
+}

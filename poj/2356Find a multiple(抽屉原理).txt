@@ -1,0 +1,53 @@
+#include<cstdio>  //ÂãµØ³éÌëÔ­Àí¡£¡£¡£
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int visit[10010];
+int digit[10010];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        for(int i=1;i<=N;i++)
+            scanf("%d",digit+i);
+        int ans=0;
+        memset(visit,-1,sizeof(visit));
+        visit[0]=0;
+        int left,right;
+        for(int i=1;i<=N;i++)
+        {
+            ans+=digit[i];
+            ans%=N;
+            if(-1!=visit[ans])
+            {
+                left=visit[ans];
+                right=i;
+                break;
+            }
+            else
+            {
+                visit[ans]=i;
+            }
+        }
+        printf("%d\n",right-left);
+        for(int i=left+1;i<=right;i++)
+        {
+            printf("%d\n",digit[i]);
+        }
+    }
+    return 0;
+}
+

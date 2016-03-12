@@ -1,0 +1,72 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //枚举每个点是左边的还是右边的。。然后。。有个小剪纸。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int n,puzzle[25][25],ans;
+int llist[25] , rlist[25];
+void dfs(int lsum,int rsum,int sum,int ind){
+    if(ind == n+1){
+        ans = MIN(sum , ans);
+        return;
+    }
+    int s1 = sum;
+    FOR(i,1,lsum){
+        s1 += puzzle[llist[i]][ind];
+    }
+    if(sum < ans){
+        llist[lsum + 1] = ind;
+        dfs(lsum+1,rsum,s1,ind+1);
+    }
+    int s2 = sum;
+    FOR(i,1,rsum){
+        s2 += puzzle[rlist[i]][ind];
+    }
+    if(sum < ans){
+        rlist[rsum + 1] = ind;
+        dfs(lsum,rsum+1,s2,ind+1);
+    }
+}
+void solve(void){
+    int tot = 0;
+    ans = INF;
+    FOR(i,1,n)FOR(j,1,n) scanf("%d",&puzzle[i][j]) , tot += puzzle[i][j];
+    llist[1] = 1;
+    dfs(1,0,0,2);
+    //printf("ans is %d\n",ans);
+    printf("%d\n",tot/2 - ans);
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

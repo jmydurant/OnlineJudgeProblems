@@ -1,0 +1,61 @@
+#include <iostream>   //其实就是暴力搜索。。只是有点小技巧。。就是用b数组来存数字。。然后根据j来跳跃。。这样可以把不必要搜索的地方
+#include <cstdio>     // 略过。。。
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 1000020
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+int a[maxn];
+int n,k;
+int b[maxn];
+int main(void)
+{
+    while(EOF != scanf("%d%d",&n,&k))
+    {
+        REP(i,n)scanf("%d",a+i);
+        sort(a,a+n);
+        n = unique(a,a+n) - a;
+        a[n] = -1;
+        int j = 0;
+        FOR(i,0,a[n-1])
+        {
+            if(i == a[j])
+            {
+                b[i+1] = a[j];
+                j++;
+            }
+            else b[i+1] = b[i];
+        }
+        FORD(i,a[0],1)
+        {
+            bool flag = true;
+            for(j = a[n-1];j>=a[0];)
+            {
+                if(j%i>k)
+                {
+                    flag = false;
+                    break;
+                }
+                j -= j%i;
+                j = b[j];
+            }
+            if(flag)
+            {
+                printf("%d\n",i);
+                break;
+            }
+        }
+
+    }
+}

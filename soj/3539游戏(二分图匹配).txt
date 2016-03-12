@@ -1,0 +1,84 @@
+#include <cstdio>   //把属性值当做x。。道具编号当做y。。然后一个y可以和2个x相连。。然后匹配即可。。
+#include <cstring>
+#include <queue>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define maxv 1001000
+#define maxn 10010
+using namespace std;
+
+struct node
+{
+    int t,nxt;
+}edge[maxv*2];
+int headline[maxn];
+int tot,n;
+bool visit[maxv];
+int linky[maxv];
+queue<int> q;
+int maxr;
+void add(int f,int t)
+{
+    tot++;
+    edge[tot].t = t;
+    edge[tot].nxt = headline[f];
+    headline[f] = tot;
+}
+
+bool dfs(int u)
+{
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(!visit[v])
+        {
+            visit[v] = true;
+            q.push(v);
+            if(-1 == linky[v] || dfs(linky[v]))
+            {
+                linky[v] = u;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int Hungary(void)
+{
+    int ans = 0;
+    for(int i = 1;i<=n;i++)
+    {
+        while(!q.empty())
+        {
+            visit[q.front()] = false;
+            q.pop();
+        }
+        if(dfs(i))
+            ans++;
+        else break;
+    }
+    return ans;
+}
+
+int main(void)
+{
+    while(EOF != scanf("%d",&n))
+    {
+        tot = 0;
+        memset(headline,-1,sizeof(headline));
+        memset(visit,false,sizeof(visit));
+        memset(linky,-1,sizeof(linky));
+        maxr = -1;
+        while(!q.empty())q.pop();
+        for(int i = 1;i<=n;i++)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            maxr = MAX(maxr,a);
+            maxr = MAX(maxr,b);
+            add(a,i);
+            add(b,i);
+        }
+        printf("%d\n",Hungary());
+    }
+    return 0;
+}

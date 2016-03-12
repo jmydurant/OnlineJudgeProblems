@@ -1,0 +1,124 @@
+#include <iostream>   //我是沙茶.....有一篇博文讲的特别详细。。
+#include <cstdio>     //http://blog.csdn.net/acdreamers/article/details/10983813
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define maxn 70000
+#define INF 100000
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+LL prime[maxn],n;
+LL digit[maxn],num[maxn];
+LL vv[maxn];
+LL ans[maxn];
+bool visit[maxn];
+int tot,cp,cv,iCase;
+void INIT(void){
+    rst(visit,false); tot = 0;
+    for(LL i = 2;i<maxn;i++){
+        if(!visit[i]){
+            prime[++tot] = i;
+            for(LL j = i*i;j<maxn;j += i) visit[j] = true;
+        }
+    }
+}
+LL power(LL a,LL n,LL mod){
+    LL ans = 1;
+    while(n){
+        if(n % 2){
+            ans *= a;
+            ans %= mod;
+        }
+        a *= a;
+        a %= mod;
+        n /= 2;
+    }return ans;
+}
+LL gcd(LL a,LL b){
+    LL temp;
+    while(b){
+        temp = a%b;
+        a = b;
+        b = temp;
+    }return a;
+}
+void solve(void){
+    scanf("%I64d",&n);
+    cp = 0;
+    LL temp = n;
+    for(int i = 1;i<=tot && prime[i]*prime[i] <= temp;i++){
+        if(temp % prime[i] == 0){
+            cp++; digit[cp] = prime[i];
+            LL cnt = 0;
+            while(temp % prime[i] == 0){
+                cnt++;
+                temp /= prime[i];
+            }num[cp] = cnt;
+        }
+    }
+    if(temp > 1){
+        cp++; digit[cp] = temp;
+        num[cp] = 1;
+    }
+    for(int i = 1;i<=cp;i++){
+        LL f = 1,g = 1,h,pos;
+        for(int j = 2;;j++){
+            h = (f+g)%digit[i];
+            if(h == 0){
+                pos = j+1;
+                h = g;
+                break;
+            }
+            f = g; g = h;
+        }
+        LL top = digit[i]-1;
+        cv = 0;
+        for(LL j = 1;j*j<=top;j++){
+            if(top % j == 0){
+                if(j*j == top){
+                    vv[cv++] = j;
+                }else{
+                    vv[cv++] = j;
+                    vv[cv++] = top / j;
+                }
+            }
+        }
+        sort(vv,vv+cv);
+        LL T;
+        for(int j = 0;j<cv;j++){
+            if(power(h,vv[j],digit[i]) == 1){
+                T = pos * vv[j];
+                break;
+            }
+        }
+        ans[i] = T;
+        for(int j = 1;j<num[i];j++) ans[i] *= digit[i];
+    }
+    LL res = 1;
+    for(int i = 1;i<=cp;i++)
+        res = (res / gcd(res,ans[i]) * ans[i]);
+    printf("Case #%d: %I64d\n",++iCase,res);
+}
+int main(void){
+    INIT();iCase = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)solve();
+}

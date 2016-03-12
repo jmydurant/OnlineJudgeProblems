@@ -1,0 +1,93 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //一个最短路问题。。建立一个超级源点和超级汇点就ok了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-4
+#define INF 50000000
+#define maxn 1010
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int m,s1,s2;
+int n;
+struct node{
+    int t,nxt,w;
+}edge[1001000];
+int headline[maxn] , E;
+inline void add(int f,int t,int w){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].w = w;
+    headline[f] = E++;
+}
+int s , e;
+int q[1010100] , head,tail;
+int dis[maxn];
+bool visit[maxn];
+void spfa(void){
+    rst(visit,false);
+    FOR(i,0,1001) dis[i] = INF;
+    head = 0 , tail = 1;
+    q[head] = s;
+    dis[s] = 0 , visit[s] = true;
+    while(head < tail){
+        int u = q[head] ; head++; visit[u] = false;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(dis[v] > dis[u] + edge[i].w){
+                dis[v] = dis[u] + edge[i].w;
+                if(!visit[v]){
+                    visit[v] = true;
+                    q[tail] = v; tail++;
+                }
+            }
+        }
+    }
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    REP(i,m){
+        int a,b,c; scanf("%d%d%d",&a,&b,&c);
+        add(a,b,c); add(b,a,c);
+    }
+    s = 0 , e = 1001;
+    REP(i,s1){
+        int tt; scanf("%d",&tt);
+        add(s , tt , 0); add(tt , s , 0);
+    }
+    REP(i,s2){
+        int tt; scanf("%d",&tt);
+        add(tt , e , 0); add(e , tt , 0);
+    }
+    spfa();
+    printf("%d\n",dis[e]);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&m,&s1,&s2)) solve();
+    return 0;
+}

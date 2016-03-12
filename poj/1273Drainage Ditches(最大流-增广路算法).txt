@@ -1,0 +1,80 @@
+#include <cstdio>    //我的第一道网络流。。。好激动。。Ford-Fulkerson算法
+#include <cstring>   //详细讲解链接http://www.cnblogs.com/kuangbin/archive/2011/07/26/2117636.html
+#include <queue>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 210
+#define MAXV 100100
+#define INF 0x7f7f7f7f
+using namespace std;
+
+int n,m;
+int path[MAXN];
+int flow[MAXN];
+int puzzle[MAXN][MAXN];
+queue<int> q;
+int s,e;
+int bfs(void)
+{
+    memset(path,-1,sizeof(path));
+    while(!q.empty())q.pop();
+    path[s] = 1;flow[s] = INF;
+    q.push(s);
+    while(!q.empty())
+    {
+        int temp = q.front();
+        q.pop();
+        if(temp == e)
+            break;
+        for(int i = 1;i<=n;i++)
+        {
+            if(i != s && path[i] == -1 && puzzle[temp][i]>0)
+            {
+                path[i] = temp;
+                flow[i] = MIN(flow[temp],puzzle[temp][i]);
+                q.push(i);
+            }
+        }
+    }
+    if(path[e] == -1)
+        return -1;
+    return flow[e];
+}
+
+int Edmonds_Karp(void)
+{
+    int ans = 0;
+    memset(flow,0,sizeof(flow));
+    q.push(s);
+    flow[s] = INF;
+    int step;
+    while((step = bfs()) != -1)
+    {
+        int now = e,pre = path[e];
+        ans += step;
+        while(now != s)
+        {
+            pre = path[now];
+            puzzle[now][pre] += step;
+            puzzle[pre][now] -= step;
+            now = pre;
+        }
+    }
+    return ans;
+}
+
+int main(void)
+{
+    while(2==scanf("%d%d",&m,&n))
+    {
+        memset(puzzle,0,sizeof(puzzle));
+        for(int i = 1;i<=m;i++)
+        {
+            int a,b,c; scanf("%d%d%d",&a,&b,&c);
+            puzzle[a][b]+=c;
+        }
+        s = 1;e = n;
+        printf("%d\n",Edmonds_Karp());
+    }
+    return 0;
+}

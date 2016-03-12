@@ -1,0 +1,60 @@
+#include<cstring>    //代码写的极其之搓。。。时间控制也是渣渣。。开始RE了N次。。。最后发现。。原来用队列去做简直就是找死。。动态内存早就分配完了。。
+#include<cstdio>      //然后老老实实的用压缩状态DP做。。。渣死了。。。但是原理很简单。。就是每次找一个原来路上没有的点。。然后加进去
+#include<climits>    //dp（state,i）state代表当时的状态。。用二进制表示。。i代表走到了哪里。。。。
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int dp[1<<20][20];
+int road[20][20];
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N; scanf("%d",&N);
+        for(int i=0;i<N;i++)
+        {
+            for(int j=0;j<N;j++)
+            {
+                scanf("%d",&road[i][j]);
+            }
+        }
+        if(N==1)
+        {
+            printf("%d\n",0);
+            continue;
+        }
+        int ans=INF;
+        //printf("pass\n");
+        memset(dp,INF,sizeof(dp));
+        dp[1<<0][0]=0;
+        for(int state=1;state<(1<<N);state++)
+        {
+            for(int i=0;i<N;i++)
+            {
+                for(int j=0;j<N;j++)
+                {
+                    if(i==j || (state & (1<<j)))continue;
+                    dp[state | (1<<j)][j]=MIN(dp[state | (1<<j)][j],dp[state][i]+road[i][j]);
+                }
+            }
+        }
+        for(int i=1;i<N;i++)
+        {
+            ans=MIN(ans,dp[(1<<N)-1][i]+road[i][0]);
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

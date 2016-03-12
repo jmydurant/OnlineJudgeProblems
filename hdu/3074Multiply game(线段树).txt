@@ -1,0 +1,74 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //裸地线段树
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 51000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int a[maxn];
+struct node{
+    LL val[maxn<<2];
+    void build(int l,int r,int ind){
+        if(l == r){
+            val[ind] = a[l];
+            return;
+        }
+        int mid = (l+r)>>1;
+        build(l,mid,lson);
+        build(mid+1,r,rson);
+        val[ind] = val[lson] * val[rson] % mod;
+    }
+    void change(int l,int r,int ind,int pos,int _val){
+        if(l == r){
+            val[ind] = _val;
+            return;
+        }
+        int mid = (l+r)>>1;
+        if(pos <= mid)change(l,mid,lson,pos,_val);
+        else change(mid+1,r,rson,pos,_val);
+        val[ind] = val[lson] * val[rson] % mod;
+    }
+    LL req(int l,int r,int Ql,int Qr,int ind){
+        if(Ql <= l && r <= Qr)return val[ind];
+        int mid = (l+r) >> 1;
+        if(Qr <= mid)return req(l,mid,Ql,Qr,lson) % mod;
+        else if(Ql > mid)return req(mid+1,r,Ql,Qr,rson) % mod;
+        else return req(l,mid,Ql,mid,lson) * req(mid+1,r,mid+1,Qr,rson) % mod;
+    }
+}seg_tree;
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--){
+        int n; scanf("%d",&n);
+        FOR(i,1,n) scanf("%d",a+i);
+        seg_tree.build(1,n,1);
+        int Q; scanf("%d",&Q);
+        int op,a,b;
+        while(Q--){
+            scanf("%d%d%d",&op,&a,&b);
+            if(op == 0)printf("%I64d\n",seg_tree.req(1,n,a,b,1));
+            else seg_tree.change(1,n,1,a,b);
+        }
+    }return 0;
+}

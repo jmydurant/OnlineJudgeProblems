@@ -1,0 +1,50 @@
+#include<cstdio>
+#include<cstring>  //思路：这是一道完全背包和多重背包的混合体。。。要付的钱用多重背包（没找到更有效率的解法。。背包九讲没太看懂）
+#include<algorithm>//找到零钱用完全背包。。有O（NV）的最优算法。。。然后开始枚举付的钱数和找的钱数的change——making次数。。记录最小值
+#define INF 1<<15   //因为两个背包都是找最小值。。。所以dp就设为INF了。。当然dp0还是0.。。
+using namespace std;
+int change[130];
+int buy[11000];
+int v[110],c[110];
+int main(void)
+{
+    int T,N;
+    while(EOF!=scanf("%d%d",&N,&T))
+    {
+        int max_cash=0;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",v+i);
+            if(v[i]>max_cash)max_cash=v[i];
+        }
+        for(int i=1;i<=N;i++)scanf("%d",c+i);
+        for(int i=1;i<=max_cash;i++)change[i]=INF;
+        for(int i=1;i<=T+max_cash;i++)buy[i]=INF;
+        for(int i=1;i<=N;i++)
+            for(int j=v[i];j<=max_cash;j++)
+        {
+            if(change[j]>change[j-v[i]]+1)change[j]=change[j-v[i]]+1;
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=0;j<(max_cash+T)/v[i]&&j<c[i];j++)
+            {
+                for(int k=max_cash+T;k>=v[i];k--)
+                {
+                    if(buy[k]>buy[k-v[i]]+1)buy[k]=buy[k-v[i]]+1;
+                }
+            }
+        }
+        int result=INF;
+        for(int i=T;i<=max_cash+T;i++)
+        {
+            if(result>buy[i]+change[i-T])
+            {
+                result=buy[i]+change[i-T];
+            }
+        }
+        printf("%d\n",result==INF?-1:result);
+    }
+    return 0;
+}
+

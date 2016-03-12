@@ -1,0 +1,104 @@
+#include<cstring>    //第三道线段树。。应该来讲。。已经熟悉不少了。。建立树。。改变树。。查询树。。标准的格式看起来也很清楚。。
+#include<algorithm>  //这题的精髓是用到了位运算。。还是得多积累。。才行。。还有。。返回的数是位运算的结果。。所以得转换回来。。。
+#include<cmath>
+#include<cstdio>
+using namespace std;
+const int maxn = 100050<<2;
+struct Node
+{
+    int left,right;
+    int mid;
+    int color;
+}tree[maxn];
+void build_tree(int x,int y,int num)
+{
+    tree[num].left=x;
+    tree[num].right=y;
+    tree[num].mid=(x+y)>>1;
+    tree[num].color=2;
+    if(x==y)return ;
+    int middle=tree[num].mid;
+    build_tree(x,middle,num<<1);
+    build_tree(middle+1,y,num<<1|1);
+}
+void change_tree(int x,int y,int num,int c)
+{
+    if(tree[num].color==(1<<c))return ;
+    if(tree[num].left>=x&&tree[num].right<=y)
+    {
+        tree[num].color=(1<<c);
+        return ;
+    }
+    if(tree[num].color!=-1)
+    {
+        tree[2*num].color=tree[num].color;
+        tree[2*num+1].color=tree[num].color;
+        tree[num].color=-1;
+    }
+    int middle=tree[num].mid;
+    if(y<=middle)change_tree(x,y,num<<1,c);
+    else if(x>middle)change_tree(x,y,num<<1|1,c);
+    else
+    {
+        change_tree(x,middle,num<<1,c);
+        change_tree(middle+1,y,num<<1|1,c);
+    }
+}
+int req_tree(int x,int y,int num)
+{
+    if(tree[num].color!=-1)return tree[num].color;
+    int middle=tree[num].mid;
+    if(y<=middle)return req_tree(x,y,num<<1);
+    else if(x>middle)return req_tree(x,y,num<<1|1);
+    else
+    {
+        return req_tree(x,middle,num<<1)|req_tree(middle+1,y,num<<1|1);
+    }
+}
+int Zhuanhuan(int n)
+{
+    int result=0;
+    while(n)
+    {
+        result+=(n&1);
+        n>>=1;
+    }
+    return result;
+}
+int main(void)
+{
+    int L,T,Q_num;
+    while(EOF!=scanf("%d%d%d",&L,&T,&Q_num))
+    {
+        build_tree(1,L,1);
+        for(int i=1;i<=Q_num;i++)
+        {
+            char op[2];
+            scanf("%s",op);
+            int a,b,c;
+            if(op[0]=='C')
+            {
+                scanf("%d%d%d",&a,&b,&c);
+                if(a>b)
+                {
+                    int tmpt=a;
+                    a=b;
+                    b=tmpt;
+                }
+                change_tree(a,b,1,c);
+            }
+            else
+            {
+                scanf("%d%d",&a,&b);
+                if(a>b)
+                {
+                    int tmpt=a;
+                    a=b;
+                    b=tmpt;
+                }
+                printf("%d\n",Zhuanhuan(req_tree(a,b,1)));
+            }
+        }
+    }
+    return 0;
+}

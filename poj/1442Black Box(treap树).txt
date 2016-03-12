@@ -1,0 +1,105 @@
+#include <iostream>   //自学了一下treap数。。发现还是不错的。。只是还需要再强化一下。。这个东西旋转还是比较简单的。。
+#include <cstdio>    //不过这题并没有用删除函数。。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 420100
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+struct node
+{
+    int l,r,fix,key;
+    int cl,cr;
+}tree[maxn];
+int size,root;
+void ro_l(int &x)
+{
+    int y = tree[x].r;
+    tree[x].r = tree[y].l;
+    tree[x].cr = tree[y].cl;
+    tree[y].l = x;
+    tree[y].cl = tree[x].cl + tree[x].cr + 1;
+    x = y;
+}
+void ro_r(int &x)
+{
+    int y = tree[x].l;
+    tree[x].l = tree[y].r;
+    tree[x].cl = tree[y].cr;
+    tree[y].r = x;
+    tree[y].cr = tree[x].cl + tree[x].cr + 1;
+    x = y;
+}
+void Insert(int &x,int key)
+{
+    if(x == -1)
+    {
+        x = ++size;
+        tree[x].cl = tree[x].cr = 0;
+        tree[x].fix = rand();
+        tree[x].l = tree[x].r = -1;
+        tree[x].key = key;
+        return;
+    }
+    if(tree[x].key>key)
+    {
+        Insert(tree[x].l,key);
+        tree[x].cl++;
+        if(tree[tree[x].l].fix>tree[x].fix)
+            ro_r(x);
+    }
+    else
+    {
+        Insert(tree[x].r,key);
+        tree[x].cr++;
+        if(tree[tree[x].r].fix>tree[x].fix)
+            ro_l(x);
+    }
+}
+
+int find_r(int &x,int ra)
+{
+    if(x == -1)return -1;
+    if(tree[x].cl+1 == ra) return tree[x].key;
+    if(tree[x].cl+1<ra) return find_r(tree[x].r,ra-tree[x].cl-1);
+    return find_r(tree[x].l,ra);
+}
+
+void INIT(void)
+{
+    size = root = -1;
+    srand(time(0));
+}
+int item[maxn];
+int main(void)
+{
+    int n,m;
+    while(2 == scanf("%d%d",&n,&m))
+    {
+        INIT();
+        FOR(i,1,n) scanf("%d",item+i);
+        int rear = 0,ra = 0;
+        FOR(i,1,m)
+        {
+            int k;
+            scanf("%d",&k);
+            while(rear<k)
+            {
+                Insert(root,item[++rear]);
+            }
+            printf("%d\n",find_r(root,++ra));
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,92 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //用这样一个dfs函数就可以了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 50000000
+#define maxn 210000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+    bool block;
+}edge[maxn];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].block = false;
+    headline[f] = E++;
+}
+int n,m;
+int dfs(int u){
+    vector<int> adj;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        if(edge[i].block)continue;
+        edge[i].block = edge[i ^ 1].block = true;
+        adj.push_back(edge[i].t);
+    }
+    int ss = adj.size();
+    queue<int> q;
+    for(int i = 0;i<ss;i++){
+        int ww = dfs(adj[i]);
+        if(ww == 0){
+            q.push(adj[i]);
+        }else{
+            printf("%d %d %d\n",u,adj[i],ww);
+        }
+    }
+    int x = -1 , y = -1;
+    while(!q.empty()){
+        if(x == -1){
+            x = q.front(); q.pop();
+        }else{
+            y = q.front(); q.pop();
+            printf("%d %d %d\n",x,u,y);
+            x = y = -1;
+        }
+    }
+    if(x == -1)return 0;
+    return x;
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    REP(i,m){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a,b); add(b,a);
+    }
+    if(m % 2){
+        printf("No solution\n");
+        return;
+    }
+    dfs(1);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+}

@@ -1,0 +1,37 @@
+#include<stdio.h>
+#include<math.h>
+
+int main(void)
+{
+    double xa,xb,xc,ya,yb,yc;
+    while(6==scanf("%lf%lf%lf%lf%lf%lf",&xa,&ya,&xb,&yb,&xc,&yc))
+    {
+        double resultnum=0.0;                //第一次理解到双精度的重要性。。
+        double dab;
+        xb-=xa;                             //行列式表示面积的方法终于用上了。。
+        yb-=ya;
+        xc-=xa;
+        yc-=ya;
+        xa=0.0; ya=0.0;
+        dab=xb*xb+yb*yb;
+        if(xb*xc+yb*yc<=0.0)
+        {
+            resultnum=xc*xc+yc*yc;
+            resultnum=sqrt(resultnum);
+        }
+        else if(xb*(xb-xc)+yb*(yb-yc)<=0)
+        {
+            resultnum=(xb-xc)*(xb-xc)+(yb-yc)*(yb-yc);
+            resultnum=sqrt(resultnum);
+        }
+        else
+        {
+            double s =xb*yc-xc*yb;
+            if(s<0.0)
+            s=s*(-1);
+            resultnum=s/(sqrt(dab));
+        }
+        printf("%.2lf\n",resultnum);
+    }
+    return 0;
+}

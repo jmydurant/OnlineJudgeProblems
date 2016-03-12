@@ -1,0 +1,76 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define maxn 101000
+using namespace std;
+typedef long long LL;
+string t[maxn];
+string ans;
+int n;
+int main(void)
+{
+    while(cin >> n)
+    {
+        for(int i = 1;i<=n;i++) t[i].clear();
+        ans.clear();
+        for(int i = 1;i<=n;i++)cin >> t[i];
+        cin >> ans;
+        int tot = 1;
+        int now = 0;
+        int finish = 1;
+        bool ok = false;
+        for(int i = 0;i<ans.length();i++)
+        {
+            if(ans[i] == '<')
+            {
+                if(finish == 1)
+                {
+                    finish = 2;
+                }
+            }
+            else if(ans[i] == '3')
+            {
+                if(finish == 2)
+                {
+                    finish = 0;
+                    if(tot>n)
+                    {
+                        ok = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if(finish == 0)
+                {
+                    if(ans[i] == t[tot][now])
+                        now++;
+                    if(now == t[tot].length())
+                    {
+                        finish = 1;
+                        tot++;
+                        now = 0;
+                    }
+                }
+            }
+        }
+        if(ok)
+            printf("yes\n");
+        else
+            printf("no\n");
+    }
+    return 0;
+}

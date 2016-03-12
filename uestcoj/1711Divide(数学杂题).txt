@@ -1,0 +1,120 @@
+#include<cstdio>     //开始看解题报告没有怎么看懂。。但是最后还是看懂了。。附上原来的题解和自己的理解
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) ((a)&(-(a)))
+#define MAXN 1001000
+using namespace std;
+typedef long long LL;
+LL A[MAXN],B[MAXN];
+struct abc
+{
+    LL a,n;
+}item[MAXN];
+bool cmp(abc a,abc b)
+{
+    return a.a<b.a;
+}
+int N,tot;
+int main(void)
+{
+    int iCase=1;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d",&N);
+        for(int i=1;i<=N;i++)
+            scanf("%I64d%I64d",&item[i].a,&item[i].n);
+        sort(item+1,item+N+1,cmp);
+        tot=1;
+        for(int i=2;i<=N;i++)
+        {
+            if(item[i].a==item[tot].a)
+            {
+                item[tot].n+=item[i].n;
+            }
+            else
+            {
+                tot++;
+                item[tot]=item[i];
+            }
+        }
+        memset(A,0,sizeof(A));
+        memset(B,0,sizeof(B));
+        LL yushu=0;
+        int now=1;
+        for(LL i=0;i<=item[tot].a;i++)
+        {
+            if(now<=tot && i==item[now].a)
+            {
+                if(yushu>0)B[i]=1;
+                yushu+=item[now].n;
+                A[i]=yushu%2;
+                yushu/=2;
+                now++;
+            }
+            else
+            {
+                B[i]=1;
+                A[i]=yushu%2LL;
+                yushu/=2;
+            }
+        }
+        for(now=item[tot].a;now>0;now--)
+        {
+            if(0==A[now] || 1==B[now])
+                A[now]=0;
+            else
+                break;
+        }
+        printf("Case #%d: ",iCase);
+        iCase++;
+        if(0==now)
+        {
+            printf("%I64d\n",A[now]);
+        }
+        else
+        {
+            yushu=0;
+            for(LL i=0;i<=now;i++)
+            {
+                if(0==yushu)
+                {
+                    A[i]^=yushu;
+                    yushu=A[i];
+                }
+                else
+                    A[i]^=yushu;
+            }
+            while(0==A[now])now--;
+            for(LL i=now;i>=0;i--)
+                printf("%I64d",A[i]);
+            printf("\n");
+        }
+    }
+    return 0;
+}
+题意：岛上有n种宝藏，每一种宝藏有x个，它的价值为2^a。(x<10^9,a<10^5)
+现在给出n种宝藏的个数x和价值a，要你将它分成两份是它们差值最小并输出差值。
+思路：开始以为是背包问题，但是做不出来，正确的做法是：跟它的价值是2的次方有关系。
+假如宝藏有x个，而x是个奇数，那么没办法我们只能把一边多分一个2^a(先保存好，等下再讨论分给谁)。
+剩余的我们不分把她它弄成是(x/2)个价值为2^(a+1)的宝藏。(这里我们需要从a最小的开始)这样一直往上推，把宝藏弄成全部是bc[i][0]*2^i的形式，
+而bc[i][1]记录是否由下面2^(i-1)生成的(其中bc[i][0]=1(或0),表示有(没有)2^i的这种宝藏，bc[i][1]=1(或0),表示由(不由)2^(i-1)构成)。
+我现在又从高位往低位判断，
+1、如果2^j不存在，继续往下分配。
+2、如果存在则分两种情况讨论
+  (1)、这个宝藏是由2^(j-1)构成的，那么我们把这种宝藏分成2^(j-1)，平均分配给两边。继续往下分配。
+  (2)、如果不是，我们把这个宝藏分配给一边，把比这个宝藏阶层小的分配给另一边。分配结束。
+  差值为2^(j)-bc[j-1][0]*2^(j-1)-bc[j-2][0]*2^(j-2)-……-bc[0][0]*2^0;
+  输出其对应的2进制即可。
+我的理解：就是说。。。其实开始的时候先预处理给的东西。。对于最小价值的东西。。看他是不是偶数。。如果是偶数。。就先把它凑成大的东西。。对结果不会有影响。。比如a=0  n=4就先看成a=1，n=2的东西。。因为如果在没有进行这种处理的时候。。平均分配的时候如果缺一个a=1的东西。。那么这4个a=0的东西可以先变成2个a=1的东西。。凑玩之后会用掉一个。。然后因为这个时候剩下的一个a=1的东西是原来凑出来的。。可以分开。。所以就可以平均分配。。那么。。也就有了加入另一个数组的必要。。那个数组来记录这个大小的东西又没有来自比他小的东西凑成。。然后就是这样凑。。一直把东西全都凑成价值n。。个数是1或者是0的东西。。然后从价值最大的东西开始分配。。。如果这个东西的个数是0。。那就不要管他。。如果个东西即使不是0.是1.。但是如果他是由比他小的东西组成的一部分。。那么因为这个小东西可分。。所以也不用管他。。。比如 1 1 2 4 凑成的8.。那么肯定能分成1 1 2 和4.。。（任何能凑成2^N的数字肯定能被平均分为两组。。使这两组数字和分别相同。）然后分配就会停止在n=1但是却没有被比他小的东西组成的东西上。。他就是不平衡的数。。那么把它分配给一遍。。剩下比他小的数字分配给另一边。。比如16 8 2 1.。肯定是16分给一遍。。剩下所有的数字分配给另一边。。。（因为我们之前预处理就把各种大小的东西给合成了。。所以每种东西最多只有一个。。多余一个就又可以把这相同的东西合成了。。）所以一旦出现不平衡的东西。。那么这个大的东西肯定比比他小的东西的总和还大。。那么答案就是他们之间的差值了。。 

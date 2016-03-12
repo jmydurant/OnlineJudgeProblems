@@ -1,0 +1,103 @@
+#include<stdio.h>
+#include<string.h>
+
+int a[1000];
+int main(void)
+{
+    int n;
+    while(scanf("%d",&n)&&(n!=0))
+    {
+        int E=11;
+        int Length=4;
+        memset(a,0,sizeof (a));
+        a[3]=2;a[2]=0;a[1]=4;a[0]=8;
+        if(n==1)
+        {
+            printf("%d\n",7);
+            continue;
+        }
+        if(n==2)
+        {
+            printf("%d\n",8);
+            continue;
+        }
+        if(n==5)
+        {
+            printf("%d\n",9);
+            continue;
+        }
+        if(n>=10&&n<=99)
+        {
+            while(n!=((a[Length-1])*10+a[Length-2]))
+            {   int i;
+                for(i=0;i<=999;i++)
+                {
+                    a[i]*=2;
+                }
+                for(i=0;i<=998;i++)
+                {
+                    if(a[i]>=10)
+                    {
+                        a[i+1]+=(a[i])/10;
+                        a[i]%=10;
+                    }
+                }
+                if(a[Length]>0)
+                {
+                    Length++;
+                }
+                E++;
+            }
+            printf("%d\n",E);
+        }
+        if(n<=9)
+        {
+            while(n!=(a[Length-1]))
+            {   int i;
+                for(i=0;i<=999;i++)
+                {
+                    a[i]*=2;
+                }
+                for(i=0;i<=998;i++)
+                {
+                    if(a[i]>=10)
+                    {
+                        a[i+1]+=(a[i])/10;
+                        a[i]%=10;
+                    }
+                }
+                if(a[Length]>0)
+                {
+                    Length++;
+                }
+                E++;
+            }
+            printf("%d\n",E);
+        }
+        if(n==100)
+        {
+            while(n!=((a[Length-1])*100+(a[Length-2])*10+a[Length-3]))
+            {   int i;
+                for(i=0;i<=999;i++)
+                {
+                    a[i]*=2;
+                }
+                for(i=0;i<=998;i++)
+                {
+                    if(a[i]>=10)
+                    {
+                        a[i+1]+=(a[i])/10;
+                        a[i]%=10;
+                    }
+                }
+                if(a[Length]>0)
+                {
+                    Length++;
+                }
+                E++;
+            }
+            printf("%d\n",E);
+        }
+    }
+    return 0;
+}

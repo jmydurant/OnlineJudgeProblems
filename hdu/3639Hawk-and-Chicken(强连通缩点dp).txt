@@ -1,0 +1,149 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //本来一个很沙茶的问题。。为什么折腾了我那么久。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 5100
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+typedef pair<int,int> P;
+int n,m,iCase;
+struct node{
+    int f,t,nxt;
+}edge[1010100];
+int headline[maxn] , reheadline[maxn] , E;
+inline void add(int f,int t,int re){
+    edge[E].f = f;
+    edge[E].t = t;
+    if(re){
+        edge[E].nxt = reheadline[f];
+        reheadline[f] = E++;
+    }else{
+        edge[E].nxt = headline[f];
+        headline[f] = E++;
+    }
+}
+int dfn[maxn] , low[maxn] , tot , st[maxn] , top , belong[maxn] , scc;
+bool instack[maxn];
+int sum[maxn] , dp[maxn];
+void tarjan(int u){
+    dfn[u] = low[u] = ++tot;
+    st[top] = u; top++;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(dfn[u] == low[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+map<P,int> bst;
+int out[maxn];
+int visit[maxn] , ind;
+int dfs(int u){
+    visit[u] = ind;
+    int ans = sum[u];
+    for(int i = reheadline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(visit[v] != ind){
+            ans += dfs(v);
+        }
+    }return ans;
+}
+vector<int> la , aa;
+void solve(void){
+    scanf("%d%d",&n,&m);
+    rst(headline,-1); rst(reheadline,-1); E = 0;
+    FOR(i,1,m){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a,b,0);
+    }
+    rst(dfn,0); rst(instack,false);
+    tot = top = scc = 0;
+    REP(i,n)if(!dfn[i]) tarjan(i);
+    rst(out,0);
+    int tE = E;
+    REP(i,tE){
+        int a = belong[edge[i].f] , b = belong[edge[i].t];
+        if(a != b){
+            out[a]++;
+            add(b,a,1);            //加反边。。
+        }
+    }
+    rst(visit,0); rst(sum,0);
+    REP(i,n){
+        sum[belong[i]]++;
+    }
+    int ans = 0;
+    la.clear(); aa.clear();
+    FOR(i,1,scc)if(out[i] == 0){
+        ind = i;
+        int tt = dfs(i);
+        if(tt > ans){
+            ans = tt;
+            la.clear();
+            la.push_back(i);
+        }else if(tt == ans){
+            la.push_back(i);
+        }
+    }
+    int ss = la.size();
+    printf("Case %d: %d\n",++iCase,ans-1);
+    REP(i,n){
+        REP(j,ss){
+            if(belong[i] == la[j]){
+                aa.push_back(i);
+                break;
+            }
+        }
+    }
+    sort(aa.begin(),aa.end());
+    ss = aa.size();
+    REP(i,ss){
+        printf("%d%c",aa[i] , (i == ss-1)?'\n':' ');
+    }
+}
+int main(void){
+    iCase = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

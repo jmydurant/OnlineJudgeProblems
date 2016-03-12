@@ -1,0 +1,65 @@
+#include<stdio.h>
+#include<string.h>
+int digit[110][110];
+int wordlen[110];
+int sum[110];
+char words[110][110];
+void get_digit(int linenum,int length);
+int main (void)
+{
+    int total;
+    int i,j;
+
+    memset(sum,0,sizeof(sum));
+    for(i=0;i<=109;i++)
+    {
+        memset(digit[i],0,sizeof(digit[i]));    //别误会哈。。只是练练手罢了。。现在这种题目都成水题了。。啦啦啦
+    }
+    for(i=0;i<=108;i++)
+    {
+        gets(words[i]);
+        if(!strcmp(words[i],"0"))
+        {
+            break;
+        }
+        wordlen[i]=strlen(words[i]);
+    }
+    total=i-1;
+    for(i=0;i<=total;i++)
+    {
+        get_digit(i,wordlen[i]);
+    }
+    for(i=0;i<=107;i++)
+    {
+        for(j=0;j<=total;j++)
+        {
+            sum[i]+=digit[j][i];
+        }
+    }
+    for(j=0;j<=108;j++)
+    {
+        if(sum[j]>=10)
+        {
+            sum[j+1]+=sum[j]/10;
+            sum[j]%=10;
+        }
+    }
+    for(i=109;0==sum[i];i--)
+    {
+        ;
+    }
+    for(;i>=0;i--)
+    {
+        printf("%d",sum[i]);
+    }
+    printf("\n");
+    return 0;
+}
+void get_digit(int linenum,int length)
+{
+    int k;
+    for(k=0;k<length;k++)
+    {
+        digit[linenum][k]=(words[linenum][length-k-1]-'0');
+    }
+}

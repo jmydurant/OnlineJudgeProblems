@@ -1,0 +1,55 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //因为要每5个月都亏本。。所以稍微枚举一下情况就能分类讨论了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 1010101
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int s,d;
+void solve(void){
+    int ans;
+    if(4*s < d){
+        ans = 10*s - 2*d;
+    }else if(3*s < 2*d){
+        ans = 8*s - 4*d;
+    }else if(2*s < 3*d){
+        ans = 6*s - 6*d;
+    }else if(s < 4*d){
+        ans = 3*s - 9*d;
+    }else{
+        ans = -12*d;
+    }
+    if(ans < 0)printf("Deficit\n");
+    else printf("%d\n",ans);
+}
+int main(void){
+    while(cin >> s >> d)solve();
+    return 0;
+}

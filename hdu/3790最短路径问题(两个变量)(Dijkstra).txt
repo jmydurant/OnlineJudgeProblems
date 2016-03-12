@@ -1,0 +1,88 @@
+#include<cstdio>    //其实考虑方法都是一样的。。。就是路程一样的时候记录最短钱数就可以了。。。
+#include<cstring>
+#include<cstdlib>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+using namespace std;
+int puzzle[1100][1100];
+int cost[1100][1100];
+int path[1100];
+int money[1100];
+bool visit[1100];
+int N,M,start,aim;
+void IINT(void)
+{
+    memset(visit,false,sizeof(visit));
+    memset(puzzle,INF,sizeof(puzzle));
+    for(int i=1;i<=N;i++)
+    {
+        for(int j=1;j<=N;j++)
+        {
+            cost[i][j]=200000000;
+        }
+    }
+}
+int main(void)
+{
+    while(2==scanf("%d%d",&N,&M),N || M)
+    {
+        IINT();
+        for(int i=1;i<=M;i++)
+        {
+            int x,y,z,c;
+            scanf("%d%d%d%d",&x,&y,&z,&c);
+            if(puzzle[x][y]>z)
+            {
+                puzzle[x][y]=z;
+                puzzle[y][x]=z;
+                cost[x][y]=c;
+                cost[y][x]=c;
+            }
+            else if(puzzle[x][y]==z)
+            {
+                cost[x][y]=MIN(cost[x][y],c);
+                cost[y][x]=MIN(cost[y][x],c);
+            }
+        }
+        scanf("%d%d",&start,&aim);
+        for(int i=1;i<=N;i++)
+        {
+            path[i]=puzzle[start][i];
+            money[i]=cost[start][i];
+        }
+        path[start]=0;money[start]=0;
+        visit[start]=true;
+        //printf("%d %d\n",start,aim);
+        while(start!=aim)
+        {
+            //system("pause");
+            //printf("%d\n",start);
+            int minroad=INF,tmpt;
+            for(int i=1;i<=N;i++)
+            {
+                if(!visit[i])
+                {
+                    if(path[i]>path[start]+puzzle[start][i])
+                    {
+                        path[i]=path[start]+puzzle[start][i];
+                        money[i]=money[start]+cost[start][i];
+                    }
+                    else if(path[i]==path[start]+puzzle[start][i])
+                    {
+                        money[i]=MIN(money[i],money[start]+cost[start][i]);
+                    }
+                    if(minroad>path[i])
+                    {
+                        minroad=path[i];
+                        tmpt=i;
+                        //printf("pass %d\n",i);
+                    }
+                }
+            }
+            start=tmpt;visit[start]=true;
+        }
+        //printf("%d %d\n",money[2],money[3]);
+        printf("%d %d\n",path[aim],money[aim]);
+    }
+    return 0;
+}

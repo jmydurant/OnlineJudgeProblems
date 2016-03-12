@@ -1,0 +1,90 @@
+#include <stdio.h>   //这题不错。。思路见下
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <map>
+#include <string>
+#define INF 0xffffffff
+#define MAXN 51000
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+struct node
+{
+    int a,b,next;
+    double rate,con;
+}puzzle[220];
+int N,M,s;
+double v;
+int headline[110];
+bool visit[110];
+double dis[110];
+void INIT(void)
+{
+    memset(headline,-1,sizeof(headline));
+    memset(visit,false,sizeof(visit));
+    for(int i=1;i<=N;i++)
+        dis[i]=-1.0;
+}
+bool spfa()
+{
+    queue<int>q;
+    int start=s;
+    dis[start]=v;
+    visit[start]=true;
+    q.push(start);
+    while(!q.empty())
+    {
+        start=q.front();
+        q.pop();
+        visit[start]=false;
+        for(int i=headline[start];i!=-1;i=puzzle[i].next)
+        {
+            int tail=puzzle[i].b;
+            if(dis[tail]<(dis[start]-puzzle[i].con)*puzzle[i].rate)
+            {
+                dis[tail]=(dis[start]-puzzle[i].con)*puzzle[i].rate;
+                if(!visit[tail])
+                {
+                    visit[tail]=true;
+                    q.push(tail);
+                }
+            }
+        }
+        if(dis[s]>v)
+            return true;
+    }
+    return false;
+
+}
+int main(void)
+{
+    while(2==scanf("%d%d",&N,&M))
+    {
+        INIT();
+        scanf("%d%lf",&s,&v);
+        for(int i=1;i<=2*M;i+=2)
+        {
+            scanf("%d%d%lf%lf%lf%lf",&puzzle[i].a,&puzzle[i].b,&puzzle[i].rate,&puzzle[i].con,&puzzle[i+1].rate,&puzzle[i+1].con);
+            puzzle[i+1].a=puzzle[i].b;
+            puzzle[i+1].b=puzzle[i].a;
+            puzzle[i].next=headline[puzzle[i].a];
+            puzzle[i+1].next=headline[puzzle[i+1].a];
+            headline[puzzle[i].a]=i;
+            headline[puzzle[i+1].a]=i+1;
+        }
+        bool ok=spfa();
+        if(ok)
+            printf("YES\n");
+        else
+            printf("NO\n");
+    }
+    return 0;
+}
+题目大意：有多种从a到b的汇率，在你汇钱的过程中还需要支付手续费，那么你所得的钱是 money=（nowmoney-手续费）*rate，现在问你有v钱，从s开始出发交换钱能不能赚钱
+
+解题思路：能不能赚钱从s找一条正权回路，如果这个时候d[i]数组表示从s开始到i的最多钱，如果有一个大于v了，直接返回1，如果spfa都走完了还没找到，那么返回0
+
+如果用bellman-ford来的话，在松弛n-1次后看有没有d[i]大于s的，有就返回1，否则返回0

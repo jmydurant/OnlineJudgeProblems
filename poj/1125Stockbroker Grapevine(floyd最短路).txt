@@ -1,0 +1,71 @@
+#include <stdio.h>   //水的一B的最短路哈。。。
+#include <cstring>
+
+#define INF 100000
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+int N;
+int puzzle[110][110];
+void INIT(void)
+{
+    for(int i=1;i<=N;i++)
+        for(int j=1;j<=N;j++)
+        puzzle[i][j]=INF;
+}
+int main(void)
+{
+    while(EOF!=scanf("%d",&N) && N)
+    {
+        INIT();
+        for(int i=1;i<=N;i++)
+        {
+            int k; scanf("%d",&k);
+            for(int j=1;j<=k;j++)
+            {
+                int a,b; scanf("%d%d",&a,&b);
+                puzzle[i][a]=MIN(puzzle[i][a],b);
+            }
+        }
+        for(int k=1;k<=N;k++)
+        {
+            for(int i=1;i<=N;i++)
+            {
+                if(i!=k && puzzle[i][k]!=INF)
+                {
+                    for(int j=1;j<=N;j++)
+                    {
+                        if(j!=k && j!=i && puzzle[k][j]!=INF)
+                        {
+                            puzzle[i][j]=MIN(puzzle[i][j],puzzle[i][k]+puzzle[k][j]);
+                        }
+                    }
+                }
+            }
+        }
+        int start,minr=INF;
+        for(int i=1;i<=N;i++)
+        {
+            int road=0;
+            for(int j=1;j<=N;j++)
+            {
+                if(i!=j)
+                {
+                    if(road<puzzle[i][j])
+                    {
+                        road=puzzle[i][j];
+                    }
+                }
+            }
+            if(minr>road)
+            {
+                minr=road;
+                start=i;
+            }
+        }
+        if(minr==INF)
+            printf("disjoint\n");
+        else
+            printf("%d %d\n",start,minr);
+    }
+    return 0;
+}

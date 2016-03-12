@@ -1,0 +1,44 @@
+#include<iostream>   //设dp(i,j)是左端选到i右端选到j的最大值。。则dp(i,j)=MAX(dp(i-1,j)+v[i]*a , dp(i,j+1)+v[j]*a)
+#include<cstring>     //然后把边界弄一下就好了。。。
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+using namespace std;
+int MAX(int a,int b){return a>b?a:b;}
+int dp[2010][2010];
+int v[2010];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        memset(dp,0,sizeof(dp));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",v+i);
+            dp[i][N+1]=dp[i-1][N+1]+v[i]*i;
+        }
+        for(int i=N;i>=1;i--)
+        {
+            dp[0][i]=dp[0][i+1]+v[i]*(N-i+1);
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=N;j>=i+1;j--)
+            {
+                dp[i][j]=MAX(dp[i][j+1]+v[j]*(N+i-j+1),dp[i-1][j]+v[i]*(N+i-j+1));
+            }
+        }
+        int result=0;
+        for(int i=0;i<=N;i++)
+        {
+            if(dp[i][i+1]>result)result=dp[i][i+1];
+        }
+        printf("%d\n",result);
+    }
+}
+
+
+
+
+

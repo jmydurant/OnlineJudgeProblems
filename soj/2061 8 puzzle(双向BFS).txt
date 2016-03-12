@@ -1,0 +1,196 @@
+#include<cstdio>
+#include<cstring>                     //经典的八数码问题。。第一次写广搜。。结果超时。。逼着我自学双向BFS。。
+using namespace std;
+int puzztype[400000];               //记录双向队列的类别。。从终点扩展来的是2，从起点扩展来的是1
+int state[800000];                  //记录所有的状态。。。
+int road[400000];                  //记录hash过后的状态所需要的路径长度
+int visit[400000];                    //路径判重。。原来我看的东西叫做hash。。。好厉害的东西
+int bfs();
+int oddeven();                       //一个缩短时间的函数。。当起始和终了的状态奇偶性不同是直接判定寻找失败。。
+void look_up_table(void);            //初始化查找表格。。。
+int head,tail;                      //队列的头尾
+int dx[]={1,-1,0,0};
+int dy[]={0,0,1,-1};
+int change(int x);                //将一个八数码给hash掉。。
+int findway(int dir,int x);           //将一个状态给转移成另外一种状态。。返回的是八数码
+int puzzle[3][3];                 //记录起始状态
+int revpuzzle[3][3];               //记录终了状态
+int f1[9];int f2[9];             //缩短时间函数需要的数组。。存放排在第x数之前且比他小的数字的个数。。但是忽略0的存在。。原理很强大
+int table[9];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        if(0==oddeven())
+        {
+            printf("%d\n",-1);
+        }
+        else
+        {
+            int ok=0;
+            memset(road,0,sizeof(road));
+            memset(visit,0,sizeof(visit));
+            memset(state,0,sizeof(state));
+            memset(puzztype,0,sizeof(puzztype));
+            look_up_table();
+            for(int i=0;i<9;i++)
+            {
+                state[0]*=10;
+                state[1]*=10;
+                state[0]+=revpuzzle[i/3][i%3];
+                state[1]+=puzzle[i/3][i%3];
+            }
+            //printf("%d %d",change(state[0]),change(state[1]));
+            visit[change(state[1])]=1;
+            visit[change(state[0])]=2;
+            puzztype[change(state[1])]=1;
+            puzztype[change(state[0])]=2;
+            ok=bfs();
+            printf("%d\n",ok);
+        }
+    }
+    return 0;
+}
+
+int bfs()
+{
+    head=0;tail=1;
+    if(state[0]==state[1])return 0;
+    while(head<=tail)
+    {
+        for(int i=0;i<4;i++)
+        {
+            int exchange=findway(i,state[head]);   //我的双向BFS原理比较挫。。将起始状态和终了状态同时放入队列中。。然后按顺序展开。。
+            int pass,now;                          //当一个hash数字已经被占过。。而且如果是来自起始状态的hash被终了状态的hash撞到一起。。就算找到
+            if(0==exchange)continue;              
+            pass=change(exchange);
+            now=change(state[head]);
+            if(0==visit[pass])
+            {
+                tail++;
+                if(1==puzztype[now])
+                {
+                    puzztype[pass]=1;
+                    visit[pass]=1;
+                }
+                else
+                {
+                    puzztype[pass]=2;
+                    visit[pass]=2;
+                }
+                state[tail]=exchange;
+                road[pass]=road[now]+1;
+            }
+            else if(3==visit[pass]+puzztype[now])
+            {
+                //printf("%d %d\n",head,tail);
+                return road[pass]+road[now]+1;
+            }
+        }
+        head++;
+    }
+    return -1;
+}
+int findway(int dir,int num)
+{
+    int check[3][3];
+    int result=0;
+    int x,y,nx,ny;
+    for(int i=8;i>=0;i--)
+    {
+        check[i/3][i%3]=num%10;
+        num/=10;
+        if(0==check[i/3][i%3]){x=i/3;y=i%3;}
+    }
+    nx=x+dx[dir];ny=y+dy[dir];
+    if(nx<0||ny<0||nx>2||ny>2)return 0;
+    else
+    {
+        check[x][y]=check[nx][ny];
+        check[nx][ny]=0;
+    }
+    for(int i=0;i<9;i++)
+    {
+        result*=10;
+        result+=check[i/3][i%3];
+    }
+    return result;
+}
+void look_up_table(void)
+{
+    table[0]=1;
+    for(int i=1;i<9;i++)
+    {
+        table[i]=table[i-1]*i;
+    }
+}
+int oddeven()
+{
+    int t1=0,t2=0;
+    int q1[9];int q2[9];
+    memset(q1,0,sizeof(q1));
+    memset(q2,0,sizeof(q2));
+    for(int i=0;i<3;i++)
+    {
+        for(int j=0;j<3;j++)
+        {
+            scanf("%d",&puzzle[i][j]);
+            q1[i*3+j]=puzzle[i][j];
+            for(int k=i*3+j-1;k>=0;k--)
+            {
+                if((q1[i*3+j]>q1[k])&&q1[k])
+                {
+                    t1++;
+                }
+            }
+        }
+    }
+    for(int i=0;i<3;i++)
+    {
+        for(int j=0;j<3;j++)
+        {
+            scanf("%d",&revpuzzle[i][j]);
+            q2[i*3+j]=revpuzzle[i][j];
+            for(int k=i*3+j-1;k>=0;k--)
+            {
+                if((q2[i*3+j]>q2[k])&&q2[k])
+                {
+                    t2++;
+                }
+            }
+        }
+    }
+    if((t1%2)==(t2%2))
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+int change(int x)
+{
+    int s[9];
+    int paiwei[9]={0};
+    int result=0;
+    for(int i=8;i>=0;i--)
+    {
+        s[i]=x%10;
+        x/=10;
+    }
+    for(int i=0;i<9;i++)
+    {
+        for(int j=i-1;j>=0;j--)
+        {
+            if(s[i]>s[j]) paiwei[i]++;
+        }
+    }
+    for(int i=0;i<9;i++)
+    {
+        result+=(s[i]-paiwei[i])*table[8-i];
+    }
+    return result;
+}

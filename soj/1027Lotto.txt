@@ -1,0 +1,36 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+int main(void)
+{
+    int digit[20];
+    int num;
+    scanf("%d",&num);
+    while(num)
+    {
+        int i;
+        int a[6];
+        for(i=0;i<num;i++)
+        {
+            scanf("%d",&digit[i]);              //输出格式是个幌子。。老样子输出。。。
+        }
+        for(a[0]=0;a[0]<=num-6;a[0]++)
+        for(a[1]=a[0]+1;a[1]<=num-5;a[1]++)
+        for(a[2]=a[1]+1;a[2]<=num-4;a[2]++)
+        for(a[3]=a[2]+1;a[3]<=num-3;a[3]++)
+        for(a[4]=a[3]+1;a[4]<=num-2;a[4]++)
+        for(a[5]=a[4]+1;a[5]<=num-1;a[5]++)
+        {
+            int j=0;
+            for(;j<=5;j++)
+            {
+                printf("%d%c",digit[a[j]],((j+1)%6)?' ':'\n');
+            }
+        }
+        printf("\n");
+        scanf("%d",&num);
+
+    }
+    return 0;
+}

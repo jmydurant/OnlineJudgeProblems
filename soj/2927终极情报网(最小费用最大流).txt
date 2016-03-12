@@ -1,0 +1,145 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //图比较好建。。但是要注意几个问题。。首先spfa要小心浮点精度。。有可能会负环。。其次是输出保留有效位数要四舍五入
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 140000000
+#define maxn 500
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int f,t,nxt;
+    int r;
+    double cost;
+}edge[100000];
+int headline[maxn] , E;
+void add(int f,int t,int w,double c){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].r = w;
+    edge[E].cost = c;
+    headline[f] = E++;
+    edge[E].f = t;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].r = 0;
+    edge[E].cost = -c;
+    headline[t] = E++;
+}
+int n,k,op,ed,mid;
+int q[101010] , head,tail , fa[maxn];
+double dis[maxn];
+bool visit[maxn];
+bool spfa(void){
+    FOR(i,op,ed){
+        dis[i] = INF;
+        fa[i] = -1;
+        visit[i] = false;
+    }
+    head = 0 , tail = 1;
+    q[head] = op;
+    visit[op] = true;
+    dis[op] = 0;
+    while(head < tail){
+        int u = q[head]; head++; visit[u] = false;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(edge[i].r > 0 && dis[v] > dis[u] + edge[i].cost && fabs(dis[v] - dis[u] - edge[i].cost) > 1e-10){
+                dis[v] = dis[u] + edge[i].cost;
+                fa[v] = i;
+                if(!visit[v]){
+                    visit[v] = true;
+                    q[tail] = v; tail++;
+                }
+            }
+        }
+    }
+    if(fa[ed] == -1)return false;
+    return true;
+}
+double MCMF(void){
+    double mincost = 0;
+    int maxflow = 0;
+    while(spfa()){
+        int u = fa[ed];
+        int minflow = INF;
+        while(u != -1){
+            minflow = MIN(minflow , edge[u].r);
+            u = fa[edge[u].f];
+        }
+        u = fa[ed];
+        while(u != -1){
+            edge[u].r -= minflow;
+            edge[u ^ 1].r += minflow;
+            u = fa[edge[u].f];
+        }
+        mincost += dis[ed] * minflow;
+        maxflow += minflow;
+    }
+    if(maxflow != k)return 0.0;
+    return exp(-mincost);
+}
+double as[maxn];
+void solve(void){
+    rst(headline,-1); E = 0;
+    op = 0; mid = n+1; ed = n+2;
+    add(op,mid,k,0);
+    FOR(i,1,n) scanf("%lf",as+i);
+    FOR(i,1,n){
+        int tt; scanf("%d",&tt);
+        if(tt) add(mid,i,tt,-log(as[i]));
+    }
+    FOR(i,1,n){
+        int tt; scanf("%d",&tt);
+        if(tt) add(i,ed,INF,0);
+    }
+    int a,b;
+    while(scanf("%d%d",&a,&b)){
+        if(a == -1 && b == -1)break;
+        double cc ; int ww; scanf("%lf%d",&cc,&ww);
+        add(a,b,ww,-log(cc));
+        add(b,a,ww,-log(cc));
+    }
+    double ans = MCMF();
+    char ch[40];
+    sprintf(ch,"%.15lf\n",ans);
+    int i , sum;
+    for(i = 0,sum = 0;sum < 5;i++){
+        if(sum > 0 || (ch[i] != '0' && ch[i] != '.') ) sum++;
+    }
+    if(ch[i] >= '5')ch[i-1]++ ;
+    ch[i] = 0;
+    for(;i>=0 ;i--){
+        if(ch[i] == '.')break;
+        if(ch[i] > '9') ch[i-1]++ , ch[i] = '0';
+    }
+    printf("%s\n",ch);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&k)) solve();
+    return 0;
+}

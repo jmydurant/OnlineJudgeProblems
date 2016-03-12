@@ -1,0 +1,41 @@
+#include<cstdio>
+#include<cstring>
+struct a
+{
+    int x;
+    int y;
+    int hight;
+}building[5010];           //啥也不说了。。做的相当搓。。。。
+int xline[10010];
+int maxy,minx;
+int main(void)
+{
+    int i=0;
+    memset(xline,0,sizeof(xline));
+    minx=10010;maxy=0;
+    while(EOF!=scanf("%d%d%d",&building[i].x,&building[i].hight,&building[i].y))
+    {
+        int j;
+        if(building[i].x<minx){minx=building[i].x;}
+        if(building[i].y>maxy){maxy=building[i].y;}
+        for(j=building[i].x;j<building[i].y;j++)
+        {
+            if(building[i].hight>xline[j])
+            {
+                xline[j]=building[i].hight;
+            }
+            //printf(" %d\n",xline[2]);
+        }
+        i++;
+    }
+    //printf("%d",building[1].hight);
+    printf("%d %d ",minx,xline[minx]);
+    for(int k=minx+1;k<=maxy+5;k++)
+    {
+        if(xline[k]!=xline[k-1])
+        {
+            printf("%d %d ",k,xline[k]);
+        }
+    }
+    printf("\n");
+}

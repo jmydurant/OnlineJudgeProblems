@@ -1,0 +1,70 @@
+#include <iostream>   //仔细的一位一位的推算就可以了。。注意先把数字换成k进制。。
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <cstdlib>
+#include <vector>
+#define FOR(i,a,b) for(int i = (int)a ;i<=(int)b;i++)
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 120000
+#define rank fadsasf
+using namespace std;
+typedef long long LL;
+
+LL k = 10;
+LL power[1000   ];
+LL pow(LL a,int n)
+{
+    LL ans = 1;
+    while(n)
+    {
+        if(n%2)
+            ans *= a;
+        a *= a;
+        n /= 2;
+    }
+    return ans;
+}
+
+LL cal(LL n)
+{
+    if(n == 0 || n == 1)
+        return n;
+    LL sum = 0;
+    LL ans = 0;
+    int top = 0;
+    while(n)
+    {
+        power[top] = n % k;
+        n /= k;
+        top++;
+    }
+    top--;
+    //cout << "top is " << top << endl;
+    while(top>=0)
+    {
+        LL m = power[top];
+        ans += m*pow(k,top)*top*(k-1)/2;
+        ans += pow(k,top)*(m-1)*m/2;
+        ans += sum*pow(k,top)*m;
+        sum += m;
+        top--;
+    }
+    ans += sum;
+    return ans;
+}
+
+
+
+int main(void)
+{
+    LL a,b;
+    //cout << cal(10);
+    while(cin >> a >> b >> k)
+    {
+        LL ans = cal(b) - cal(a-1);
+        cout << ans << endl;
+    }
+    return 0;
+}

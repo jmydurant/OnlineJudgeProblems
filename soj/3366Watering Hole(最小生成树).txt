@@ -1,0 +1,51 @@
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<vector>    //这个是用优先队列做的。。。应该是属于Kruskal和prim算法的结合体。。。话说stl真的是太好用了。。。
+using namespace std;
+typedef pair<int, int> point;//注意pair的比较规则。。先比较first。。然后是second。。
+using namespace std;
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+       int result=0;
+       int ditu[310][310],visit[310]={0};
+       priority_queue<point,vector<point>,greater<point> >q;
+       for(int i=1;i<=N;i++)
+       {
+           int a;
+           scanf("%d",&a);
+           q.push(point(a,i));
+       }
+       for(int i=1;i<=N;i++)
+       {
+           for(int j=1;j<=N;j++)
+           {
+               scanf("%d",&ditu[i][j]);
+           }
+       }
+       while(!q.empty())
+       {
+           point tmpt=q.top();
+           q.pop();
+           int length=tmpt.first,zuobiao=tmpt.second;
+           if(!visit[zuobiao])
+           {
+               visit[zuobiao]=1;
+               result+=length;
+               for(int i=1;i<=N;i++)
+               {
+                   if(!visit[i])
+                   {
+                       q.push(point(ditu[zuobiao][i],i));
+                   }
+               }
+           }
+       }
+       printf("%d\n",result);
+    }
+    return 0;
+
+}

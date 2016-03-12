@@ -1,0 +1,79 @@
+#include <cstdio>     //ºÃÏñºÜ¼òµ¥¡£¡£¡£¡£¡£
+#include <cstring>
+#include <map>
+#include <set>
+#include <algorithm>
+#include <climits>
+#include <queue>
+#define INF -10000000
+#define mod 1000000007LL
+using namespace std;
+
+struct node
+{
+    int x,y;
+    int c;
+    bool operator < (const node & temp) const
+    {
+        return c > temp.c;
+    }
+};
+priority_queue<node> q;
+int fa[1010];
+int findset(int x)
+{
+    if(fa[x] != x)
+        fa[x] = findset(fa[x]);
+    return fa[x];
+}
+void unionset(int x,int y)
+{
+    int fx = findset(x);
+    int fy = findset(y);
+    if(fx != fy)
+        fa[fx] = fy;
+}
+int main(void)
+{
+    int n,m;
+    while(2==scanf("%d%d",&n,&m))
+    {
+        while(!q.empty()) q.pop();
+        node v;
+        for(int i = 1;i<=m;i++)
+        {
+            scanf("%d%d%d",&v.x,&v.y,&v.c);
+            v.c = -v.c;
+            q.push(v);
+        }
+        for(int i = 1;i<=n;i++)
+            fa[i] = i;
+        int ans = 0;
+        while(!q.empty())
+        {
+            int x = q.top().x;
+            int y = q.top().y;
+            int fx = findset(x);
+            int fy = findset(y);
+            if(fx != fy)
+            {
+                unionset(fx,fy);
+                ans += q.top().c;
+            }
+            q.pop();
+        }
+        int fa = findset(1);
+        bool ok = true;
+        for(int i = 2;i<=n;i++)
+            if(findset(i) != fa)
+        {
+            ok = false;
+            break;
+        }
+        if(ok)
+            printf("%d\n",-ans);
+        else
+            printf("-1\n");
+    }
+    return 0;
+}

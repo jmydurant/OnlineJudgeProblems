@@ -1,0 +1,117 @@
+#include <iostream>   //这题可以用线段树去写。。splay也可以写。。效率稍低。。
+#include <cstdio>    //询问x，y区间的方法是把x-1提到根。。再把y+1提到右儿子，那么y+1的左儿子就是a到b了。。很好玩哈。。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 300000
+#define INF 1000000000
+using namespace std;
+typedef long long LL;
+struct node
+{
+    int fa;
+    int son[2];
+    int key;
+    int maxr;
+}tree[maxn];
+int root;
+int n,Q;
+inline void update(int x)
+{
+    tree[x].maxr = tree[x].key;
+    tree[x].maxr = MAX(tree[x].maxr,tree[tree[x].son[0]].maxr);
+    tree[x].maxr = MAX(tree[x].maxr,tree[tree[x].son[1]].maxr);
+}
+void getnew(int ind,int key)
+{
+    tree[ind].fa = ind-1;
+    tree[ind].key = tree[ind].maxr = key;
+    tree[ind].son[0] = tree[ind].son[1] = 0;
+    tree[ind-1].son[1] = ind;
+    update(ind);
+}
+
+inline void rol(int x,int kind)  //旋转 0代表左旋。。1代表右旋
+{
+    int y = tree[x].fa;
+    int z = tree[y].fa;
+    tree[y].son[!kind] = tree[x].son[kind];
+    tree[tree[x].son[kind]].fa = y;
+    tree[x].son[kind] = y;
+    tree[x].fa = z;
+    tree[z].son[tree[z].son[1] == y] = x;
+    tree[y].fa = x;
+    update(y);
+    update(x);
+}
+
+void splay(int x,int aim)
+{
+    if(x != aim)
+    {
+        while(tree[x].fa != aim)
+        {
+            int y = tree[x].fa;
+            if(tree[y].son[0] == x)
+                rol(x,1);
+            else
+                rol(x,0);
+        }
+        if(!aim)
+            root = x;
+    }
+}
+
+void change(int ind,int val)
+{
+    ind++;
+    splay(ind,0);
+    tree[ind].key = val;
+    update(ind);
+}
+
+void req(int a,int b)
+{
+    b+=2;
+    splay(a,0);
+    splay(b,a);
+    printf("%d\n",tree[tree[b].son[0]].maxr);
+}
+
+int main(void)
+{
+    while(2 == scanf("%d%d",&n,&Q))
+    {
+        getnew(1,-INF);
+        FOR(i,2,n+1)
+        {
+            int w; scanf("%d",&w);
+            getnew(i,w);
+        }
+        getnew(n+2,-INF);
+        FOR(i,1,n+1)update(i);
+        while(Q--)
+        {
+            char op[10];
+            int x,y;
+            scanf("%s%d%d",op,&x,&y);
+            if(op[0] == 'Q')
+                req(x,y);
+            else
+                change(x,y);
+        }
+    }
+    return 0;
+}

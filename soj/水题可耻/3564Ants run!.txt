@@ -1,0 +1,40 @@
+#include<cstring>
+#include<cstdio>
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const double Pi = 2.0*asin(1.0);
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;double R;
+        scanf("%d%lf",&N,&R);
+        int maxnum=-1,minnum=INT_MAX;
+        for(int i=1;i<=N;i++)
+        {
+            int k; scanf("%d",&k);
+            if(k<minnum)minnum=k;
+            if(k>maxnum)maxnum=k;
+        }
+        if(maxnum==minnum)printf("Inf\n");
+        else
+        {
+            double dx=(double)(maxnum-minnum);
+            double ans=2.0*Pi*R/dx;
+            printf("%.3lf\n",ans);
+        }
+    }
+    return 0;
+}

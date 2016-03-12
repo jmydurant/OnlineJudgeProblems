@@ -1,0 +1,62 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1<<15
+using namespace std;
+
+int row,col;
+char puzzle[50][50];
+int ans[50][50];
+int main(void)
+{
+    while(2==scanf("%d%d",&row,&col))
+    {
+        int tot = 0;
+        for(int i=0; i<row; i++)
+            scanf("%s",puzzle[i]);
+        memset(ans,0,sizeof(ans));
+        for(int i=0; i<row; i++)
+        {
+            bool ok = true;
+            for(int j=0; j<col; j++)
+            {
+                if(puzzle[i][j] == 'S')
+                {
+                    ok = false;
+                    break;
+                }
+            }
+            if(ok)
+            {
+                for(int j=0; j<col; j++)
+                    ans[i][j] = 1;
+            }
+        }
+        for(int i=0; i<col; i++)
+        {
+            bool ok = true;
+            for(int j=0; j<row; j++)
+            {
+                if(puzzle[j][i] == 'S')
+                {
+                    ok = false;
+                    break;
+                }
+            }
+            if(ok)
+            {
+                for(int j=0; j<row; j++)
+                    ans[j][i] = 1;
+            }
+        }
+        for(int i=0; i<row; i++)
+        {
+            for(int j=0; j<col; j++)
+                tot += ans[i][j];
+        }
+        printf("%d\n",tot);
+    }
+    return 0;
+}

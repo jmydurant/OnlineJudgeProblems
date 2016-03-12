@@ -1,0 +1,48 @@
+#include <iostream>   //开始的时候题意理解错了。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int puzzle[100][100];
+int n;
+bool dfs(int s)
+{
+    for(int i = 0;i<n;i++)
+    {
+        if(s&(1<<i))
+            continue;
+        int temp = (s|(1<<i));
+        for(int j = 0;j<n;j++)
+        {
+            if(puzzle[i][j])
+                temp |= (1<<j);
+        }
+        if(!dfs(temp))
+            return true;
+    }
+    return false;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d",&n);
+        for(int i = 0;i<n;i++)
+            for(int j = 0;j<n;j++)
+            scanf("%d",&puzzle[i][j]);
+        printf("%d\n",(int)dfs(0));
+    }
+    return 0;
+}

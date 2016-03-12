@@ -1,0 +1,41 @@
+#include<iostream>   //就是判断一列数是否能成环。。。那就判断一下中间的数字至少都要出现两遍就ok了。。
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define INF 0x7f7f7f7f
+using namespace std;
+int num[50100];
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;scanf("%d",&N);
+        for(int i=0;i<N;i++)scanf("%d",num+i);
+        sort(num,num+N);
+        int jishu=1;
+        bool flag=true;
+        int last=num[0];
+        for(int i=0;i<N;i++)
+        {
+            if(num[i]==last)jishu++;
+            else
+            {
+                if(jishu<2||num[i]-last>1)
+                {
+                    flag=false;
+                    break;
+                }
+                last=num[i];
+                jishu=1;
+            }
+        }
+        if(flag)printf("possible\n");
+        else printf("impossible\n");
+    }
+    return 0;
+}

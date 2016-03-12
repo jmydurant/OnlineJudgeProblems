@@ -1,0 +1,68 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //把课和时间连起来就是二分图了。。直接匹配即可。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int n,link[maxn],visit[maxn],ind,mmmax;
+bool puzzle[310][maxn];
+bool Hungary(int u){
+    FOR(v,1,mmmax){
+        if(puzzle[u][v] && visit[v] != ind){
+            visit[v] = ind;
+            if(link[v] == -1 || Hungary(link[v])){
+                link[v] = u;
+                return true;
+            }
+        }
+    }return false;
+}
+void solve(void){
+    rst(puzzle,false); rst(link,-1); rst(visit,0);mmmax = 0;
+    FOR(i,1,n){
+        int nn; scanf("%d",&nn);
+        FOR(j,1,nn){
+            int a,b; scanf("%d%d",&a,&b);
+            puzzle[i][(a-1)*12 + b] = true;
+            mmmax = MAX(mmmax , (a-1)*12 + b);
+        }
+    }
+    int ans = 0;
+    FOR(i,1,n){
+        ind = i;
+        if(Hungary(i)) ans++;
+    }printf("%d\n",ans);
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

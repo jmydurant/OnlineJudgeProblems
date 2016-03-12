@@ -1,0 +1,65 @@
+#include<cstdio>    //一直被那几个最短路算法迷惑了。。其实最简单的爆搜就可以啊。。。这个世界。。真是看复杂了。。。
+#include<cstring>     //但是还是有许多收获的。。比如说。。好像那个记录路径的方法挺省时间的。。叫临界表？、、反正好用就行。。
+#include<algorithm>
+#include<deque>
+#include<climits>
+#define INF 0x7f7f7f7f
+using namespace std;
+int mark[10010];
+int visit[10010];
+struct abc
+{
+    int x,y,len,cost;
+    int next;
+}road[10010];
+int result,N,HP;
+void dfs(int beg,int len,int money);
+int main(void)
+{
+    int R;
+    while(3==scanf("%d%d%d",&HP,&N,&R))
+    {
+        memset(visit,0,sizeof(visit));
+        memset(mark,-1,sizeof(mark));
+        result=INF;
+        int jishu=0;
+        for(int i=1;i<=R;i++)
+        {
+            int x,y,z,c;
+            scanf("%d%d%d%d",&x,&y,&z,&c);
+            road[jishu].x=x;
+            road[jishu].y=y;
+            road[jishu].len=z;
+            road[jishu].cost=c;
+            road[jishu].next=mark[x];
+            mark[x]=jishu;jishu++;
+        }
+        visit[1]=1;
+        dfs(1,0,HP);
+        if(result>=INF)printf("%d\n",-1);
+        else printf("%d\n",result);
+    }
+}
+void dfs(int beg,int len,int money)
+{
+    if(len>=result)return;
+    if(money<0)return;
+    if(beg==N&&money>=0&&len<result)
+    {
+        result=len;
+        return;
+    }
+    for(int i=mark[beg];i!=-1;i=road[i].next)
+    {
+        int y=road[i].y;
+        int l=road[i].len;
+        int cost=road[i].cost;
+        if(cost<=money&&(!visit[y]))
+        {
+            visit[y]=1;
+            dfs(y,len+l,money-cost);
+            visit[y]=0;
+        }
+    }
+    return ;
+}

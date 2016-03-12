@@ -1,0 +1,74 @@
+#include <iostream>  //比较水。。只要子节点有一个是偶数的ans就自加一。。。
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <deque>
+#include <climits>
+#include <cmath>
+#include <vector>
+#include <set>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 201000
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 20100403LL
+#define h(i,j) (i*col+j)
+#define eps 1e-10
+using namespace std;
+typedef long long LL;
+
+struct node
+{
+    int t,nxt;
+}edge[maxn];
+int tot;
+int n;
+int ans;
+int headline[maxn];
+void add(int f,int t)
+{
+    tot++;
+    edge[tot].t = t;
+    edge[tot].nxt = headline[f];
+    headline[f] = tot;
+}
+
+int dfs(int u,int fa)
+{
+    int res = 1;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(v != fa)
+        {
+            int temp = dfs(v,u);
+            if(temp%2 == 0) ans++;
+            res += temp;
+        }
+    }
+    return res;
+}
+
+int main(void)
+{
+    while(EOF != scanf("%d",&n))
+    {
+        tot = 0;  ans = 0;
+        rst(headline,-1);
+        REP(i,n-1)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            add(a,b);
+            add(b,a);
+        }
+        dfs(1,-1);
+        printf("%d\n",ans);
+    }
+    return 0;
+}

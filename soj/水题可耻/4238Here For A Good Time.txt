@@ -1,0 +1,16 @@
+#include<stdio.h>
+int main(void)
+{
+    int a,b;
+    int n;
+    while(scanf("%d%d%d",&a,&b,&n)!=EOF)   //水成这样的题我居然还WA一次。。哎。。。
+    {
+        if(0==n)
+        {
+            printf("%d\n",0);
+            continue;
+        }
+        printf("%d\n",(a+b)%2);
+    }
+    return 0;
+}

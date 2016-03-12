@@ -1,0 +1,35 @@
+        /* 这道题我们先降序排序，然后再用动态规划去解决，为什么要降序排序呢？因为这三只筷子里有最长的一只，如果我们按已给的递增顺序递推，无法保证存在最长筷子，相反降序递推，因为这组数的最大值不可能成为一双筷子里的一只，只能是作为第三只筷子存在（或者不选）因此就避免了上面的问题。当然实现起来就不用排序了，因为题中已经给了递增顺序，倒过来就行了*/
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int dp[1010][5010];
+int chopsticks[5010];
+int badness(int x,int y){return (x-y)*(x-y);}
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int k,n;
+        scanf("%d%d",&k,&n);
+        k+=8;
+        for(int i=n;i>=1;i--)
+        {
+            scanf("%d",&chopsticks[i]);
+        }
+        memset(dp[0],0,sizeof(dp[0]));
+        for(int i=1;i<=n;i++)
+        {
+            for(int j=1;j*3<=i&&j<=k;j++)          //另j*3<=i。。。可以使dp不用考虑最长杆的问题。。太神了。。。
+            {
+                dp[j][i]=dp[j-1][i-2]+badness(chopsticks[i],chopsticks[i-1]);
+                if(3*j<i&&dp[j][i]>dp[j][i-1])
+                {
+                    dp[j][i]=dp[j][i-1];
+                }
+            }
+        }
+        printf("%d\n",dp[k][n]);
+    }
+}

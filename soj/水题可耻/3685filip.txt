@@ -1,0 +1,38 @@
+#include<cstdio>
+using namespace std;
+int main(void)
+{
+    int a[2];
+    while(EOF!=scanf("%d%d",&a[0],&a[1]))  //明天开始认真做题。。。
+    {
+        int digit[2][3];
+        int ok=0;
+        int i,j;
+        for(i=0;i<=1;i++)
+        {
+            for(j=0;j<=2;j++)
+            {
+                digit[i][j]=a[i]%10;
+                a[i]/=10;
+            }
+        }
+        for(i=0;i<=2;i++)
+        {
+            if(digit[0][i]>digit[1][i])
+            {
+                break;
+            }
+            else if(digit[0][i]<digit[1][i])
+            {
+                ok=1;
+                break;
+            }
+        }
+        for(i=0;i<=2;i++)
+        {
+            printf("%d",digit[ok][i]);
+        }
+        printf("\n");
+    }
+    return 0;
+}

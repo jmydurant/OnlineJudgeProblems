@@ -1,0 +1,50 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 111080
+#define mod 1000000007LL
+#define fr first
+#define se second
+using namespace std;
+typedef long long LL;
+int n,m,k;
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&m,&k)){
+        REP(i,n){
+            REP(j,m){
+                int dd; scanf("%d",&dd);
+            }
+        }
+        printf("%d\n",m*(m-1)/2);
+        FOR(i,1,m){
+            FOR(j,i+1,m){
+                if(!k)
+                printf("%d %d\n",i,j);
+                else
+                printf("%d %d\n",j,i);
+            }
+        }
+    }return 0;
+}

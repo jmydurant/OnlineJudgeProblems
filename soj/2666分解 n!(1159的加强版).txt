@@ -1,0 +1,86 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int prime[100010];
+int visit[1100100];
+int main(void)
+{
+    int i,j,k;
+    int count=2;
+    int number;
+    memset(prime,0,sizeof(prime));
+    memset(visit,0,sizeof(visit));
+    prime[1]=2;
+    while(1)
+    {
+        j=2;
+        while(1)
+        {
+            if(j*prime[count-1]>1100000)                      //为了快速。。我先把质数表给弄了出来。。方便计算。。
+            {                                                 //后面的思想就很简单了。。。但是小心溢出。。
+                break;
+            }
+            else
+            {
+                visit[j*prime[count-1]]=1;
+                j++;
+            }
+        }
+        for(i=prime[count-1]+1;i<=1010000;i++)
+        {
+            if(0==visit[i])
+            {
+                prime[count]=i;
+                count++;
+                break;
+            }
+        }
+        if(i>=1010000)
+        {
+            break;
+        }
+    }
+    while(EOF!=scanf("%d",&number)&&number)
+    {
+        int m,n;
+        memset(visit,0,sizeof(visit));
+        for(m=1;prime[m]<=number;m++)
+        {
+            ;
+        }
+        m--;
+        for(n=1;n<=m;n++)
+        {
+            k=number;
+            for(;k>0;k/=prime[n])                          //这个地方就是为了防止溢出。。。
+            {
+                visit[n]+=k/prime[n];
+            }
+        }
+        if(1==visit[1])
+        {
+            printf("%d=%d",number,prime[1]);
+        }
+        else
+        {
+            printf("%d=%d^%d",number,prime[1],visit[1]);
+        }
+        for(n=2;n<=m;n++)
+        {
+            if(0==visit[n])
+            {
+                ;
+            }
+            else if(1==visit[n])
+            {
+                printf("*%d",prime[n]);
+            }
+            else
+            {
+                printf("*%d^%d",prime[n],visit[n]);
+            }
+        }
+        printf("\n");
+    }
+    return 0;
+}

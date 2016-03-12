@@ -1,0 +1,105 @@
+#include <cstdio>   //思路。。把每个电影的天数转换好。。远点链接所有电影。。流量为所需的天数。。每个电影和每个能拍的天相连
+#include <cstring>  //流量为1.。每天和汇点相连。。流量也为1.。如果最大流等于所有电影所需的天数就可行。。否则不可行。。
+#include <algorithm>//建图的时候我把电影编号直接设为了350+i。。汇点为371.。 
+#include <queue>
+#include <climits>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define maxn 372
+using namespace std;
+
+int puzzle[maxn][maxn];
+int ccc[maxn][maxn];
+int dis[maxn];
+int s,e,maxflow,n;
+
+void buildg(void)
+{
+    for(int i = 1;i<=n;i++)
+    {
+        puzzle[0][i+350] = ccc[i][8];
+        for(int j = 1;j<=7;j++)
+        {
+            if(ccc[i][j])
+            {
+                for(int k = 0;k<ccc[i][9];k++)
+                {
+                    puzzle[350+i][7*k+j] = 1;
+                }
+            }
+        }
+    }
+    for(int i = 1;i<=350;i++)
+        puzzle[i][371] = 1;
+}
+
+bool bfs(void)
+{
+    memset(dis,-1,sizeof(dis));
+    dis[e] = 0;
+    queue<int> q;
+    q.push(e);
+    while(!q.empty())
+    {
+        int now = q.front(); q.pop();
+        for(int i = 0;i<=371;i++)
+        {
+            if(dis[i] == -1 && puzzle[i][now])
+            {
+                dis[i] = dis[now] + 1;
+                q.push(i);
+            }
+        }
+        if(now == s) return true;
+    }
+    return false;
+}
+
+int dfs(int u,int cp)
+{
+    if(u == e) return cp;
+    int temp = cp;
+    for(int i = 0;i<372;i++)
+    {
+        if(temp == 0)break;
+        if(dis[i]+1 == dis[u] && puzzle[u][i])
+        {
+            int ttt = dfs(i,MIN(temp,puzzle[u][i]));
+            puzzle[u][i] -= ttt;
+            puzzle[i][u] += ttt;
+            temp -= ttt;
+        }
+    }
+    return cp - temp;
+}
+
+void dinic(void)
+{
+    maxflow = 0;
+    while(bfs())
+        maxflow += dfs(s,INT_MAX);
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int ans = 0;
+        s = 0; e = 371;
+        scanf("%d",&n);
+        memset(puzzle,0,sizeof(puzzle));
+        for(int i = 1;i<=n;i++)
+        {
+            for(int j = 1;j<=9;j++)
+                scanf("%d",&ccc[i][j]);
+            ans += ccc[i][8];
+        }
+        buildg();
+        dinic();
+        if(maxflow == ans)
+            printf("Yes\n");
+        else
+            printf("No\n");
+    }
+    return 0;
+}

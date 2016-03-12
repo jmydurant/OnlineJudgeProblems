@@ -1,0 +1,46 @@
+#include <cstdio>   //拷软件的时候敲的。。搓的要死。。这次筛法不是筛素数。。而是筛4n+1类型的数。。很简单的说。。
+#include <cstring>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+int visit[1000010];
+int num[1000010];
+int tot;
+void IINT(void)
+{
+    tot=0;
+    memset(visit,false,sizeof(visit));
+    memset(num,0,sizeof(num));
+    for(long long i=5;i<=1000000;i+=4)
+    {
+        for(long long j=5;j<=1000000;j+=4)
+        {
+            long long tmpt=i*j;
+            if(tmpt>1000000)break;
+            if(0==visit[i] && 0==visit[j])
+            {
+                visit[tmpt]=1;
+            }
+            else
+            {
+                visit[tmpt]=-1;
+            }
+        }
+    }
+    for(int i=5;i<=1000000;i+=4)
+    {
+        if(1==visit[i])
+        {
+            num[i]=1;
+        }
+        num[i]+=num[i-4];
+    }
+}
+int main(void)
+{
+    IINT();
+    int n;
+    while(EOF!=scanf("%d",&n) && n)
+    {
+        printf("%d %d\n",n,num[n]);
+    }
+    return 0;
+}

@@ -1,0 +1,55 @@
+#include<stdio.h>
+#include<string.h>    //感觉有点迷茫了。。不知道该做什么题目了。。。
+#include <ctype.h>
+int main()
+{
+    char str[50][50],str1[50][100];
+    int count[100],m,n,i,j,k,len,t=0,max,p;
+    char s[100];
+    while(scanf("%d%d",&m,&n)!=EOF)
+    {
+        max=-1;
+        t++;
+        for(i=0;i<m;i++)
+        {
+            scanf("%s",str[i]);
+            count[i]=0;
+        }
+        getchar();
+        for(i=0;i<n;i++)
+        {
+            k=0;
+            gets(str1[i]);
+            len=strlen(str1[i]);
+            for(j=0;j<=len;j++)
+            {
+                if((str1[i][j]>='a'&&str1[i][j]<='z')||(str1[i][j]>='A'&&str1[i][j]<='Z'))
+                {
+                    s[k]=tolower(str1[i][j]);
+                    k++;
+                }
+                else
+                {
+
+                    s[k]='\0';
+                    for(p=0;p<m;p++)
+                        if(strcmp(s,str[p])==0)
+                        {
+                            count[i]++;
+                            break;
+                        }
+                        k=0;
+                }
+
+            }
+            if(max<count[i])
+                max=count[i];
+        }
+        printf("Excuse Set #%d\n",t);
+        for(i=0;i<n;i++)
+            if(max==count[i])
+                puts(str1[i]);
+            printf("\n");
+    }
+    return 0;
+}

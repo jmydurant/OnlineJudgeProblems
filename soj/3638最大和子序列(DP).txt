@@ -1,0 +1,82 @@
+#include<iostream>   //首先。。肯定是DP没得跑了。。。如果出现环。。可以双倍数组。。但是很麻烦。。。
+#include<cstring>    //但是。。因为是求最大值。。所以环外可以用环内最小值和总值的差得出。。所以分求环内最大值和环内最小值就可以了。。
+#include<algorithm>  //因为有两段。。我开始想的是求m段子序和的方法了。。但是因为只有两段。。。其实没有必要那么麻烦。。
+#include<cmath>      //策略是求正向最大。。和逆向最大。。然后枚举相接点。。即可。。但是其实程序还是有问题。。不过。。AC了就是王道！！！
+#include<cstdio>
+#include<climits>
+using namespace std;
+inline int MAX(int a,int b){return a>b?a:b;}
+inline int MIN(int a,int b){return a<b?a:b;}
+int maxn_h[50010],maxn_t[50010];
+int minn_h[50010],minn_t[50010];
+int num[50010];
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int sum=0;
+        int N;scanf("%d",&N);
+        memset(maxn_h,0,sizeof(maxn_h));
+        memset(maxn_t,0,sizeof(maxn_t));
+        memset(minn_h,0,sizeof(minn_h));
+        memset(minn_t,0,sizeof(minn_t));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",num+i);
+            sum+=num[i];
+        }
+        for(int i=1;i<=N;i++)
+        {
+            maxn_h[i]=MAX(maxn_h[i-1]+num[i],num[i]);
+        }
+        for(int i=2;i<=N;i++)
+        {
+            maxn_h[i]=MAX(maxn_h[i],maxn_h[i-1]);
+        }
+        //printf("%d %d %d %d\n",maxn_h[1],maxn_h[2],maxn_h[3],maxn_h[4]);
+        for(int i=N;i>=1;i--)
+        {
+            maxn_t[i]=MAX(maxn_t[i+1]+num[i],num[i]);
+        }
+        for(int i=N-1;i>=1;i--)
+        {
+            maxn_t[i]=MAX(maxn_t[i],maxn_t[i+1]);
+        }
+        //printf("%d %d %d %d\n",maxn_t[1],maxn_t[2],maxn_t[3],maxn_t[4]);
+        for(int i=1;i<=N;i++)
+        {
+            minn_h[i]=MIN(minn_h[i-1]+num[i],num[i]);
+        }
+        for(int i=2;i<=N;i++)
+        {
+            minn_h[i]=MIN(minn_h[i],minn_h[i-1]);
+        }
+        for(int i=N;i>=1;i--)
+        {
+            minn_t[i]=MIN(minn_t[i+1]+num[i],num[i]);
+        }
+        for(int i=N-1;i>=1;i--)
+        {
+            minn_t[i]=MIN(minn_t[i],minn_t[i+1]);
+        }
+        int result=INT_MIN;
+        for(int i=1;i<N;i++)
+        {
+            if(result<maxn_h[i]+maxn_t[i+1])
+                result=maxn_h[i]+maxn_t[i+1];
+        }
+       // printf("%d\n",result);
+        for(int i=1;i<N;i++)
+        {
+            int t=sum-(minn_h[i]+minn_t[i+1]);
+            if(t!=0&&t>result)result=t;
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}
+
+
+
+

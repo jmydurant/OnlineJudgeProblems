@@ -1,0 +1,69 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define maxn 100000
+using namespace std;
+typedef long long LL;
+struct node
+{
+    int x,y;
+    void deal(void)
+    {
+        if(x>y)swap(x,y);
+    }
+}ttt[maxn];
+int nnn[maxn];
+int n;
+int main(void)
+{
+    int n;
+    while(EOF != scanf("%d",&n))
+    {
+        for(int i = 0;i<n;i++) scanf("%d",nnn+i);
+        if(n<=3)
+        {
+            printf("no\n");
+            continue;
+        }
+        for(int i = 1;i<n;i++)
+        {
+            ttt[i].x = nnn[i-1];
+            ttt[i].y = nnn[i];
+            ttt[i].deal();
+        }
+        bool ok = true;
+        for(int i = 1;i<n;i++)
+        {
+            for(int j = 1;j<n;j++)
+            {
+                if((ttt[i].x<=ttt[j].x && ttt[i].y>=ttt[j].y) || (ttt[i].x>=ttt[j].x && ttt[i].y<=ttt[j].y)
+                   || (ttt[i].x >= ttt[j].y) || (ttt[j].x>=ttt[i].y)
+                   )
+                    continue;
+                else
+                {
+                    //printf("%d   %d\n",i,j);
+                    ok = false;
+                    break;
+                }
+            }
+        }
+        if(ok)
+            printf("no\n");
+        else
+            printf("yes\n");
+    }
+    return 0;
+}

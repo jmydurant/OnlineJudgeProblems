@@ -1,0 +1,70 @@
+#include <iostream>   //我是沙茶.....状态比较麻烦。。dfs中fa 代表是否因为祖先的原因要翻转一次。。 needtobe是我这个节点需要变成什么样子(翻转或不翻转)然后记忆化。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define maxn 50010
+#define INF 2100001000
+#define mod 10007
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn];
+int headline[maxn],E;
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int n,v1,v2;
+int power[maxn],who[maxn],bug[maxn];
+int dp[maxn][2][2];
+int dfs(int u,bool fa,bool needtobe){
+    if(dp[u][fa][needtobe] != -1)return dp[u][fa][needtobe];
+    int vv = (bug[u] ? v2 : v1);
+    int needtodone = fa ^ needtobe ^ bug[u];
+    int ans = (needtodone ?  -vv : 0);
+    int now = needtobe ^ who[u];
+    ans += (now ? -power[u] : power[u]);
+    for(int i = headline[u];i != -1;i = edge[i].nxt){
+        int v = edge[i].t;
+        ans += max(dfs(v,needtobe,0),dfs(v,needtobe,1));
+    }dp[u][fa][needtobe] = ans;
+    return ans;
+}
+void INIT(void){
+    E = 0;
+    rst(headline,-1);
+    FOR(i,0,n)rst(dp[i],-1);
+    FOR(i,1,n){
+        int f;
+        scanf("%d%d%d%d",power+i,&f,bug+i,who+i);
+        add(f,i);
+    }
+    int ans = dfs(0,0,0);
+    if(ans < 0)printf("HAHAHAOMG\n");
+    else printf("%d\n",ans);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&v1,&v2))INIT();
+    return 0;
+}

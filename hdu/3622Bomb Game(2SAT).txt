@@ -1,0 +1,136 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //二分建图。。然后2SAT判断可行性。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-5
+#define INF 50000000
+#define maxn 210
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[50100];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+struct aa{
+    double x,y;
+}pp[maxn];
+int n;
+double mid;
+inline bool judge(int i,int j){
+    if((pp[i].x - pp[j].x) * (pp[i].x - pp[j].x) + (pp[i].y - pp[j].y) * (pp[i].y - pp[j].y) > 4.0 * mid * mid)return true;
+    return false;
+}
+bool buildg(void){
+    rst(headline,-1); E = 0;
+    FOR(i,1,n){
+        FOR(j,i+1,n){
+            int flag = 0;
+            if(!judge(i,j)){
+                add(i , j+n);
+                add(j , i+n);
+                flag |= 1;
+            }
+            if(!judge(i , j + n)){
+                add(i , j);
+                add(j + n , i + n);
+                flag |= 2;
+            }
+            if(!judge(i + n , j)){
+                add(i + n , j + n);
+                add(j , i);
+                flag |= 4;
+            }
+            if(!judge(i + n , j + n)){
+                add(i + n , j);
+                add(j + n , i);
+                flag |= 8;
+            }
+            //if(((flag & 3) == 3) || ((flag & 12) == 12) || ((flag & 5) == 5) || ((flag & 10) == 10 ))return false;
+        }
+    }
+    return true;
+}
+int dfn[maxn] , low[maxn] , st[maxn] , top , scc , belong[maxn] , tot;
+bool instack[maxn];
+void dfs(int u){
+    dfn[u] = low[u] = ++tot;
+    instack[u] = true;
+    st[top] = u; top++;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            dfs(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(low[u] == dfn[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            belong[j] = scc;
+            instack[j] = false;
+            if(j == u)break;
+        }
+    }
+}
+bool tarjan(void){
+    rst(dfn , 0);
+    rst(instack,false);
+    tot = scc = top = 0;
+    FOR(i,1,2*n)if(!dfn[i])dfs(i);
+    FOR(i,1,n)if(belong[i] == belong[i+n])return false;
+    return true;
+}
+void solve(void){
+    FOR(i,1,n){
+        scanf("%lf%lf%lf%lf",&pp[i].x , &pp[i].y , &pp[i + n].x , &pp[i + n].y);
+    }
+    double l = 0 , r = 300000.0;
+    double ans = 0;
+    while(abs(r - l) > eps){
+        mid = (l + r) / 2;
+        if(buildg()){
+            if(tarjan()){
+                ans = mid;
+                l = mid;
+            }
+            else r = mid;
+        }else r = mid;
+    }
+    printf("%.2lf\n",ans);
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

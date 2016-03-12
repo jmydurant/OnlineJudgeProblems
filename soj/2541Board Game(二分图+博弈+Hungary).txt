@@ -1,0 +1,131 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //我觉得这题很bt。。思路见http://www.cppblog.com/wolf5x/archive/2009/07/06/89351.html
+#include <cstdio>     //就是把每个状态给Hash掉。。能转移的就连边。。因为每次只能改变x或y坐标1点。。所以形成的肯定是二分图。。
+#include <cstring>    //那就开始判断起点是什么点。。如果起点是二分图最大匹配的一个点。且路径为开始染色的点。那就可以赢
+#include <algorithm>  //如果是被染色的。。那就输了。。
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 50000000
+#define maxn 5000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int row,col ,op , cap;
+char puzzle[10][10];
+struct node{
+    int t,nxt;
+}edge[maxn << 4];
+int headline[maxn] , E , link[maxn];
+int visit[maxn] , ind;
+int px[2] , py[2] , ccc;
+int dx[] = {1,-1,0,0};
+int dy[] = {0,0,1,-1};
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+inline int _hash(int x1,int y1,int x2,int y2){
+    if(x1 > x2 || (x1 == x2 && y1 > y2)){
+        swap(x1,x2); swap(y1,y2);
+    }
+    int ans = x1; ans <<= 3;
+    ans += y1; ans <<= 3;
+    ans += x2; ans <<= 3;
+    ans += y2;
+    return ans;
+}
+inline bool tjudge(int x,int y){
+    if(x < 0 || x >= row || y < 0 || y >= col || puzzle[x][y] == '#')return false;
+    return true;
+}
+inline bool judge(int x1,int y1,int x2,int y2){
+    if((!tjudge(x1,y1)) || (!tjudge(x2,y2)))return false;
+    if(abs(x1 - x2) + abs(y1 - y2) <= 1)return false;
+    return true;
+}
+inline void addpath(int u,int x1,int y1,int x2,int y2){
+    if(!judge(x1,y1,x2,y2))return;
+    int v = _hash(x1,y1,x2,y2);
+    add(u,v);
+}
+void build(int x1,int y1,int x2,int y2){
+    if(!judge(x1,y1,x2,y2))return;
+    int mm = _hash(x1,y1,x2,y2);
+    link[mm] = -1;
+    REP(k,4){
+        addpath(mm , x1+dx[k] , y1+dy[k] , x2,y2);
+        addpath(mm , x1,y1 , x2+dx[k] , y2+dy[k]);
+    }
+}
+bool Hungary(int u){
+    visit[u] = ind;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(visit[v] == ind)continue;
+        visit[v] = ind;
+        if(link[v] == -1 || Hungary(link[v])){
+            link[v] = u;
+            link[u] = v;
+            return true;
+        }
+    }return false;
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    rst(visit,0);
+    cap = h(12);
+    REP(i,cap) link[i] = INF;
+    REP(i,row) scanf("%s",puzzle[i]);
+    ccc = 0;
+    REP(i,row)REP(j,col){
+        if(puzzle[i][j] == 'P'){
+            px[ccc] = i , py[ccc] = j;
+            ccc++;
+        }
+        FOR(q , j+1 , col-1)build(i,j,i,q);
+        FOR(p , i+1 , row-1)REP(q,col) build(i,j,p,q);
+    }
+    op = _hash(px[0] , py[0] , px[1] , py[1]);
+    if(link[op] == INF){
+        printf("Alice wins.\n");
+        return;
+    }
+    REP(i,cap){
+        ind = i+1;
+        if(link[i] == -1)Hungary(i);
+    }
+    if(link[op] != -1){
+        ind += 3;
+        visit[op] = 3;
+        if(Hungary(link[op])) link[op] = -1;
+    }
+    if(link[op] == -1)printf("Bob wins.\n");
+    else printf("Alice wins.\n");
+}
+int main(void){
+    while(2 == scanf("%d%d",&row,&col)) solve();
+    return 0;
+}

@@ -1,0 +1,37 @@
+#include<stdio.h>
+
+long long jisuan(int n,int m);
+int main(void)
+{
+    int n,m;
+    int num;
+    scanf("%d",&num);
+    for(;num>0;num--)
+    {
+      long long ways;
+      scanf("%d%d",&n,&m);
+      
+      ways=jisuan(n,m);
+      printf("%lld\n",ways);
+    }
+    return 0;
+}
+long long jisuan(int n,int m)                         //换成了long long 型。。。坑爹的让我wa了3次。。还换了一次高精度做法。。直接超时。。
+{                                                     //以后记住了。。SOJ上可以使用%lld。。吃一堑长一智。。
+
+    if(m>n)
+    {
+        long long digit;
+        digit=1;
+        for(;n>0;n--)
+        {
+            digit*=2;
+        }
+
+        return digit;
+    }
+    else
+    {
+        return (2*jisuan(n-1,m)-jisuan(n-m-1,m));
+    }
+}

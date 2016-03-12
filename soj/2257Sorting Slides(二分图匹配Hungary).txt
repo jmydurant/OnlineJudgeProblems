@@ -1,0 +1,97 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //先说一下这题很奇葩。。首先找到每个数字能被那些纸片覆盖。。然后连上边。。然后对于匹配的结果。。轮流删去
+#include <cstring>    //继续匹配如果结果不变。。就说嘛这个边不是必须的。那么这个数字也就不能确定。。还原边之后依次做下去。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 600
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int puzzle[maxn][maxn];
+int link[maxn] , edge[maxn][2] , exist[maxn];
+int visit[maxn] , ind;
+int n , x1[maxn] , x2[maxn] , x3[maxn] , x4[maxn];
+bool dfs(int u){
+    FOR(v,1,n){
+        if(puzzle[u][v] == 0 || visit[v] == ind)continue;
+        visit[v] = ind;
+        if(link[v] == -1 || dfs(link[v])){
+            link[v] = u;
+            return true;
+        }
+    }return false;
+}
+int Hungary(void){
+    rst(visit,0);rst(link,-1);
+    int ans = 0;
+    FOR(i,1,n){
+        ind = i;
+        if(dfs(i)) ans++;
+    }return ans;
+}
+void solve(void){
+    FOR(i,1,n)scanf("%d%d%d%d",x1+i,x2+i,x3+i,x4+i);
+    rst(puzzle,0);
+    FOR(i,1,n){
+        int x , y; scanf("%d%d",&x,&y);
+        FOR(j,1,n){
+            if(x > x1[j] && x < x2[j] && y > x3[j] && y < x4[j]) puzzle[i][j] = 1;
+        }
+    }
+    //FOR(i,1,n){
+    //    FOR(j,1,n)printf("%d ",puzzle[i][j]);printf("\n");
+    //}
+    if(Hungary() == n){
+        int now = n;
+        FOR(i,1,n){
+            edge[i][0] = i , edge[i][1] = link[i];
+            exist[i] = true;
+        }
+        FOR(i,1,n){
+            puzzle[edge[i][1]][edge[i][0]] = 0;
+            if(Hungary() == n){
+                exist[i] = 0;
+                now--;
+            }
+            puzzle[edge[i][1]][edge[i][0]] = 1;
+        }
+        if(now == 0)printf("none\n");
+        else{
+            FOR(i,1,n)if(exist[i])printf("(%c,%d) ",i-1+'A' , edge[i][1]);
+            printf("\n");
+        }
+    }else printf("none\n");
+    printf("\n");
+}
+int main(void){
+    int iCase = 0;
+    while(EOF != scanf("%d",&n) && n){
+        printf("Heap %d\n",++iCase);
+        solve();
+    }return 0;
+}

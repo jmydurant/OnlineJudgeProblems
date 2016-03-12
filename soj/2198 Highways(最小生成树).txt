@@ -1,0 +1,51 @@
+#include<cstdio>
+#include<cstring>
+#define INF 10000000  //最简单的最小生成树方法。。数据不大。。所以可以继续prim算法。。。
+using namespace std;
+int puzzle[510][510];
+int visit[510];
+int cost[510];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;
+        scanf("%d",&N);
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                scanf("%d",&puzzle[i][j]);
+            }
+        }
+        for(int i=1;i<=N;i++){cost[i]=puzzle[1][i];}
+        memset(visit,0,sizeof(visit));
+        visit[1]=1;
+        for(int i=1;i<=N-1;i++)
+        {
+            int minroad=INF,biaohao;
+            for(int j=1;j<=N;j++)
+            {
+                if(minroad>=cost[j]&&0==visit[j])
+                {
+                    minroad=cost[j];
+                    biaohao=j;
+                }
+            }
+            visit[biaohao]=1;
+            for(int j=1;j<=N;j++)
+            {
+                if(!visit[j]&&cost[j]>puzzle[biaohao][j])cost[j]=puzzle[biaohao][j];
+            }
+        }
+        int result=-1;
+        for(int i=1;i<=N;i++)
+        {
+            if(result<cost[i])result=cost[i];
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

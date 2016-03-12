@@ -1,0 +1,41 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>               //话说这次贪心挺蛋疼的。。不过收获就是学会了sort的用法。。。
+using namespace std;               //贪心原理。。。对于s1=t1*w2和s2=t2*w1比较。。然后高下立判。。可以认为是k秒后。。s1和s2竞争。。和之前发生了什么  
+struct item                      //没关系。。。
+{
+    long long time;
+    long long wi;
+}things[50010];
+bool cmp(item a,item b)
+{
+    long long s1=a.time*b.wi,s2=a.wi*b.time;
+    if(s1!=s2)return s1>s2;
+    return a.time>b.time;
+}
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int i;
+        int num;
+        long long result=0;
+        long long sumwi=0;
+        scanf("%d",&num);
+        for(i=0;i<num;i++)
+        {
+            scanf("%lld%lld",&things[i].time,&things[i].wi);
+            sumwi+=things[i].wi;
+        }
+        sort(things,things+num,cmp);
+        for(i=0;i<num;i++)
+        {
+            sumwi-=things[num-i-1].wi;
+            result+=sumwi*things[num-i-1].time;
+        }
+        printf("%lld\n",result);
+    }
+    return 0;
+}

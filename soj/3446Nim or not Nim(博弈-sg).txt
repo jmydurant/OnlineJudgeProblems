@@ -1,0 +1,30 @@
+#include <cstdio>   //老老实实的计算sg值。。sg(4k+1) = 4k+1;  sg(4k+2) = 4k+2 ;sg(4k+3) = 4k+4; sg(4k+4) = 4k+3
+#include <cstring>
+
+int judge(int x)
+{
+    if((x-1)%4 == 0 || (x-2)%4 == 0) return x;
+    if((x-3)%4 == 0)
+        return x+1;
+    return x-1;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n; scanf("%d",&n);
+        int ans = 0;
+        for(int i = 1;i<=n;i++)
+        {
+            int k; scanf("%d",&k);
+            ans ^= judge(k);
+        }
+        if(ans)
+            printf("Alice\n");
+        else
+            printf("Bob\n");
+    }
+    return 0;
+}

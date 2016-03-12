@@ -1,0 +1,61 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>   //因为原来的图建立好之后。。他会一直问你不同起点终点的路径。。所以floyd算法就好一些。。而Dijkstra算法超时
+#include<climits>     //原本这个算法效率应该更低才对。。。
+using namespace std;  //原理是不断循环dp[i][j]<?=dp[i][k]+dp[k][j];循环完之后。。这个图就是结果了。。所以要算很多次。。效率低。。
+#define INF 10000000
+int ditu[110][110];
+void Floyd(void);
+int MIN(int a,int b){return a<b?a:b;}
+int N;
+int main(void)
+{
+    int m;
+    while(EOF!=scanf("%d%d",&N,&m)&&(0!=N||0!=m))
+    {
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                if(i==j)ditu[i][j]=0;
+                else ditu[i][j]=INF;
+            }
+        }
+        for(int i=1;i<=m;i++)
+        {
+            int a,b,c;
+            scanf("%d%d%d",&a,&b,&c);
+            ditu[a][b]=c;ditu[b][a]=c;
+        }
+        Floyd();
+        int Question;scanf("%d",&Question);
+        while(Question--)
+        {
+            int x,y;
+            scanf("%d%d",&x,&y);
+            if(INF==ditu[x][y])printf("pity\n");
+            else printf("%d\n",ditu[x][y]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+void Floyd(void)
+{
+    for(int k=1;k<=N;k++)
+    {
+        for(int i=1;i<=N;i++)
+        {
+            if(i!=k)
+            {
+                for(int j=1;j<=N;j++)
+                {
+                    if(j!=i&&j!=k&&(ditu[i][k]+ditu[k][j]<ditu[i][j]))
+                    {
+                        ditu[i][j]=ditu[i][k]+ditu[k][j];
+                    }
+                }
+            }
+        }
+    }
+}

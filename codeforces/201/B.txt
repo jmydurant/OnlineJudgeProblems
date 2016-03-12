@@ -1,0 +1,53 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define p(i,j) ((i*col)+j)
+#define MAXN 110100
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+#define link fasdfasdf
+using namespace std;
+int a[MAXN];
+int main(void)
+{
+    int n;
+    while(EOF!=scanf("%d",&n))
+    {
+        for(int i = 0;i<n;i++)
+            scanf("%d",a+i);
+        bool exist = false;
+        bool exchange = false;
+        int ans = 0;
+        for(int i = 0;i<n;i++)
+        {
+            if(a[i] == i)
+            {
+                ans++;
+            }
+            else
+            {
+                exist = true;
+                if(a[a[i]] == i)
+                {
+                    exchange = true;
+                }
+            }
+        }
+        if(exist)
+        {
+            if(exchange)
+                ans += 2;
+            else
+                ans += 1;
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

@@ -1,0 +1,61 @@
+#include<cstdio>
+#include<iostream>    //注意哟。。优先队列默认从大到小排列。。我们要把它翻过来。。。没什么技术含量。。。。
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<cstdlib>
+#include<queue>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+int visit[1010];
+int son[1010][1010];
+int T[1010];
+typedef pair<int,int> point;
+priority_queue<point,vector<point>,greater<point> >q;
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int now;
+        memset(visit,0,sizeof(visit));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d%d",T+i,&son[i][0]);
+            for(int j=1;j<=son[i][0];j++)
+            {
+                scanf("%d",&son[i][j]);
+            }
+        }
+        visit[1]=1;
+        q.push(point(T[1],1));
+        for(int abc=2;abc<=N;abc++)
+        {
+            point tmpt=q.top();
+            q.pop();
+            now=tmpt.first;
+            int k=tmpt.second;
+            //printf("%d\n",k);
+            for(int i=1;i<=son[k][0];i++)
+            {
+                if(!visit[son[k][i]])
+                {
+                    visit[son[k][i]]=1;
+                    q.push(point(now+T[son[k][i]],son[k][i]));
+                }
+            }
+        }
+        while(!q.empty())
+        {
+            now=q.top().first;
+            q.pop();
+        }
+        printf("%d\n",now);
+    }
+}

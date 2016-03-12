@@ -1,0 +1,59 @@
+#include<cstdio>    //次奥。。这个思想太奇葩了。。以至于很快。。
+#include<cmath>     //先对x排序。。这样能够用ON的时间算出每一个点左边的x差值和右边的x差值。。同理上下的y差值也能一遍扫走。。
+#include<cstring>   //然后把这四个值加起来比较就ok了。。注意结构体中要有点的标号。。排序的时候带着标号一块排。。。
+#include<deque>
+#include<algorithm>
+#include<climits>
+using namespace std;
+struct p
+{
+    int x,y,num;
+}point[110000];
+bool cmp1(p a,p b){return a.x<b.x;}
+bool cmp2(p a,p b){return a.y<b.y;}
+int up[110000],down[110000],left[110000],right[110000];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int result=INT_MAX;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d%d",&point[i].x,&point[i].y);
+            point[i].num=i;
+        }
+        sort(point+1,point+N+1,cmp1);
+        left[point[1].num]=0;
+        for(int i=2;i<=N;i++)
+        {
+            left[point[i].num]=left[point[i-1].num]+(i-1)*(point[i].x-point[i-1].x);
+        }
+        right[point[N].num]=0;
+        for(int i=N-1;i>=1;i--)
+        {
+            right[point[i].num]=right[point[i+1].num]+(N-i)*(point[i+1].x-point[i].x);
+        }
+        sort(point+1,point+N+1,cmp2);
+        up[point[1].num]=0;
+        for(int i=2;i<=N;i++)
+        {
+            up[point[i].num]=up[point[i-1].num]+(i-1)*(point[i].y-point[i-1].y);
+        }
+        down[point[N].num]=0;
+        for(int i=N-1;i>=1;i--)
+        {
+            down[point[i].num]=down[point[i+1].num]+(N-i)*(point[i+1].y-point[i].y);
+        }
+        for(int i=1;i<=N;i++)
+        {
+            if(result>up[i]+down[i]+left[i]+right[i])
+            {
+                 result=up[i]+down[i]+left[i]+right[i];
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}
+

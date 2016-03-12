@@ -1,0 +1,106 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>   //源点到起点。汇点到终点的流为2.。其他全是1.费用照旧。。费用流基础入门题目。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 1100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int f,t,nxt;
+    int r ,cost;
+}edge[200000];
+int headline[maxn] , E;
+inline void add(int f,int t,int r,int c){ //要加双边。。因为来回修改的时候也要修改费用..
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].r = r;
+    edge[E].cost = c;
+    headline[f] = E++;
+    edge[E].f = t;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].r = 0;
+    edge[E].cost = -c;
+    headline[t] = E++;
+}
+int n,m,op,ed;
+int dis[maxn] , visit[maxn] , fa[maxn];
+void spfa(void){
+    FOR(i,0,ed) dis[i] = INF , visit[i] = false , fa[i] = -1;
+    dis[op] = 0;
+    queue<int> q;
+    q.push(op); visit[op] = true;
+    while(!q.empty()){
+        int u = q.front(); q.pop(); visit[u] = false;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(dis[v] > dis[u] + edge[i].cost && edge[i].r > 0){
+                dis[v] = dis[u] + edge[i].cost;
+                fa[v] = i;
+                if(!visit[v]){
+                    q.push(v);
+                    visit[v] = true;
+                }
+            }
+        }
+    }
+}
+int MCMF(void){
+    int mincost = 0;
+    while(true){
+        spfa();
+        if(fa[ed] == -1)break;
+        int i = fa[ed];
+        while(i != -1){
+            edge[i].r --;
+            edge[i ^ 1].r ++;
+            i = fa[edge[i].f];
+        }
+        mincost += dis[ed];
+    }return mincost;
+}
+void solve(void){
+    op = 0 , ed = n+1;
+    rst(headline,-1); E = 0;
+    REP(i,m){
+        int a,b,c; scanf("%d%d%d",&a,&b,&c);
+        add(a,b,1,c);
+        add(b,a,1,c);
+    }
+    add(op , 1 , 2 , 0);
+    add(n , ed , 2 , 0);
+    int ans = MCMF();
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

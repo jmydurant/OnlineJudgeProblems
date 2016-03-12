@@ -1,0 +1,59 @@
+#include<iostream>     //类似于背包性质的dp。。。对于dp[i][j]..代表从0修到i。。还剩下j的费用的最大f。。。然后就可以有递推公式了。。
+#include<cstring>     //这里的每条路我都当作边来处理。。。就不需要对起点排序了。。。
+#include<cstdio>
+#include<algorithm>
+#include<climits>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+struct abc
+{
+    int tail;
+    int f;
+    int c;
+    int next;
+}edge[10010];
+int head[10010];
+int dp[1010][1010];
+int main(void)
+{
+    int N,L,HP;
+    while(3==scanf("%d%d%d",&L,&N,&HP))
+    {
+        memset(head,-1,sizeof(head));
+        memset(dp,-1,sizeof(dp));
+        for(int i=1;i<=N;i++)
+        {
+            int s,len;
+            scanf("%d%d%d%d",&s,&len,&edge[i].f,&edge[i].c);
+            if(s+len>L)continue;
+            edge[i].tail=s+len;
+            edge[i].next=head[s];
+            head[s]=i;
+        }
+        for(int i=0;i<=HP;i++)dp[0][i]=0;
+        for(int i=0;i<=L;i++)
+        {
+            for(int j=0;j<=HP;j++)
+            {
+                if(-1==dp[i][j])continue;
+                for(int k=head[i];k!=-1;k=edge[k].next)
+                {
+                    int s=edge[k].tail;
+                    if(j-edge[k].c>=0 && dp[s][j-edge[k].c]<dp[i][j]+edge[k].f)
+                    {
+                        dp[s][j-edge[k].c]=dp[i][j]+edge[k].f;
+                    }
+                }
+            }
+        }
+        int ans=-1;
+        for(int i=0;i<=HP;i++)
+        {
+            if(ans<dp[L][i])ans=dp[L][i];
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

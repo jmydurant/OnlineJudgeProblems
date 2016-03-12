@@ -1,0 +1,79 @@
+#include <iostream>    //我觉得这题还是比较难的。。所以。。思路贴在下面了。。。那个取模滚动是这道题目的精髓
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <cstdlib>
+#include <vector>
+#define FOR(i,a,b) for(int i = (int)a ;i<=(int)b;i++)
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 12000
+#define MAXV 400
+#define INF 1000000000
+using namespace std;
+typedef long long LL;
+
+int mod[MAXN];
+int dp[MAXV][MAXV],g[MAXV][MAXV];
+int n,m;
+int c[MAXN];
+void INIT(void)
+{
+    for(int i = 0;i<MAXN;i++)
+        mod[i] = i % MAXV;
+}
+
+int main(void)
+{
+    INIT();
+    while(2 == scanf("%d%d",&n,&m))
+    {
+        for(int i = 1;i<=n;i++)
+        {
+            scanf("%d",c+i);
+        }
+        memset(dp,0,sizeof(dp));
+        memset(g,0,sizeof(g));
+        dp[1][0] = c[1];
+        for(int j = 0;j<n;j++)
+        {
+            for(int i = j+m-1;i>=j+1;i--)
+            {
+                if(i == j+m-1)
+                {
+                    g[mod[i]][mod[j]] = dp[mod[j]][mod[i-m]];
+                }
+                else if(i-m<0)
+                {
+                    g[mod[i]][mod[j]] = g[mod[i+1]][mod[j]];
+                }
+                else
+                {
+                    g[mod[i]][mod[j]] = MIN(dp[mod[j]][mod[i-m]],g[mod[i+1]][mod[j]]);
+                }
+                dp[mod[i]][mod[j]] = g[mod[i]][mod[j]] + c[i];
+            }
+        }
+        int ans = INF;
+        for(int j = n-m+1;j<n;j++)
+            for(int i = j+1;i<=n;i++)
+            ans = MIN(dp[mod[i]][mod[j]],ans);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+简单的方程还算好想，f[i][j]表示末端在i或i以前的区间都满足条件，最后两个染色的球为i和j，所需的最小总花费。
+
+则
+
+f[i,j] = min(f[j,i-m..j-1]) + c[i]
+
+这个方程是严重TLE的，决策不难看出可以优化，
+
+设g[i,j] = min(f[j,i-m..j-1])
+
+则g[i,j] = min(g[i+1,j], f[j,i-m])
+
+这样循环的时候就有一点小麻烦需要安排。
+
+而这样之后仍然存在TLE的问题……还要改成滚动数组……

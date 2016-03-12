@@ -1,0 +1,70 @@
+#include <iostream>   //如果对于当时状态state如果可以连选。。那么就选择目标状态中最大的。。否则。。就选择最小的(加上负号之后还是最大值。。)
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 210000
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+int G,B,S;
+int dp[1<<21];
+int cook[25],c[25][15];
+int now[25];
+void INIT(void){
+    int top = (1<<B);
+    FOR(i,1,top)dp[i] = -INF;
+    rst(c,0);
+    REP(i,B){
+        int k; scanf("%d",&k);
+        int tt;
+        REP(j,k) scanf("%d",&tt),c[i][tt]++;
+    }
+    dp[0] = 0;
+    FOR(i,1,top-1){
+        rst(cook,0);
+        REP(j,B){
+            if((h(j)&i) == 0){
+                FOR(k,1,G) cook[k] += c[j][k];
+            }
+        }
+        FOR(j,1,G)while(cook[j] >= S) cook[j] -= S;
+        REP(j,B){
+            if(h(j)&i){
+                FOR(k,1,G) now[k] = cook[k] + c[j][k];
+                int ans = 0;
+                FOR(k,1,G)while(now[k] >= S){
+                    ans++;
+                    now[k] -= S;
+                }
+                if(ans > 0) dp[i] = MAX(dp[i],dp[i^h(j)]+ans);
+                else        dp[i] = MAX(dp[i],-dp[i^h(j)]);
+            }
+        }
+    }
+    printf("%d\n",dp[top-1]);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&G,&B,&S)){
+        if(G == 0 && B == 0 && S == 0)break;
+        INIT();
+    }return 0;
+}

@@ -1,0 +1,43 @@
+//原理在此。。。如果从1,2两个物品中比较。。则需要N-B1-A2>N-B2-A1..即A1-B1>A2-B2..这就是贪心原理。。
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+using namespace std;
+struct abc
+{
+    int a;
+    int b;
+    int chazhi;
+}tasks[100010];
+int cmp(abc a,abc b)
+{
+    if(a.chazhi!=b.chazhi)return a.chazhi>b.chazhi;
+    return a.a>=b.b;
+}
+int main(void)
+{
+   int casenum;
+   scanf("%d",&casenum);
+   while(casenum--)
+   {
+       int N,HP;
+       scanf("%d%d",&N,&HP);
+       for(int i=0;i<N;i++)
+       {
+           scanf("%d%d",&tasks[i].a,&tasks[i].b);
+           tasks[i].chazhi=tasks[i].a-tasks[i].b;
+       }
+       sort(tasks,tasks+N,cmp);
+       int ok=1;
+       for(int i=0;i<N;i++)
+       {
+           if(tasks[i].a>HP){ok=0;break;}
+           if(tasks[i].b>HP){ok=0;break;}
+           HP-=tasks[i].b;
+       }
+       if(ok)printf("Clever Dahema\n");
+       else printf("Stupid Dahema\n");
+   }
+   return 0;
+}

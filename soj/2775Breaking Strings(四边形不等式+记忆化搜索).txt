@@ -1,0 +1,58 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>  //这是1702的加强版。。为了降低dp的n^3复杂度。。。应用了四边形不等式。。时间效率显著提升。。
+#include<climits>   //四边形不等式可以百度搜索。。反正应该是记住了。。。。
+#define INF INT_MAX
+using namespace std;
+int dp[1100][1100];
+int gx[1100][1100];
+int length;
+int point[1100];
+int find_way(int x,int y);
+int main(void)
+{
+    while(EOF!=scanf("%d",&length)&&length)
+    {
+        int N;scanf("%d",&N);
+        for(int i=1;i<=N;i++)scanf("%d",point+i);
+        for(int i=0;i<=N+1;i++)
+            for(int j=0;j<=N+1;j++)dp[i][j]=INF;
+        for(int i=0;i<=N;i++){gx[i][i+1]=i+1;gx[i][i]=i;}
+        point[0]=0;point[N+1]=length;
+        for(int i=0;i<=N;i++){dp[i][i+1]=0;dp[i][i]=0;}
+        int len=1;
+        for(int i=0;i<=N-len;i++)
+            {
+                int j=i+2;
+                for(int k=gx[i][j-1];k<gx[i+1][j];k++)
+                {
+                   // printf("%d %d %d %d %d\n",i,k,j,dp[i][j],dp[i][k]+dp[k][j]+point[j]-point[i]);
+                    if(dp[i][j]>=dp[i][k]+dp[k][j]+point[j]-point[i])
+                    {
+                        dp[i][j]=dp[i][k]+dp[k][j]+point[j]-point[i];
+                        gx[i][j]=k;
+                        //printf("%d %d %d %d\n",i,k,j,dp[i][j]);
+                    }
+                }
+            }
+        for(len=2;len<=N;len++)
+        {
+            for(int i=0;i<=N-len;i++)
+            {
+                int j=i+len+1;
+                for(int k=gx[i][j-1];k<=gx[i+1][j];k++)
+                {
+                    if(dp[i][j]>=dp[i][k]+dp[k][j]+point[j]-point[i])
+                    {
+                        dp[i][j]=dp[i][k]+dp[k][j]+point[j]-point[i];
+                        gx[i][j]=k;
+                       // printf("%d %d %d %d\n",i,k,j,dp[i][j]);
+                    }
+                }
+            }
+        }
+       // printf("%d %d\n",dp[0][2],dp[2][4]);
+        printf("%d\n",dp[0][N+1]);
+    }
+    return 0;
+}

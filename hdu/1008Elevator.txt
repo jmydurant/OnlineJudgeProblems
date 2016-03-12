@@ -1,0 +1,27 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    int recent,now,n,total;
+    while(EOF!=scanf("%d",&n)&&n)              //白痴的电梯模拟题。。。。
+    {
+        total=n*5;
+        recent=0;
+        while(n--)
+        {
+            scanf("%d",&now);
+            if(now>recent)
+            {
+                total+=(now-recent)*6;
+            }
+            else
+            {
+                total+=(recent-now)*4;
+            }
+            recent=now;
+        }
+        printf("%d\n",total);
+    }
+    return 0;
+}

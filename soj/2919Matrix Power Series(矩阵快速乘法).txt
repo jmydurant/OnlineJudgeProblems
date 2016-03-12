@@ -1,0 +1,105 @@
+#include<cstdio>
+#include<cstring>
+#define INF 10000000  //快速幂已经不是问题了。。关键是求Sn=A+A^2+……A^N;
+using namespace std;  //如果N=2k+1..S2k+1=Sk+1  +  (Ak+1 *Sk)同理偶数也可以得到式子。。然后就像快速幂一样求就可以了。。
+struct abc
+{
+    int matrix[35][35];
+}first,e;
+int N,m,k;
+abc m_plus(abc a,abc b);
+abc m_times(abc a,abc b);
+abc m_pow(int n);
+abc m_find(int n);
+int main(void)
+{
+    while(EOF!=scanf("%d%d%d",&N,&k,&m))
+    {
+        abc result;
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                scanf("%d",&first.matrix[i][j]);
+                first.matrix[i][j]%=m;
+                if(i==j)e.matrix[i][j]=1;
+                else e.matrix[i][j]=0;
+            }
+        }
+        result=m_find(k);
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N-1;j++)
+            {
+                printf("%d ",result.matrix[i][j]);
+            }
+            printf("%d\n",result.matrix[i][N]);
+        }
+    }
+    return 0;
+}
+abc m_find(int n)
+{
+    if(1==n)return first;
+    abc tmpt=m_find(n/2);
+    if(n%2)
+    {
+        abc tmpt1=m_pow(n/2+1);
+        tmpt=m_plus(tmpt,m_times(tmpt1,tmpt));
+        tmpt=m_plus(tmpt,tmpt1);
+    }
+    else
+    {
+        abc tmpt1=m_pow(n/2);
+        tmpt=m_plus(tmpt,m_times(tmpt1,tmpt));
+    }
+    return tmpt;
+}
+abc m_plus(abc a,abc b)
+{
+    abc result;
+    for(int i=1;i<=N;i++)
+    {
+        for(int j=1;j<=N;j++)
+        {
+            result.matrix[i][j]=(a.matrix[i][j]+b.matrix[i][j])%m;
+        }
+    }
+    return result;
+}
+abc m_times(abc a,abc b)
+{
+    abc result;
+    for(int i=1;i<=N;i++)
+    {
+        for(int j=1;j<=N;j++)
+        {
+            result.matrix[i][j]=0;
+            for(int k=1;k<=N;k++)
+            {
+                result.matrix[i][j]+=a.matrix[i][k]*b.matrix[k][j];
+            }
+            result.matrix[i][j]%=m;
+        }
+    }
+    return result;
+}
+abc m_pow(int n)
+{
+        abc result=first,x=e;
+        while(n!=1)
+        {
+            if(n&1)
+            {
+                n--;
+                x=m_times(result,x);
+            }
+            else
+            {
+                n>>=1;
+                result=m_times(result,result);
+            }
+        }
+        result=m_times(result,x);
+        return result;
+}

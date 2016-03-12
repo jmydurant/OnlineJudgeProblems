@@ -1,0 +1,105 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>    //两个任务一个做超级源点。一个做超级汇点。。然后相连。。如果有特殊条件就把那两个点也连接起来。。有点慢哈。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 20010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int f,t,nxt;
+    int ww , rev; //rev记录反边
+}edge[510000];
+int headline[maxn] , E;
+inline void add(int f,int t,int w){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].ww = w;
+    headline[f] = E++;
+}
+int n,m ,op,ed;
+int dis[maxn];
+bool bfs(void){
+    rst(dis,0);
+    queue<int> q;
+    dis[op] = 1;
+    q.push(op);
+    while(!q.empty()){
+        int u = q.front(); q.pop();
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(!dis[v] && edge[i].ww > 0){
+                dis[v] = dis[u] + 1;
+                if(v == ed)return true;
+                q.push(v);
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed)return c;
+    int temp = c;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(dis[v] == dis[u] + 1 && c && edge[i].ww > 0){
+            int tt = dfs(v , MIN(temp , edge[i].ww));
+            edge[i].ww -= tt;
+            edge[edge[i].rev].ww += tt;
+            temp -= tt;
+        }
+    }
+    if(c == temp) dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()){
+        maxflow += dfs(op , INF);
+    }
+    return maxflow;
+}
+void solve(void){
+    E = 0; rst(headline,-1);
+    op = 0 , ed = n+1;
+    FOR(i,1,n){
+        int aa , bb; scanf("%d%d",&aa,&bb);
+        add(op,i,aa);edge[E-1].rev = E; add(i,op,0); edge[E-1].rev = E - 2;
+        add(i,ed,bb);edge[E-1].rev = E; add(ed,i,0); edge[E-1].rev = E - 2;
+    }
+    FOR(i,1,m){
+        int aa,bb,cc; scanf("%d%d%d",&aa,&bb,&cc);
+        add(aa,bb,cc);edge[E-1].rev = E; add(bb,aa,cc); edge[E-1].rev = E - 2;
+    }
+    int ans = dinic();
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

@@ -1,0 +1,64 @@
+#include<cstdio>   //知道什么叫裸的线段树么。。这题就是。。算是入门了吗？不过还是很爽的。。居然一次AC了。。
+#include<cmath>   //因为过于基础。。我都不知道怎么写注释了。。。反正就是从根进入。。开始对树的深入查找吧。。找到一模一样的范围就返回好了。。
+#include<cstring>
+#include<deque>
+#include<queue>
+#include<algorithm>
+#include<climits>
+using namespace std;
+struct node
+{
+    int left,right,k;
+}tree[400010];
+void build_tree(int x,int y,int num);
+void sum_tree(int loc,int num,int p);
+int req_tree(int x,int y,int num);
+int main(void)
+{
+    int N,M;
+    while(EOF!=scanf("%d%d",&N,&M))
+    {
+        build_tree(0,N-1,1);
+        while(M--)
+        {
+            int b,p,q;
+            scanf("%d%d%d",&b,&p,&q);
+            if(0==b)printf("%d\n",req_tree(p,q,1));
+            else sum_tree(p,1,q);
+        }
+    }
+    return 0;
+}
+int req_tree(int x,int y,int num)
+{
+    if(x==tree[num].left&&y==tree[num].right)return tree[num].k;
+    int mid=(tree[num].left+tree[num].right)>>1;
+    if(y<=mid)return req_tree(x,y,2*num);
+    else if(x>=mid+1)return req_tree(x,y,2*num+1);
+    else return req_tree(x,mid,2*num)+req_tree(mid+1,y,2*num+1);
+}
+void sum_tree(int loc,int num,int p)
+{
+    if(tree[num].left==tree[num].right&&tree[num].left==loc)
+    {
+        tree[num].k+=p;
+        return;
+    }
+    int mid=(tree[num].left+tree[num].right)>>1;
+    if(loc<=mid)sum_tree(loc,2*num,p);
+    else if(loc>=mid+1)sum_tree(loc,2*num+1,p);
+    tree[num].k=tree[2*num].k+tree[2*num+1].k;
+}
+void build_tree(int x,int y,int num)
+{
+    tree[num].left=x;
+    tree[num].right=y;
+    tree[num].k=0;
+    if(x==y)
+    {
+        return;
+    }
+    int mid=(x+y)>>1;
+    build_tree(x,mid,2*num);
+    build_tree(mid+1,y,2*num+1);
+}

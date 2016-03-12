@@ -1,0 +1,77 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>    //死搜呗。。跟皇后问题差不多。。还是应当用dancelinks做才好。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+char mm[11][11];
+int puzzle[11][11];
+bool row[10][10] , col[10][10] , cube[10][10];
+bool dfs(int x,int y){
+    if(x == 10)return true;
+    if(puzzle[x][y]){
+        if(dfs(x + y/9 , y % 9 + 1)) return true;
+    }else{
+        FOR(k,1,9){
+            int a = (x-1)/3 , b = (y-1)/3;
+            if((!row[x][k]) && (!col[y][k]) && (!cube[a*3+b+1][k])){
+                puzzle[x][y] = k;
+                row[x][k] = true; col[y][k] = true; cube[3*a+b+1][k] = true;
+                if(dfs(x + y/9 , y % 9 + 1)) return true;
+                puzzle[x][y] = 0;
+                row[x][k] = false; col[y][k] = false; cube[3*a+b+1][k] = false;
+            }
+        }
+    }return false;
+}
+void solve(void){
+    FOR(i,1,9) scanf("%s",mm[i] + 1);
+    rst(row,false); rst(col,false); rst(cube,false);
+    FOR(i,1,9)FOR(j,1,9){
+        puzzle[i][j] = mm[i][j] - '0';
+        if(puzzle[i][j] == 0)continue;
+        row[i][puzzle[i][j]] = true;
+        col[j][puzzle[i][j]] = true;
+        int a = (i-1)/3 , b = (j-1)/3;
+        cube[3*a+b+1][puzzle[i][j]] = true;
+    }
+    dfs(1,1);
+    FOR(i,1,9){
+        FOR(j,1,9)printf("%d",puzzle[i][j]);
+        printf("\n");
+    }
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

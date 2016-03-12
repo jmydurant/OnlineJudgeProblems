@@ -1,0 +1,60 @@
+#include<cstring>    //方法和2822相似。。。都是把空当作线段。。每次出现就把线段减少。。具体实现见程序。。我也说不太清楚。。只能理解。。说不出来。。
+#include<algorithm>  //线段树算是真的入门了。。现在敲出这些东西只要20分钟左右。。。
+#include<cmath>
+#include<cstdio>
+#include<map>
+using namespace std;
+struct Node
+{
+    int left,right,mid;
+    int value;
+}tree[32100];
+int cow[8010];
+int ans[8010];
+void build_tree(int x,int y,int num)
+{
+    tree[num].left=x;
+    tree[num].right=y;
+    tree[num].mid=(x+y)>>1;
+    tree[num].value=y-x+1;
+    if(x==y)return;
+    build_tree(x,tree[num].mid,num<<1);
+    build_tree(tree[num].mid+1,y,num<<1|1);
+}
+int req_tree(int num,int K)
+{
+    if(tree[num].left==tree[num].right)
+    {
+        tree[num].value=0;
+        return tree[num].left;
+    }
+    tree[num].value--;
+    if(tree[num<<1].value>=K)
+    {
+        return req_tree(num<<1,K);
+    }
+    else
+    {
+        return req_tree(num<<1|1,K-tree[num<<1].value);
+    }
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        memset(ans,0,sizeof(ans));
+        build_tree(1,N,1);
+        cow[1]=0;
+        for(int i=2;i<=N;i++)scanf("%d",cow+i);
+        for(int i=N;i>=1;i--)
+        {
+            ans[i]=req_tree(1,cow[i]+1);
+        }
+        for(int i=1;i<=N;i++)
+        {
+            printf("%d\n",ans[i]);
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,100 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一道按位计算的题目。。把每个数分成二进制的n为。。每一位都维护一个线段树。。然后啪啪啪。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000
+#define maxn 101010
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int a[maxn];
+struct node{
+    LL sum[19][maxn<<2];
+    int lmax[19][maxn<<2] , rmax[19][maxn<<2];
+    int len[19][maxn<<2];
+    void INIT(int bit,int l,int r,int ind){
+        sum[bit][ind] = lmax[bit][ind] = rmax[bit][ind] = 0;
+        len[bit][ind] = r - l + 1;
+        if(l == r)return;
+        int mid = (l+r)>>1;
+        INIT(bit,l,mid,lson);
+        INIT(bit,mid+1,r,rson);
+    }
+    inline LL cal(LL x){return x * (x-1) / 2;}
+    inline void update(int bit,int ind){
+        sum[bit][ind] = sum[bit][lson] + sum[bit][rson] + (LL)rmax[bit][lson] * (LL)lmax[bit][rson];
+        lmax[bit][ind] = lmax[bit][lson];
+        if(lmax[bit][lson] == len[bit][lson]) lmax[bit][ind] += lmax[bit][rson];
+        rmax[bit][ind] = rmax[bit][rson];
+        if(rmax[bit][rson] == len[bit][rson]) rmax[bit][ind] += rmax[bit][lson];
+    }
+    void change(int bit,int l,int r,int ind,int pos,int val){
+        if(l == r){
+            sum[bit][ind] = lmax[bit][ind] = rmax[bit][ind] = val;
+            return;
+        }
+        int mid = (l+r)>>1;
+        if(pos <= mid)change(bit,l,mid,lson,pos,val);
+        else change(bit,mid+1,r,rson,pos,val);
+        update(bit,ind);
+    }
+}segtree;
+int n,Q;
+void solve(void){
+    FOR(i,0,17)segtree.INIT(i,1,n,1);
+    FOR(i,1,n){
+        scanf("%d",a+i);
+        int tt = a[i] , _bit = 0;
+        while(tt){
+            if(tt & 1) segtree.change(_bit,1,n,1,i,1);
+            tt >>= 1;
+            _bit++;
+        }
+    }
+    //printf("ans is %I64d\n",segtree.sum[0][1]);
+    while(Q--){
+        int x,y; scanf("%d%d",&x,&y);
+        int tt = a[x] , _bit = 0;
+        while(tt){
+            if(tt & 1) segtree.change(_bit,1,n,1,x,0);
+            tt >>= 1;
+            _bit++;
+        }
+        a[x] = y; tt = a[x]; _bit = 0;
+        while(tt){
+            if(tt & 1) segtree.change(_bit,1,n,1,x,1);
+            tt >>= 1;
+            _bit++;
+        }
+        LL ans = 0;
+        FOR(i,0,17) ans = ans + segtree.sum[i][1] * (1<<i);
+        printf("%I64d\n",ans);
+    }
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&Q)) solve();
+    return 0;
+}

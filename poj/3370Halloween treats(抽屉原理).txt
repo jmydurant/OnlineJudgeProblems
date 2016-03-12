@@ -1,0 +1,51 @@
+#include<cstdio>    //不解释。。原理太简单。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int visit[101000];
+int digit[101000];
+int main(void)
+{
+    int C,N;
+    while(2==scanf("%d%d",&C,&N) && (C || N))
+    {
+        for(int i=1;i<=N;i++)
+            scanf("%d",digit+i);
+        memset(visit,-1,sizeof(visit));
+        visit[0]=0;
+        int ans=0;
+        int left,right;
+        for(int i=1;i<=N;i++)
+        {
+            ans+=digit[i];
+            ans%=C;
+            if(-1!=visit[ans])
+            {
+                left=visit[ans];
+                right=i;
+                break;
+            }
+            else
+            {
+                visit[ans]=i;
+            }
+        }
+        for(int i=left+1;i<=right;i++)
+        {
+            printf("%d%c",i,i==right?'\n':' ');
+        }
+    }
+    return 0;
+}

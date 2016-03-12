@@ -1,0 +1,63 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+char visit[800][800];
+int f[800][800];
+int result[800];
+int Min(int a,int b,int c);        //转移方程能够找到的话就好做多了。。。当然是f[i][j]=min(f[i-1][j-1],f[i][j-1],f[i-1][j])+1咯。。
+int main(void)                      //也就是i，j点能向左上摆放的最大建筑规模。。。
+{
+    int N,M,P;
+    while(EOF!=scanf("%d%d%d",&N,&M,&P))
+    {
+        int i,j;
+        getchar();
+        memset(result,0,sizeof(result));
+        for(i=0;i<N;i++)
+        {
+            for(j=0;j<M;j++)
+            {
+                int k;
+                visit[i][j]=getchar();
+                if('0'==visit[i][j])
+                {
+                    f[i][j]=0;
+                }
+                else
+                {
+                    if(0==i||0==j)
+                    {
+                        f[i][j]=1;
+                    }
+                    else
+                    {
+                        f[i][j]=Min(f[i-1][j-1],f[i-1][j],f[i][j-1])+1;
+                    }
+                }
+                for(k=1;k<=f[i][j];k++)
+                {
+                    result[k]++;
+                }
+            }
+            getchar();
+        }
+        for(i=1;i<=P;i++)
+        {
+            scanf("%d",&j);
+            printf("%d\n",result[j]);
+        }
+
+    }
+}
+int Min(int a,int b,int c)
+{
+    if(a>b)
+    {
+        a=b;
+    }
+    if(a>c)
+    {
+        a=c;
+    }
+    return a;
+}

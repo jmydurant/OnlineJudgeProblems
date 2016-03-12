@@ -1,0 +1,62 @@
+#include<cstdio>     //裸的最小生成树。。。prim算法水过。。。今天soj挂了。。只好来poj练手了。。。可怜。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+int dis[2010];
+int visit[2010];
+char s[2010][10];
+inline int dis_find(int i,int j)
+{
+    int res=0;
+    for(int k=0;k<7;k++)
+    {
+        if(s[i][k]!=s[j][k])res++;
+    }
+    return res;
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        getchar();
+        int ans=0;
+        memset(visit,0,sizeof(visit));
+        memset(dis,INF,sizeof(dis));
+        for(int i=1;i<=N;i++)
+        {
+            gets(s[i]);
+        }
+        dis[1]=0;visit[1]=1;
+        int start=1;
+        for(int abc=1;abc<N;abc++)
+        {
+            int minroad=INT_MAX,tmpt;
+            for(int i=1;i<=N;i++)
+            {
+                if((!visit[i]))
+                {
+                    dis[i]=MIN(dis[i],dis_find(start,i));
+                    if(minroad>dis[i])
+                    {
+                        minroad=dis[i];
+                        tmpt=i;
+                    }
+                }
+            }
+            ans+=minroad;
+            start=tmpt;
+            visit[start]=1;
+        }
+        printf("The highest possible quality is 1/%d.\n",ans);
+    }
+    return 0;
+}

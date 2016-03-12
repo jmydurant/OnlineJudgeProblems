@@ -1,0 +1,136 @@
+#include<cstdio>
+#include<cstring>//次奥他大爷。。。居然是输入的地方有错。。。我都可以用这7个WA召唤神龙了。。。
+#include<queue>
+#include<vector>
+#include<map>       //这道题的原理是dp  但是用到单调队列优化。。。最下面粘上原理。。
+#include<climits>
+#include<stack>
+#include<cmath>
+#include<deque>
+#define POW(obj) (obj)*(obj)
+using namespace std;
+long long dp[500010],sum[500010],que[500010];
+template<typename T>
+inline T MAX(T a,T b){return a>b?a:b;}
+template<typename T>
+inline T MIN(T a,T b){return a<b?a:b;}
+double cmp(long long a,long long b)
+{
+    double result=double(dp[a]-dp[b])/(sum[a]-sum[b]);
+    result+=sum[b]+sum[a];
+    return result;
+}
+int main(void)
+{
+    int N,m;
+    while(EOF!=scanf("%d%d",&N,&m))
+    {
+        sum[N+1]=0;
+        for(int i=1;i<=N;i++)
+        scanf("%lld",sum+i);
+        for(int i=N-1;i>=1;i--)
+        sum[i]+=sum[i+1];
+        memset(dp,0,sizeof(dp));
+        dp[N]=POW(sum[N])+m;que[0]=N;
+       int head=0,rear=0;
+        for(int i=N-1;i>=1;i--)
+        {
+            if(sum[i+1]!=sum[i])
+            {
+                while(head<rear&&cmp(que[head+1],que[head])<=2*sum[i])head++;
+                dp[i]=MIN(POW(sum[i])+m,dp[que[head]]+POW(sum[i]-sum[que[head]])+m);
+                while(head<rear&&cmp(i,que[rear])<=cmp(que[rear],que[rear-1]))rear--;
+                rear++;que[rear]=i;
+            }
+            else
+            {
+                dp[i]=dp[i+1];
+            }
+        }
+        printf("%lld\n",dp[1]);
+    }
+    return 0;
+}
+//其实这道题用deque也可以。。效率稍微低一点。。以后注意。。。输入的东西lld的时候。。变量一定要是long long。。我就是死在这个地方的。。。
+#include<cstdio>
+#include<cstring>    //deque找数组第二个数比较麻烦。。
+#include<queue>
+#include<vector>
+#include<map>
+#include<climits>
+#include<stack>
+#include<cmath>
+#include<deque>
+#define POW(a)  (a)*(a)
+using namespace std;
+long long dp[500010],sum[500010];
+deque<int>q;
+template<typename T>
+inline T MAX(T a,T b){return a>b?a:b;}
+template<typename T>
+inline T MIN(T a,T b){return a<b?a:b;}
+double cmp(long long a,long long b)
+{
+    double result=double(dp[a]-dp[b])/(sum[a]-sum[b]);
+    result+=sum[b]+sum[a];
+    return result;
+}
+int main(void)
+{
+    int N,m;
+    while(EOF!=scanf("%d%d",&N,&m))
+    { 
+        sum[0]=0;
+        for(int i=1;i<=N;i++)
+        {
+			long long a;
+            scanf("%lld",&a);sum[i]=a+sum[i-1];
+        }
+        memset(dp,0,sizeof(dp));
+        dp[1]=POW(sum[1])+m;
+        q.push_back(1);
+        for(int i=2;i<=N;i++)
+        {
+            if(sum[i-1]!=sum[i])
+            {
+                while(q.size()>1)
+                {
+                    int k=q.front(),j;
+                    q.pop_front();
+                    j=q.front();
+                    if(cmp(j,k)<=2*sum[i])continue;
+                    q.push_front(k);break;
+                }
+                dp[i]=MIN(POW(sum[i])+m,dp[q.front()]+POW(sum[q.front()]-sum[i])+m);
+                while(q.size()>1)
+                {
+                    int k=q.back(),j;
+                    q.pop_back();
+                    j=q.back();
+                    if(cmp(i,k)<=cmp(k,j))continue;
+                    q.push_back(k);break;
+                }
+                q.push_back(i);
+            }
+            else
+            {
+                dp[i]=dp[i-1];
+            }
+        }
+        q.clear();
+        printf("%lld\n",dp[N]);
+    }
+    return 0;
+}
+这是一个动态规划，设dp[i]为从i到n的最小值，sum[i]为从i到n的物品重量之和，于是有dp[i]=min{dp[k]+(sum[i]-sum[k])^2+m}i<=k<n,但是需要进行优化 .
+ 
+对于当前状态i,若有两个决策a,b，若决策a优于决策b，则有dp[a]+(sum[i]-sum[a])^2+m<=dp[b]+(sum[i]-sum[b])^2+m,
+也就是(dp[a]-dp[b])/(sum[a]-sum[b])+sum[a]+sum[b]<=2*sum[i]
+ 
+定义g[a,b]= (dp[a]-dp[b])/(sum[a]-sum[b])+sum[a]+sum[b]
+ 
+则对于a<b<c，若g[a,b]<=g[b,c],则b必然不为决策点，因为如果g[a,b]<=2*sum[i],那么a就比b好，如果g[a,b]>2*sum[i],那么g[b,c]肯定也大于2*sum[i],那么c就比b好。
+ 
+所以可以维护一个双端队列q,每次决策前，先对队列头进行删除，如果队列中元素多于1个且g[q[head+1],q[head]]<=2*sum[i]就可以把队列头删掉，到无法继续删除时，以min(sum[i]*sum[i]+2,dp[q[head]]+(sum[i]-sum[q[head]])^2+m)作为当前状态最优值。而后如果队列中元素多于1个且g[i,q[tail]]<=g[q[tail],q[tail-1]],那么可以把队尾元素删除，一直做删除操作到上述条件不满足为止。之后把i插入队列尾。
+ 
+不过题目有一个陷阱就是有可能出现重量为0的东西，也就是说会出现sum[i]==sum[i+1]，这种时候应该dp[i]=dp[i+1]

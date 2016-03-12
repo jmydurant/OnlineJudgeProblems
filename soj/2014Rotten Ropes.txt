@@ -1,0 +1,32 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+int ropes[1200];
+int main(void)
+{
+    int casenum;                 //想明白就发现。。。好水。。
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int rpnum;
+        int i,j;
+        int maxnum=0;
+        j=1;
+        scanf("%d",&rpnum);
+        for(i=0;i<rpnum;i++)
+        {
+            scanf("%d",&ropes[i]);
+        }
+        sort(ropes,ropes+rpnum);
+        for(i=rpnum-1;i>=0;i--)
+        {
+            if(maxnum<(ropes[i]*j))
+            {
+                maxnum=(ropes[i]*j);
+            }
+            j++;
+        }
+        printf("%d\n",maxnum);
+    }
+    return 0;
+}

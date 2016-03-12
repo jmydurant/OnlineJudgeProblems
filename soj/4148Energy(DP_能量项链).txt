@@ -1,0 +1,41 @@
+#include<cstdio>     //一道经典的DP。。我次奥。。居然想了很久。。尼玛简直是作死。。因为太经典了。。就像合并东西一样。。所以就不说什么了。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+int dp[210][210];
+int digit[210];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int res=INT_MIN;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",digit+i);
+            digit[i+N]=digit[i];
+        }
+        //printf("%d %d\n",digit[1],digit[5]);
+        memset(dp,0,sizeof(dp));
+        for(int i=2;i<2*N;i++)
+        {
+            for(int j=i-1; j>0 && i-j<N ;j--)
+            {
+                for(int k=j;k<i;k++)
+                {
+                    dp[j][i]=MAX(dp[j][i],dp[j][k]+dp[k+1][i]+digit[j]*digit[k+1]*digit[i+1]);
+                }
+                if(res<dp[j][i])res=dp[j][i];
+            }
+        }
+        printf("%d\n",res);
+    }
+    return 0;
+}

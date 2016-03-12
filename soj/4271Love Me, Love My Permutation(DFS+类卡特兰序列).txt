@@ -1,0 +1,112 @@
+#include<cstring>   //擦擦！！！终于过了。。暴爽！！！！
+#include<cstdio>     //还是说明一下原理吧。。。哎。。下面慢慢看注释。。。
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -1000000000000LL
+#define MOD 1000003LL
+#define lowbit(a) (a)^(-(a))
+#define count fsladfjiaew
+using namespace std;
+bool visit[15];
+int matrix[15][15];
+int count,N;      //记录多少个结果
+int best[15];     //记录最小结果
+int digit[15];     //记录当前结果
+void dfs(int now)
+{
+    if(now==N)
+    {
+        if(count==0)
+        {
+            memcpy(best,digit,sizeof(best));
+        }
+        else
+        {
+            for(int i=N;i>0;i--)
+            {
+                if(digit[i]>best[i])break;
+                else if(digit[i]<best[i])
+                {
+                    memcpy(best,digit,sizeof(best));
+                    break;
+                }
+            }
+        }
+        count++;
+        return;
+    }
+    if(0==now)
+    {
+        for(int i=1;i<=N;i++)
+        {
+            visit[i]=true;
+            digit[1]=i;
+            dfs(now+1);
+            visit[i]=false;
+        }
+        return;
+    }
+    for(int i=1;i<=N;i++)
+    {
+        if(!visit[i])
+        {
+            bool flag=true;
+            int sum=0;
+            for(int j=now;j>0;j--)    //这里是判断关键。。。保证现在序列中符合卡特兰排列。。即1的个数比0多。。。
+            {
+                sum+=matrix[i][digit[j]];
+                if(sum<0)
+                {
+                    flag=false;
+                    break;
+                }
+            }
+            if(flag)
+            {
+                digit[now+1]=i;
+                visit[i]=true;
+                dfs(now+1);
+                visit[i]=false;
+            }
+        }
+    }
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    digit[0]=1;best[0]=1;
+    while(casenum--)
+    {
+        scanf("%d",&N);
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                scanf("%d",&matrix[i][j]);
+                if(matrix[i][j]==0)matrix[i][j]=-1;
+            }
+        }
+        count=0;
+        memset(visit,0,sizeof(visit));
+        dfs(0);
+        if(0==count)printf("%d\n",-1);
+        else
+        {
+            printf("%d\n",count);
+            for(int i=N;i>0;i--)
+            {
+                printf("%d%c",best[i]-1,(i==1)?'\n':' ');
+            }
+        }
+    }
+    return 0;
+}

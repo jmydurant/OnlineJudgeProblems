@@ -1,0 +1,71 @@
+#include <iostream>   //我是沙茶.....对于an = kn-1*an-2 + kn-2*an-2....k1*a1 mod x都是有循环节的。。写个小程序把一层一层的循环节找到就ok了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define maxn 70000
+#define INF 100000
+#define mod 1000000007LL
+#define mod1 222222224LL
+#define mod2 183120LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct mat{
+    LL a[2][2];
+    mat(){rst(a,0);}
+    void INIT(int kind = 0){
+        if(kind){
+            a[0][0] = 3; a[0][1] = 1; a[1][0] = 1; a[1][1] = 0;
+            return;
+        }
+        a[0][0] = 1; a[1][0] = 0; a[0][1] = 0; a[1][1] = 1;
+    }
+};
+mat mul(mat & a,mat & b,LL m){
+    mat ans;
+    REP(i,2)REP(j,2)REP(k,2){
+        ans.a[i][j] += a.a[i][k] * b.a[k][j];
+        ans.a[i][j] %= m;
+    }return ans;
+}
+mat power(mat a,LL n,LL m){
+    mat ans; ans.INIT();
+    while(n){
+        if(n % 2){
+            ans = mul(ans,a,m);
+        }
+        a = mul(a,a,m);
+        n /= 2;
+    }return ans;
+}
+LL n;
+void solve(){
+    n %= 240;
+    mat A; A.INIT(1);
+    LL tt = power(A,n,mod2).a[0][1];
+    tt = power(A,tt,mod1).a[0][1];
+    tt = power(A,tt,mod).a[0][1];
+    printf("%I64d\n",tt);
+}
+int main(void){
+    while(EOF != scanf("%I64d",&n))solve();
+    return 0;
+}

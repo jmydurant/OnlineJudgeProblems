@@ -1,0 +1,164 @@
+#include<cstdio>   //连续做了几道高斯消元法的题目。。基本模板已经背的滚瓜烂熟了。。。这道题还是解同余方程组。。方法比较巧妙。。so easy！！
+#include<climits>   //思路见下。。就不解释了。。。
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int a[9][10];
+int x[10];
+int equ=9,var=9;
+int ans[100];
+int len;
+int dxdy[9][9]={
+    {1, 1, 0, 1, 1, 0, 0, 0, 0},
+    {1, 1, 1, 0, 0, 0, 0, 0, 0},
+    {0, 1, 1, 0, 1, 1, 0, 0, 0},
+    {1, 0, 0, 1, 0, 0, 1, 0, 0},
+    {0, 1, 0, 1, 1, 1, 0, 1, 0},
+    {0, 0, 1, 0, 0, 1, 0, 0, 1},
+    {0, 0, 0, 1, 1, 0, 1, 1, 0},
+    {0, 0, 0, 0, 0, 0, 1, 1, 1},
+    {0, 0, 0, 0, 1, 1, 0, 1, 1}
+};
+inline int gcd(int a,int b)
+{
+    int tmpt;
+    while(b)
+    {
+        tmpt=a%b;
+        a=b;
+        b=tmpt;
+    }
+    return a;
+}
+int lcm(int a,int b)
+{
+    int ans=a;
+    ans/=gcd(a,b);
+    ans*=b;
+    return ans;
+}
+void IINT(void)
+{
+    for(int i=0;i<equ;i++)
+    {
+        for(int j=0;j<var;j++)
+        {
+            a[i][j]=dxdy[j][i];
+        }
+    }
+}
+void Gauss(void)
+{
+    int k=0,col=0;
+    int maxr;
+    //printf("pass\n");
+    for(;k<equ && col<var;k++,col++)
+    {
+        //printf("pass\n");
+        maxr=k;
+        for(int i=k+1;i<equ;i++)
+        {
+            if(abs(a[i][col])>abs(a[maxr][col]))
+                maxr=i;
+        }
+        if(k!=maxr)
+        {
+            for(int i=col;i<=var;i++)swap(a[k][i],a[maxr][i]);
+        }
+        if(0==a[k][col])
+        {
+            k--;
+            continue;
+        }
+        for(int i=k+1;i<equ;i++)
+        {
+            if(a[i][col])
+            {
+                int tmpt=lcm(abs(a[k][col]),abs(a[i][col]));
+                int ta=tmpt/a[k][col],tb=tmpt/a[i][col];
+                for(int j=col;j<=var;j++)
+                {
+                    int res=ta*a[k][j]-tb*a[i][j];
+                    a[i][j]=(res%4+4)%4;
+                }
+            }
+        }
+    }
+    //printf("pass\n");
+    for(int i=equ-1;i>=0;i--)
+    {
+        int tmpt=a[i][var];
+        for(int j=i+1;j<var;j++)
+        {
+            tmpt-=a[i][j]*x[j];
+            tmpt=(tmpt%4+4)%4;
+        }
+        while(tmpt%a[i][i])tmpt+=4;
+        x[i]=(tmpt/a[i][i])%4;
+    }
+}
+int main(void)
+{
+    int abc;
+    while(EOF!=scanf("%d",&abc))
+    {
+        IINT();
+        a[0][var]=(4-abc)%4;
+        for(int i=1;i<9;i++)
+        {
+            scanf("%d",&abc);
+            a[i][var]=(4-abc)%4;
+        }
+        Gauss();
+        int len=0;
+        for(int i=0;i<9;i++)
+        {
+            for(int j=0;j<x[i];j++)
+            {
+                ans[++len]=i;
+            }
+        }
+        for(int i=1;i<=len;i++)
+        {
+            printf("%d%c",ans[i]+1,i==len?'\n':' ');
+        }
+    }
+    return 0;
+}
+高斯消去法的典型应用
+题意：
+输入提供9个钟表的位置（钟表的位置只能是0点、3点、6点、9点，分别用0、1、2、3）表示。而题目又提供了9的步骤表示可以用来调正钟的位置，例如1 ABDE表示此步可以在第一、二、四、五个钟调正，如原来是0点，那么调正后为3点。问经过那些步骤可以导致9个钟的位置都在0点。
+算法：
+如果数学敏感度不强的话，那么此题很容易陷入bfs算法来做，时间复杂度就很大了。其实我们可以仔细观察题意的要求：
+Move   Affected clocks
+1         ABDE
+2         ABC
+3         BCEF
+4         ADG
+5         BDEFH
+6         CFI
+7         DEGH
+8         GHI
+9         EFHI  
+影响第一个钟的就仅有1、2、4move相关，同理其他也是这样，而在sample钟的第一个中只需要移动一步就可以达到0点，此时就发现了一个线性规律。我们可否将1、2、4move设置为x1,x2,x4呢？而且x1+x2+x4=1.问题看来变得很简单。我们现在尝试将所有与每个钟都相关的步骤联系起来，如下：
+x1+x2+x4=1
+x1+x2+x3+x5=1
+x2+x3+x6=0
+x1+x4+x5+x7=2
+x1+x3+x5+x7+x9=2
+x3+x5+x6+x9=2
+x4+x7+x8=2
+x5+x7+x8+x9=3
+x6+x8+x9=2
+与output结果相比，很容易联想到x4=1,x5=1,x7=1,x8=1,其他x值都为0.经过检查，与猜想符合。那么问题就是编写高斯消去法的问题了。

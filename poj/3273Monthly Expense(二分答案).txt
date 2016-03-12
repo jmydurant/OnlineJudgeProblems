@@ -1,0 +1,59 @@
+#include<cstdio>  //一道很基础的二分答案的题目。。因为相连的day才能组成month。。所以判断很简单。。都不用dfs。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int money[100010];
+int day,month;
+bool judge(int mid)
+{
+    int group=1;
+    int sum=0;
+    for(int i=1;i<=day;i++)
+    {
+        if(sum+money[i]<=mid)
+        {
+            sum+=money[i];
+        }
+        else
+        {
+            sum=money[i];
+            group++;
+        }
+    }
+    if(group<=month)return true;
+    return false;
+}
+int main(void)
+{
+    while(2==scanf("%d%d",&day,&month))
+    {
+        int left=0,right=0;
+        for(int i=1;i<=day;i++)
+        {
+            scanf("%d",money+i);
+            left=MAX(left,money[i]);
+            right+=money[i];
+        }
+        int mid=((left+right)>>1);
+        while(left<right)
+        {
+            if(judge(mid))right=mid;
+            else left=mid+1;
+            mid=((left+right)>>1);
+        }
+        printf("%d\n",mid);
+    }
+    return 0;
+}

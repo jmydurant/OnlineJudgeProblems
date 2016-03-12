@@ -1,0 +1,78 @@
+#include<cstring>   //Kruskal算法。。由于边比较稀疏。。这种算法比较省时间。。。用到了并查集。。。然后优先队列要把cmp函数编写一下。。
+#include<cstdio>    //其他就没有什么难度了。。。
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int fa[200010];
+inline int findfa(int x)
+{
+    if(fa[x]!=x)
+    {
+        fa[x]=findfa(fa[x]);
+    }
+    return fa[x];
+}
+inline void unionfa(int x,int y)
+{
+    int fx=findfa(x),fy=findfa(y);
+    if(fx!=fy)
+    {
+        fa[fx]=fy;
+    }
+}
+struct item
+{
+    int x,y,cost;
+}road;
+struct cmp
+{
+    bool operator () (const item & a,const item & b)const
+    {
+        return a.cost>b.cost;
+    }
+};
+priority_queue<item,vector<item>,cmp>q;
+int main(void)
+{
+    int N,Q;
+    while(2==scanf("%d%d",&N,&Q) && (N || Q))
+    {
+        while(!q.empty())q.pop();
+        int sum=0;
+        for(int i=0;i<=N;i++)fa[i]=i;
+        for(int i=1;i<=Q;i++)
+        {
+            scanf("%d%d%d",&road.x,&road.y,&road.cost);
+            sum+=road.cost;
+            q.push(road);
+        }
+        int ans=0;
+        for(int i=1;i<N;)
+        {
+            item tmpt=q.top();
+            q.pop();
+            if(findfa(tmpt.x)!=findfa(tmpt.y))
+            {
+                ans+=tmpt.cost;
+                unionfa(tmpt.x,tmpt.y);
+                i++;
+            }
+        }
+        ans=sum-ans;
+        //printf("%d\n",sum);
+        printf("%d\n",ans);
+    }
+    return 0;
+}

@@ -1,0 +1,86 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //真的无语。。感觉太弱了自己。。思路想了半天。。不过还是稍微说一下吧。。
+#include <cstring>    //首先可以认为pick和ban都不会出现废操作。。因为pick显然要选择战斗力最高的。。ban的话直接ban最弱的和不ban是结果一样。所以每次都ban
+#include <algorithm>  //然后就直接dp来记录过程就好。。当然要压缩一下数组。。用bit记录一下剩余英雄的状态。。多余m的英雄不用管。他们是不会被选也不会被ban
+#include <queue>    //复杂度2^m * m
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 1048600
+#define mod 1000000007LL
+#define fr first
+#define se second
+using namespace std;
+typedef long long LL;
+int bitc[maxn];
+int a[110];
+int team[25],pick[25];
+int dp[2][maxn];
+int n,m;
+int main(void){
+    while(EOF != scanf("%d",&n)){
+        REP(i,n) scanf("%d",a+i);
+        sort(a,a+n);
+        reverse(a,a+n);
+        scanf("%d",&m);
+        char op[10]; int _x;
+        REP(i,m){
+            scanf("%s%d",op,&_x);
+            if(op[0] == 'p')pick[i] = 1;
+            else pick[i] = 0;
+            if(_x == 1)team[i] = 1;
+            else team[i] = 0;
+        }
+        int top = h(m);
+        REP(i,top){
+            bitc[i] = 0;
+            int tt = i;
+            while(tt){
+                if(tt & 1)bitc[i]++;
+                tt >>= 1;
+            }
+        }
+        REP(i,2){
+            REP(j,top)dp[i][j] = -INF;
+        }
+        dp[0][top-1] = 0;
+        FORD(i,m-1,0){
+            int cur = (i & 1);
+            REP(mask,top){
+                //printf("bitc is %d and i is %d\n",bitc[mask],i);
+                if(bitc[mask] != i)continue;
+                if(team[i])dp[cur][mask] = -INF;
+                else dp[cur][mask] = INF;
+                FOR(j,0,m-1){
+                    if(!(h(j) & mask) && dp[1-cur][mask | h(j)] != -INF){
+                        if(team[i]){
+                            dp[cur][mask] = MAX(dp[cur][mask] , dp[1-cur][mask | h(j)] + pick[i] * a[j]);
+                        }
+                        else{
+                            dp[cur][mask] = MIN(dp[cur][mask] , dp[1-cur][mask | h(j)] - pick[i] * a[j]);
+                        }
+                    }
+                }
+                if(dp[cur][mask] == INF) dp[cur][mask] = -INF;
+            }
+        }
+        printf("%d\n",dp[0][0]);
+    }return 0;
+}

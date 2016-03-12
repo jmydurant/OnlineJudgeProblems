@@ -1,0 +1,189 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //其实那个插入负数可以这样处理。。插入正数之后。。找正数之后的第一个正数。。插到那个正数的相反数的前面就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define maxn 210000
+#define INF 1000000000
+#define mod 1000000007LL
+#define base 105000
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct spl{
+    #define ls son[x][0]
+    #define rs son[x][1]
+    int fa[maxn],son[maxn][2],s[maxn],opp[maxn];
+    LL sum[maxn];
+    int root,cur;
+    void test(int x,int kind){
+        if(x == 0)return;
+        printf("(");
+        test(son[x][0],kind);
+        if(kind == 1)printf("%d",x - base);
+        else printf("%d",sum[x]);
+        test(son[x][1],kind);
+        printf(")");
+    }
+    inline int getnew(int key,int _fa){
+        son[key+base][0] = son[key+base][1] = 0;
+        fa[key+base] = _fa;
+        s[key+base] = 1; sum[key+base] = key;
+        opp[key+base] = (key > 0);
+        return key+base;
+    }
+    inline void update(int x){
+        if(!x)return;
+        s[x] = s[ls] + s[rs] + 1;
+        opp[x] = opp[ls] + opp[rs] + (x-base > 0);
+        sum[x] = sum[ls] + sum[rs] + (x-base);
+    }
+    void INIT(void){
+        son[0][0] = son[0][1] = fa[0] = s[0] = sum[0] = 0;
+        fa[1] = son[1][1] = son[1][0] = 0;  sum[1] = s[1] = 1;
+        fa[2*base-1] = son[2*base-1][1] = son[2*base-1][0] = 0;
+        root = 2*base-1;
+        son[root][1] = getnew(1-base,root);
+        update(1);
+        update(root);
+    }
+    inline void rolate(int x,int kind){
+        int y = fa[x], z = fa[y];
+        son[y][!kind] = son[x][kind];
+        if(son[x][kind]) fa[son[x][kind]] = y;
+        son[x][kind] = y;
+        if(z) son[z][son[z][1] == y] = x;
+        fa[x] = z; fa[y] = x;
+        update(y);
+    }
+    void splay(int x,int aim){
+        if(x == aim)return;
+        int y,z;
+        while(fa[x] != aim){
+            y = fa[x]; z = fa[fa[x]];
+            if(z == aim){
+                rolate(x,son[y][0] == x);
+            }else{
+                int kk = (son[z][0] == y);
+                if(son[y][kk] == x){
+                    rolate(x,!kk); rolate(x,kk);
+                }else{
+                    rolate(y,kk); rolate(x,kk);
+                }
+            }
+        }
+        update(x);
+        if(!aim) root = x;
+    }
+    int findmin(int x){
+        while(ls != 0)x = ls;
+        return x;
+    }
+    int findmax(int x){
+        while(rs != 0)x = rs;
+        return x;
+    }
+    int FINDK(int k){
+        int x = root;
+        while(s[ls] + 1 != k){
+            if(s[ls] + 1 < k){
+                k -= (s[ls] + 1);
+                x = rs;
+            }else{
+                x = ls;
+            }
+        }
+        return x;
+    }
+    bool findpos(int x){
+        if(opp[x] == 0 || x == 0)return false;
+        if(opp[ls]) return findpos(ls);
+        if(x-base > 0){
+            cur = x;
+            return true;
+        }
+        return findpos(rs);
+    }
+    void Insert(int key,int pos){
+        int x = FINDK(pos+1);
+        int y = FINDK(pos+2);
+        splay(x,0);
+        splay(y,x);
+        son[y][0] = getnew(key,y);
+        update(y); update(x);
+        splay(key+base,0);
+        //test(root,1);printf("\n");
+        if(findpos(son[key+base][1]) == false) cur = 2*base-1;
+        cur = (2*base - cur);
+        splay(cur,0);
+        y = findmax(son[cur][0]);
+        splay(y,cur);
+        son[y][1] = getnew(-key,y);
+        update(y); update(cur);
+    }
+    void Delete(int key){
+        int x = key+base;
+        splay(x,0);
+        int y = findmax(son[x][0]);
+        int z = findmin(son[x][1]);
+        splay(y,0); splay(z,y);
+        son[z][0] = 0;
+        update(z); update(y);
+     }
+     void req(int key){
+         int x = key + base;
+         int y = -key + base;
+         splay(x,0);
+         splay(y,x);
+         printf("%I64d\n",sum[son[y][0]]);
+     }
+}sb;
+set<int> pool;
+int main(void){
+    int Q;
+    int iCase = 0;
+    char op[10];
+    while(EOF != scanf("%d",&Q)){
+        sb.INIT();
+        pool.clear();
+        printf("Case #%d:\n",++iCase);
+        FOR(i,1,Q)pool.insert(i);
+        while(Q--){
+            //sb.test(sb.root,1); printf("\n");
+            scanf("%s",op);
+            if(op[0] == 'i'){
+                int pos,key;
+                scanf("%d",&pos);
+                key = (*pool.begin());
+                pool.erase(pool.begin());
+                sb.Insert(key,pos);
+            }else if(op[0] == 'r'){
+                int key; scanf("%d",&key);
+                pool.insert(key);
+                sb.Delete(key);
+                sb.Delete(-key);
+            }else{
+                int key; scanf("%d",&key);
+                sb.req(key);
+            }
+        }
+    }return 0;
+}

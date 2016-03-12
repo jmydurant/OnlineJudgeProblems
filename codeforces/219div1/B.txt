@@ -1,0 +1,58 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一道不错的dp。。感觉自己是个沙茶。。按照一个比较好的dp顺序。可以用大概跟容斥的方法去做。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 101000
+using namespace std;
+typedef long long LL;
+int n,m,Q;
+int dp[42][42][42][42];
+int sum[42][42];
+char puzzle[42][42];
+void solve(void){
+    FOR(i,1,n){
+        scanf("%s",puzzle[i]+1);
+    }
+    FORD(i,n,1)FORD(j,m,1){
+        rst(sum,0);
+        int minr = 50;
+        FOR(k,i,n){
+            int nowmin = 0;
+            bool flag = false;
+            FOR(l,j,m){
+                if(puzzle[k][l] == '1')flag = true;
+                if(!flag) nowmin++;
+                sum[k][l] = sum[k-1][l] + MIN(nowmin,minr);
+                dp[i][j][k][l] = dp[i+1][j][k][l] + dp[i][j+1][k][l] - dp[i+1][j+1][k][l] + sum[k][l];
+            }
+            minr = MIN(nowmin,minr);
+        }
+    }
+    while(Q--){
+        int a,b,c,d; scanf("%d%d%d%d",&a,&b,&c,&d);
+        printf("%d\n",dp[a][b][c][d]);
+    }
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&m,&Q))solve();
+}

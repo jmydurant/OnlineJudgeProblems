@@ -1,0 +1,94 @@
+#include<iostream>    //蛋疼死了。。这次又是那么狼狈。。。因为unique函数用的不熟练。。所以导致一直再改代码。。原理很简单。。这道题很裸。。
+#include<cstring>     //就是容斥原理加上二分答案。。。注意把a和b的质因子全部找好然后排列好。。然后就可以用容斥原理二分了。。
+#include<cstdio>     //这种题目做出来都很有成就感。。。
+#include<algorithm>
+#include<climits>
+using namespace std;
+long long digit[101000];
+bool visit[1000010];
+long long prime[100010];
+int tot;
+long long ans;
+void IINT(void)
+{
+    memset(visit,false,sizeof(visit));
+    tot=0;
+    for(long long i=2;i<=1000000;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot]=i;
+            for(long long j=i*i;j<=1000000;j+=i)visit[j]=1;
+        }
+
+    }
+    //printf("%I64d %I64d\n",prime[1],prime[2]);
+}
+inline void make_prime(long long n)
+{
+    for(long long i=1;prime[i]*prime[i]<=n;i++)
+    {
+        if(0==n%prime[i])
+        {
+            digit[++tot]=prime[i];
+            //printf("%I64d\n",digit[tot]);
+            while(0==n%prime[i])n/=prime[i];
+        }
+    }
+    if(n>1)digit[++tot]=n;
+}
+void dfs(long long abc,long long gcd,long long flag,long long num)
+{
+    for(long long i=abc;i<tot;i++)
+    {
+        ans+=((num/(gcd*digit[i]))*flag);
+        dfs(i+1,gcd*digit[i],-flag,num);
+    }
+}
+inline bool judge(long long res,long long k)
+{
+    dfs(1,1,-1,res);
+    if(ans>=k)return true;
+    return false;
+}
+int main(void)
+{
+    IINT();
+    digit[0]=-1;
+    int casenum;  scanf("%d",&casenum);
+    int kkk=0;
+    while(casenum--)
+    {
+        long long a,b,k;
+        scanf("%lld%lld%lld",&a,&b,&k);
+        if(a==1 && b==1)
+        {
+            printf("%lld\n",k);
+            continue;
+        }
+        tot=0;
+        make_prime(a);make_prime(b);
+        sort(digit+1,digit+tot+1);
+        int j=0;
+        for(int i=1;i<=tot;i++)
+        {
+            if(digit[j]!=digit[i])
+            {
+                digit[++j]=digit[i];
+            }
+        }
+        //printf("%I64d %I64d %I64d\n",digit[1],digit[2],digit[3]);
+        tot=j+1;
+        long long left=k,right=(1LL)<<62;
+        long long middle;
+        while(left<right)
+        {
+            middle=(left+right)>>1;
+            ans=middle;
+            if(judge(ans,k))right=middle;
+            else left=middle+1;
+        }
+        printf("Case %d: %lld\n",++kkk,left);
+    }
+    return 0;
+}

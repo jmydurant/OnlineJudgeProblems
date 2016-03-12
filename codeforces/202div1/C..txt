@@ -1,0 +1,35 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <cstdlib>
+#define FOR(i,a,b) for(int i = (int)a ;i<=(int)b;i++)
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 120000
+using namespace std;
+typedef long long LL;
+LL a[MAXN];
+LL maxr;
+
+int main(void)
+{
+    LL n;
+    while(cin >> n)
+    {
+        maxr = -1;
+        LL sum = 0;
+        for(int i = 1;i<=n;i++)
+        {
+            cin >> a[i];
+            maxr = MAX(maxr,a[i]);
+            sum += a[i];
+        }
+        LL ans = sum/(n-1);
+        if(sum%(n-1))
+            ans++;
+        ans = MAX(maxr,ans);
+        cout << ans << endl;
+    }
+    return 0;
+}

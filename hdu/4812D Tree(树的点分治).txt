@@ -1,0 +1,150 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     // 我居然2B到把每个case都求了一遍逆元。。
+#include <cstring>    //基本思想不变。。找重心之后分治。。然后小心的更新答案就可以了。。
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define maxn 110000
+#define INF 1000000000
+#define mod 1000003LL
+#define base 105000
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+    bool used;
+}edge[maxn<<1];
+int headline[maxn],E;
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].used = true;
+    headline[f] = E++;
+}
+int f[maxn],s[maxn],meet[mod],ans1,ans2,c[mod];
+LL dis[maxn];
+LL val[maxn];
+int n; LL k;
+int root,size;
+
+void findrt(int u,int fa){
+    s[u] = 1; f[u] = 0;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t; if(v == fa || edge[i].used == false)continue;
+        findrt(v,u);
+        s[u] += s[v]; f[u] = MAX(f[u],s[v]);
+    }
+    f[u] = MAX(f[u], size - s[u]);
+    if(f[u] < f[root]) root = u;
+}
+void ex_gcd(LL a,LL b,LL &d,LL &x,LL &y){
+    if(!b){d = a; x = 1;y = 0;}
+    else{
+        ex_gcd(b,a%b,d,y,x);
+        y -= x*(a/b);
+    }
+}
+LL ni[mod];
+LL niv(LL a){
+    LL d,x,y;
+    ex_gcd(a,mod,d,x,y);
+    ni[a] = (x+mod) % mod;
+    return ni[a];
+}
+void dfs(int u,int fa){
+    LL kk = ni[dis[u]*val[root]%mod];
+    if(dis[u] * val[root] % mod == k){
+        int a = u, b = root;
+        if(a > b){
+            int tt = a; a = b; b = tt;
+        }
+        if(a < ans1 || (a == ans1 && b < ans2)){
+            ans1 = a; ans2 = b;
+        }
+    }
+    if(meet[k*kk%mod] == root){
+        int a = c[k*kk%mod];
+        //printf("x is %d  ni is %d\n",dis[u]*val[root],kk);
+        int b = u; if(a > b){
+            int tt = a; a = b; b = tt;
+        }
+        if(a < ans1){
+            ans1 = a; ans2 = b;
+        }else if(a == ans1 && b < ans2){
+            ans1 = a; ans2 = b;
+        }
+    }
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t; if(v == fa || edge[i].used == false) continue;
+        dis[v] = dis[u]*val[v]%mod;
+        dfs(v,u);
+    }
+}
+inline void dfn(int u,int fa){
+    if(meet[dis[u]] != root){
+        meet[dis[u]] = root;
+        c[dis[u]] = u;
+    }else{
+        c[dis[u]] = MIN(u,c[dis[u]]);
+    }
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t; if(v == fa || edge[i].used == false) continue;
+        dfn(v,u);
+    }
+}
+void kill_la_kill(int u){
+    dis[u] = val[u];
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t; if(edge[i].used == false) continue;
+        dis[v] = val[v]%mod;
+        dfs(v,u);
+        dfn(v,u);
+    }
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t; if(edge[i].used == false) continue;
+        edge[i ^ 1].used = false;
+        f[0] = size = s[v];
+        root = 0;
+        findrt(v,0);
+        kill_la_kill(root);
+    }
+}
+
+inline void solve(void){
+    rst(meet,0);
+    FOR(i,1,n) scanf("%I64d",val+i);
+    rst(headline,-1); E = 0;
+    REP(i,n-1){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a,b); add(b,a);
+    }
+    ans1 = ans2 = INF;
+    size = f[0] = n;    root = 0;
+    findrt(1,0);
+    kill_la_kill(root);
+    if(ans1 == INF)printf("No solution\n");
+    else printf("%d %d\n",ans1,ans2);
+}
+int main(void){
+    FOR(i,1,mod-1)ni[i] = niv(i);
+    while(2 == scanf("%d%I64d",&n,&k))solve();
+    return 0;
+}

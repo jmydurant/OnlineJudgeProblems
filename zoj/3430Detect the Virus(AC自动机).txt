@@ -1,0 +1,122 @@
+#include <cstdio>       //这道题目要转换一下。。把6个0的转换成8个0的。。然后就是沙茶匹配。。
+#include <cstring>
+#include <algorithm>
+#include <vector>
+#include <queue>
+#define rst(x,k) memset(x,k,sizeof(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define maxn 51000
+using namespace std;
+struct node{
+    int cnt,fail;
+    int nxt[265];
+    void INIT(void){
+        cnt = fail = 0;
+        rst(nxt,0);
+    }
+}tree[maxn];
+bool visit[maxn];
+int Get(char &c){
+    if(c >= 'A' && c <= 'Z')return c - 'A';
+    else if(c >= 'a' && c <= 'z')return c - 'a' + 26;
+    else if(c >= '0' && c <= '9')return c - '0' + 52;
+    else if(c == '+')return 62;
+    return 63;
+}
+int n,m;
+char s[maxn];
+int cc[maxn];
+int ww[maxn];
+int tot,EE;
+void due(){
+    vector<int> tt;
+    int len = strlen(s);
+    rst(cc,0);
+    while(s[len-1] == '=')len--;
+    REP(i,len)tt.push_back(Get(s[i]));
+    for(unsigned int i = 0;i<tt.size();i++){
+        for(int j = 5;j>=0;j--){
+            if(tt[i] & 1)cc[i*6+j] = 1;
+            tt[i] >>= 1;
+
+        }
+    }
+    EE = tt.size()*6/8;
+    for(int i = 0;i<EE;i++){
+        int temp = 0;
+        for(int j = 0;j<8;j++){
+            temp = (temp<<1) + cc[i*8+j];
+        }
+        ww[i] = temp;
+    }
+    ww[EE] = -1;
+}
+void Insert(void){
+    int now = 0;
+    for(int i = 0; ww[i] >= 0;i++){
+        if(tree[now].nxt[ww[i]] == 0){
+            tot++;
+            tree[tot].INIT();
+            tree[now].nxt[ww[i]] = tot;
+        }
+        now = tree[now].nxt[ww[i]];
+    }
+    tree[now].cnt++;
+}
+
+void bfs(void){
+    int now;
+    queue<int> q;
+    q.push(0);
+    while(!q.empty()){
+        now = q.front(); q.pop();
+        for(int i = 0;i<256;i++){
+            if(tree[now].nxt[i]){
+                int temp = tree[now].nxt[i];
+                if(now) tree[temp].fail = tree[tree[now].fail].nxt[i];
+                q.push(temp);
+            }else{
+                tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+            }
+        }
+    }
+}
+int ans;
+void Match(void){
+    rst(visit,false);
+    int now = 0;
+    ans = 0;
+    for(int i = 0;ww[i] >= 0;i++){
+        int c = ww[i];
+        now = tree[now].nxt[c];
+        for(int pp = now;pp;pp = tree[pp].fail){
+            if(!visit[pp]){
+                ans += tree[pp].cnt;
+                visit[pp] = true;
+            }
+        }
+    }
+}
+void solve(void){
+    tree[0].INIT();
+    tot = 0;
+    REP(step,n){
+        scanf("%s",s);
+        due();
+        Insert();
+    }
+    bfs();
+    scanf("%d",&m);
+    REP(step,m){
+        scanf("%s",s);
+        due();
+        Match();
+        printf("%d\n",ans);
+    }
+    printf("\n");
+}
+int main(void){
+    while(EOF != scanf("%d",&n))solve();
+    return 0;
+}

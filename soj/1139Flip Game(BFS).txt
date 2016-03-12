@@ -1,0 +1,80 @@
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>   //把16个棋子当作二进制的0和1.。方便判重。。而且翻转棋子的话就用异或运算即可。。。
+#include<queue>    //话说queue用的真方便。。。啦啦啦。。。
+using namespace std;
+struct abc
+{
+    int step;
+    int state;
+}start;
+const int change[4][4] = {{51200, 58368, 29184, 12544}, {35968, 20032, 10016, 4880}, {2248, 1252, 626, 305}, {140, 78, 39, 19}};
+int visit[65540];
+int bfs(void);
+char puzzle[4][5];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    getchar();
+    while(casenum--)
+    {
+        int ok=0;
+        start.state=0;start.step=0;
+        getchar();
+        memset(visit,0,sizeof(visit));
+        for(int i=0;i<4;i++)
+        {
+            gets(puzzle[i]);
+            for(int j=0;j<4;j++)
+            {
+                if('b'==puzzle[i][j])
+                {
+                    start.state<<=1;
+                    start.state+=1;
+                }
+                else
+                {
+                    start.state<<=1;
+                }
+            }
+        }
+       // printf("%d\n",start.state);
+        ok=bfs();
+        if(-1==ok)printf("Impossible\n");
+        else printf("%d\n",ok);
+    }
+    return 0;
+}
+int bfs()
+{
+    abc tmpt;
+    queue<abc>q;q.push(start);
+    visit[start.state]=1;
+    if(0==start.state||65535==start.state)
+    {
+        return 0;
+    }
+    while(!q.empty())
+    {
+        start=q.front();
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<4;j++)
+            {
+                tmpt=start;
+                tmpt.state^=change[i][j];
+                if(0==tmpt.state||65535==tmpt.state)return tmpt.step+1;
+                if(0==visit[tmpt.state])
+                {
+                    visit[tmpt.state]=1;
+                    tmpt.step++;
+                    q.push(tmpt);
+                }
+            }
+        }
+        q.pop();
+    }
+    return -1;
+}

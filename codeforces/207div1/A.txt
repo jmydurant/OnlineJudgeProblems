@@ -1,0 +1,50 @@
+#include <iostream>    //就是把所有元素放进一个堆里面。。然后对于最左边的l进行二分查找。。。
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <deque>
+#include <climits>
+#include <cmath>
+#include <vector>
+#include <set>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 301000
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 20100403LL
+#define h(i,j) (i*col+j)
+#define eps 1e-10
+using namespace std;
+typedef long long LL;
+set<int> knight;
+int lose[maxn];
+int main(void)
+{
+    int n,m;
+    while(2 == scanf("%d%d",&n,&m))
+    {
+        knight.clear();
+        rst(lose,0);
+        FOR(i,1,n)knight.insert(i);
+        REP(i,m)
+        {
+            int l,r,x; scanf("%d%d%d",&l,&r,&x);
+            set<int>::iterator it;
+            it = knight.lower_bound(l);
+            while(it != knight.end())
+            {
+                if(*it>r)break;
+                if(*it != x) lose[*it] = x,knight.erase(it++);
+                else it++;
+            }
+        }
+        FOR(i,1,n)printf("%d%c",lose[i],(i==n)?'\n':' ');
+    }
+    return 0;
+}

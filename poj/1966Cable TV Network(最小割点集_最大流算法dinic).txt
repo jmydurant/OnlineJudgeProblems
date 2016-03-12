@@ -1,0 +1,103 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //求最小割点集。。算法很奇葩。。把每个点拆点。。然后流量为一。。然后原来的边都为无限大。固定一个源点。对每个汇点求最大流。。然后最小的数		
+#include <cstring>   //就是答案。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 500000
+#define mod 835672545LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int n,m;
+int r[110][110] , flow[110][110] , op,ed;
+int q[101010] , head,tail;
+int dis[110];
+bool bfs(void){
+    head = 0,tail = 1;
+    q[head] = op;
+    rst(dis,0);
+    dis[op] = 1;
+    while(head < tail){
+        int u = q[head]; head++;
+        for(int v = 1;v<=2*n;v++){
+            if(!dis[v] && r[u][v] > flow[u][v]){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+            }
+        }
+        if(u == ed)return true;
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed)return c;
+    int temp = c;
+    for(int v = 1;v<=2*n;v++){
+        if(dis[v] == dis[u] + 1 && temp && r[u][v] > flow[u][v]){
+            int tt = dfs(v,MIN(temp,r[u][v] - flow[u][v]));
+            temp -= tt;
+            flow[u][v] += tt;
+            flow[v][u] -= tt;
+        }
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    rst(flow,0);
+    while(bfs())maxflow += dfs(op,INF);
+    return maxflow;
+}
+void solve(void){
+    rst(r,0);
+    FOR(i,1,n){
+        r[i][i+n] = 1;
+    }
+    REP(i,m){
+        int a,b; scanf(" (%d,%d)",&a,&b);
+        a++; b++;
+        r[a+n][b] = INF;
+        r[b+n][a] = INF;
+    }
+    int ans = INF;
+    op = n+1;
+    //FOR(i,1,2*n){
+    //    FOR(j,1,2*n)printf("%d ",r[i][j]);printf("\n");
+    //}
+    FOR(i,2,n){
+        ed = i;
+        int tt = dinic();
+        ans = MIN(ans,tt);
+    }
+    if(ans == INF)printf("%d\n",n);
+    else printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

@@ -1,0 +1,74 @@
+#include <iostream>  //”È¿÷”È¿÷°£°£°£
+#include <cstdio>    
+#include <cstring>
+#include <string>
+#include <cstdlib>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#define FOR(i,a,b) for(int i = (int)a ;i<=(int)b;i++)
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 120
+#define MAXV 400
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int r[MAXN];
+struct node
+{
+    int p,ind;
+    bool operator < (const node & temp) const
+    {
+        return p<temp.p;
+    }
+}problem[MAXN];
+
+int main(void)
+{
+    int n,p;
+    while(2 == scanf("%d%d",&n,&p))
+    {
+        memset(r,0,sizeof(r));
+        for(int i = 1;i<=n;i++)
+        {
+            for(int j = 0;j<p;j++)
+            {
+                scanf("%d",&problem[j].p);
+                problem[j].ind = j+1;
+            }
+            sort(problem,problem+p);
+            int minr = problem[0].p , maxr = problem[p-1].p;
+            for(int j = 0;j<p;j++)
+            {
+                if(problem[j].p == minr && r[problem[j].ind] >=0)
+                {
+                    r[problem[j].ind]++;
+                }
+            }
+            for(int j = p-1;j>=0;j--)
+            {
+                if(problem[j].p == maxr)
+                    r[problem[j].ind] = -1;
+            }
+        }
+        int ans[MAXN],tot = 0;
+        for(int i = 0;i<p;i++)
+        {
+            if(2*r[problem[i].ind] > n)
+            {
+                ans[tot] = problem[i].ind;
+                tot++;
+            }
+        }
+        if(tot == 0)
+            printf("0\n");
+        else
+        {
+            sort(ans,ans+tot);
+            for(int i = 0;i<tot;i++)
+                printf("%d%c",ans[i],(i==tot-1)?'\n':' ');
+        }
+    }
+    return 0;
+}

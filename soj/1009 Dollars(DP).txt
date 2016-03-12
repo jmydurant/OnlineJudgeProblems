@@ -1,0 +1,22 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int dollar[]={1, 2, 4, 10, 20, 40, 100, 200, 400, 1000, 2000};
+int dp[1010]={1};
+int main(void)
+{
+    float n;
+    int i,j;
+    for(i=0;i<=10;i++)                  //每次循环都是只含dollar【i】一下的货币的组成方法。。这样就把二维数组压缩成一维
+    {
+        for(j=dollar[i];j<=1005;j++)
+        {
+            dp[j]+=dp[j-dollar[i]];
+        }
+    }
+    while(EOF!=scanf("%f",&n)&&0.0!=n)
+    {
+        printf("%5.2f%12d\n",n,dp[(int)(n*20+0.5)]);  //最后四舍五入。。注意技巧
+    }
+    return 0;
+}

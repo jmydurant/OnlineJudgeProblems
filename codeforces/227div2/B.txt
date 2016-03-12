@@ -1,0 +1,54 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define INF 1400000000
+#define maxn 711080
+#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+using namespace std;
+typedef long long LL;
+int n,m;
+int a[maxn],b[maxn];
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)){
+        FOR(i,1,n) scanf("%d",a+i);
+        FOR(i,1,m) scanf("%d",b+i);
+        sort(a,a+n); sort(b,b+m);
+        int pa = n,pb = m;
+        int ans = 0;
+        while(pa > 0 && pb > 0){
+            if(a[pa] <= b[pb]){
+                pa--;
+                pb--;
+            }else {
+                pa--;
+                ans++;
+            }
+        }
+        if(pa > 0) ans += pa;
+        printf("%d\n",ans);
+    }return 0;
+}

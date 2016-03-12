@@ -1,0 +1,64 @@
+#include<cstring>
+#include<cstdio>    // 这个板砖的鸟题让我理解了正向迭代器和反向迭代器。。。。还好。。。不是很蛋疼。。。就是语法不太好理解。。。
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+using namespace std;
+map<int,int>q;
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N; scanf("%d",&N);
+        q.clear();
+        map<int,int>::iterator x;
+        map<int,int>::reverse_iterator y;
+        for(int day=1;day<=N;day++)
+        {
+            int num; scanf("%d",&num);
+            for(int i=1;i<=num;i++)
+            {
+                int k;scanf("%d",&k);
+                q[k]++;
+            }
+            int a,b;
+            x=q.begin();x++;
+            y=q.rbegin();y++;
+            if(q.size()<2)
+            {
+                printf("%d %d\n",-1,-1);
+                continue;
+            }
+            else
+            {
+                a=x->first;
+                b=y->first;
+            }
+            q.erase(a);
+            if(a!=b)
+            {
+                q.erase(b);
+            }
+            printf("%d %d\n",a,b);
+        }
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+

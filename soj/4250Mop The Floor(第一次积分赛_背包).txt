@@ -1,0 +1,112 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>  //没看出来。。居然是个背包。。当时想成贪心了。。所以一直没有思路。。看来解题报告之后。。也不知道如何下手。。
+#define INF 1<<15    //但是今天中国近代史课上。。睡觉中。。想到了解法。。效率不是很高。。可能是各种优化没有用到吧
+using namespace std;
+int dp[60000];       //其实原理很简单。。对于left为背包。。然后每次取一个右边界。看右边界的物品是否能够按照规则放进去。。
+int v[201];int c[201];  //从sum-right到left只要有一个背包可以放好就可以确定那个就是最小的右边界了。。每个物品的价值当作1就可以了。。
+int main(void)      //下面有改进的代码。。这个代码多了一个循环所以直接500+ms
+{
+    int casenum;
+    scanf("%d",&casenum);
+    for(;casenum>0;casenum--)
+    {
+        int LEFT,RIGHT;
+        int sum=0;
+        int N;
+        scanf("%d",&N);
+        scanf("%d",&LEFT);
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",v+i);
+            v[i]=-v[i];
+            sum+=v[i];
+        }
+        scanf("%d",&RIGHT);
+        if(LEFT+RIGHT<sum){printf("Lazy Power\n");continue;}
+        else if(RIGHT>=sum){printf("%d\n",N+1);continue;}
+        else
+        {
+            int K;
+            int ok=0;
+            for(int i=1;i<=N;i++){c[i]=1;}
+            for(K=1;K<=N;K++)
+            {
+                for(int i=1;i<=LEFT;i++){dp[i]=INF;}
+                for(int i=1;i<=K;i++)
+                {
+                    for(int j=LEFT;j>=v[i];j--)
+                    {
+                        if(dp[j]>dp[j-v[i]]+c[i])dp[j]=dp[j-v[i]]+c[i];
+                    }
+                }
+                for(int i=sum-RIGHT;i<=LEFT;i++)
+                {
+                    if(dp[i]!=INF){ok=1;break;}
+                }
+                if(ok)break;
+            }
+            if(ok)printf("%d\n",K*2+N+1);
+            else printf("Lazy Power\n");
+        }
+    }
+    return 0;
+}
+
+
+//这是修改之后的。。复杂度变小了。。16ms
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#define INF 1<<15
+using namespace std;
+int dp[60000];
+int v[201];int c[201];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    for(;casenum>0;casenum--)
+    {
+        int LEFT,RIGHT;
+        int sum=0;
+        int N;
+        scanf("%d",&N);
+        scanf("%d",&LEFT);
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",v+i);
+            v[i]=-v[i];
+            sum+=v[i];
+        }
+        scanf("%d",&RIGHT);
+        if(LEFT+RIGHT<sum){printf("Lazy Power\n");continue;}
+        else if(RIGHT>=sum){printf("%d\n",N+1);continue;}
+        else
+        {
+            int m;
+            int ok=0;
+            for(int i=1;i<=N;i++){c[i]=1;}
+            for(int i=1;i<=LEFT;i++){dp[i]=INF;}
+            for(m=1;m<=N;m++)
+            {
+                for(int j=LEFT;j>=v[m];j--)
+                {
+                    if(dp[j]>dp[j-v[m]]+c[m])dp[j]=dp[j-v[m]]+c[m];
+                }
+                for(int i=sum-RIGHT;i<=LEFT;i++)
+                {
+                    if(dp[i]!=INF)
+                    {
+                        ok=1;
+                        break;
+                    }
+                }
+                if(ok)break;
+            }
+            if(ok)printf("%d\n",m*2+N+1);
+            else printf("Lazy Power\n");
+        }
+    }
+    return 0;
+}

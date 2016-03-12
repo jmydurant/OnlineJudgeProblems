@@ -1,0 +1,142 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <climits>
+#include <iostream>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 100010
+#define mod 1000000009LL
+using namespace std;
+typedef long long LL;
+int N,m,dis;
+int headline[MAXN];
+struct edge
+{
+    int nxt;
+    int b;
+}e[2*MAXN];
+int tot;
+bool mark[MAXN];
+int max1[MAXN],max2[MAXN];
+int num[MAXN];
+int disup[MAXN],disdown[MAXN];
+
+void INIT(void)
+{
+    memset(headline,-1,sizeof(headline));
+    memset(mark,false,sizeof(mark));
+    memset(num,0,sizeof(num));
+    tot = 0;
+}
+
+void Addline(int u,int v)
+{
+    tot++;
+    e[tot].nxt = headline[u];
+    e[tot].b = v;
+    num[u]++;
+    headline[u] = tot;
+}
+
+void dfsdown(int now,int fa)
+{
+    if(num[now] == 1 && e[headline[now]].b == fa)
+    {
+        if(mark[now])
+            disdown[now] = 0;
+        else
+            disdown[now] = INT_MIN;
+        return;
+    }
+    max1[now] = max2[now] = INT_MIN;
+    for(int i = headline[now];i!=-1;i = e[i].nxt)
+    {
+        int son = e[i].b;
+        if(son == fa)
+            continue;
+        dfsdown(son,now);
+        if(disdown[son]>max1[now])
+        {
+            max2[now] = max1[now];
+            max1[now] = disdown[son];
+        }
+        else if(disdown[son]>max2[now])
+        {
+            max2[now] = disdown[son];
+        }
+    }
+    disdown[now] = max1[now]+1;
+    if(disdown[now]<0 && mark[now])
+        disdown[now] = 0;
+}
+
+void dfsup(int now,int fa)
+{
+    if(fa == -1)
+    {
+        if(mark[now])
+            disup[now] = 0;
+        else
+            disup[now] = INT_MIN;
+    }
+    else
+    {
+        if(disdown[now] == max1[fa])
+        {
+            disup[now] = max2[fa]+2;
+        }
+        else
+        {
+            disup[now] = max1[fa]+2;
+        }
+        disup[now] = MAX(disup[now],disup[fa]+1);
+        if(disup[now]<0 && mark[now])
+            disup[now] = 0;
+    }
+    if(num[now] == 1 && e[headline[now]].b == fa)
+        return;
+    for(int i = headline[now];i!=-1;i = e[i].nxt)
+    {
+        int son = e[i].b;
+        if(son!= fa)
+        {
+            dfsup(son,now);
+        }
+    }
+}
+
+int main(void)
+{
+    while(3==scanf("%d%d%d",&N,&m,&dis))
+    {
+        INIT();
+        for(int i = 1;i<=m;i++)
+        {
+            int temp; scanf("%d",&temp);
+            mark[temp] = true;
+        }
+        for(int i = 1;i<N;i++)
+        {
+            int u,v; scanf("%d%d",&u,&v);
+            Addline(u,v);
+            Addline(v,u);
+        }
+        dfsdown(1,-1);
+        dfsup(1,-1);
+        int ans = 0;
+       // for(int i=1;i<=N;i++)
+         //   printf("now %d  =  %d\n",i,num[i]);
+        //for(int i = 1;i<=N;i++)
+        //    printf("disdown   %d    disup   %d\n",disdown[i],disup[i]);
+        for(int i = 1;i<=N;i++)
+        {
+            if(MAX(disdown[i],disup[i])<=dis )
+                ans ++;
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

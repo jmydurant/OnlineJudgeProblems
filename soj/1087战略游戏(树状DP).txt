@@ -1,0 +1,54 @@
+#include<cstring>    //我次奥他大爷。。我总觉得解题报告中的方法是错的。。。虽然无法反驳。。。
+#include<algorithm>   //方法用烂了。。参见皇宫守卫。。名字好像是这个。。反正很简单的一个树状DP。。。
+#include<cmath>
+#include<cstdio>
+using namespace std;
+inline int MIN(int a,int b){return a<b?a:b;}
+int son[1510][1510],fa[1510];
+int tree[1510][2];
+void dp(int num);
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        memset(son,0,sizeof(son));
+        memset(fa,-1,sizeof(fa));
+        memset(tree,0,sizeof(tree));
+        for(int i=1;i<=N;i++)
+        {
+            int k;
+            scanf("%d",&k);
+            scanf("%d",&son[k][0]);
+            for(int j=1;j<=son[k][0];j++)
+            {
+                scanf("%d",&son[k][j]);
+                fa[son[k][j]]=k;
+            }
+        }
+        int root=-1;
+        for(int i=0;i<N;i++)
+        {
+            if(-1==fa[i])
+            {
+                root=i;
+                break;
+            }
+        }
+        //printf("%d %d\n",dp(0,1,1),dp(0,0,0));
+        dp(root);
+        int result=MIN(tree[root][1],tree[root][0]);
+        printf("%d\n",result);
+    }
+    return 0;
+}
+void dp(int num)
+{
+    for(int i=1;i<=son[num][0];i++)
+    {
+        dp(son[num][i]);
+        tree[num][0]+=tree[son[num][i]][1];
+        tree[num][1]+=MIN(tree[son[num][i]][0],tree[son[num][i]][1]);
+    }
+    tree[num][1]++;
+}

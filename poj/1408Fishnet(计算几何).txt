@@ -1,0 +1,113 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个线段相交和三角形面积的叉积运算。。。还是很不错的一道题目。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    double x,y;
+    node(double _x = 0.0 , double _y = 0.0){x = _x ; y = _y;}
+    void update(double _x = 0.0, double _y = 0.0){x = _x ; y = _y;}
+    void show(){
+        printf("x is %lf   y is %lf\n",x,y);
+    }
+}a[50],b[50],c[50],d[50];
+node operator + (node &x,node &y){
+    return node(x.x+y.x , x.y+y.y);
+}
+node operator - (node &x,node &y){
+    return node(x.x-y.x , x.y-y.y);
+}
+struct line{
+    node p ,v;
+}pr[50],vt[50];
+inline node getcross(line a,line b){
+    double x = a.p.x , y = a.p.y , x0 = a.v.x , y0 = a.v.y;
+    double xp = b.p.x , yp = b.p.y , x0p = b.v.x , y0p = b.v.y;
+    double deta = xp*y0p - yp*x0p + x0p*y - y0p*x;
+    double neta = x0*y0p - y0*x0p;
+    node ans;
+    ans.x = x + x0*deta/neta;
+    ans.y = y + y0*deta/neta;
+    return ans;
+}
+inline double cross(node a,node b){
+    return a.x*b.y - b.x*a.y;
+}
+inline double getarea(node a,node b,node c){
+    double ans = cross(b-a , c-a);
+    ans = abs(ans) / 2.0;
+    return ans;
+}
+int n;
+void solve(void){
+    a[0].update(0,0);a[n+1].update(1,0);
+    FOR(i,1,n){
+        double kk; scanf("%lf",&kk);
+        a[i].update(kk,0);
+    }
+    b[0].update(0,1);b[n+1].update(1,1);
+    FOR(i,1,n){
+        double kk; scanf("%lf",&kk);
+        b[i].update(kk,1);
+    }
+    c[0].update(0,0);c[n+1].update(0,1);
+    FOR(i,1,n){
+        double kk; scanf("%lf",&kk);
+        c[i].update(0,kk);
+    }
+    d[0].update(1,0);d[n+1].update(1,1);
+    FOR(i,1,n){
+        double kk; scanf("%lf",&kk);
+        d[i].update(1,kk);
+    }
+    FOR(i,0,n+1){
+        pr[i].p = a[i]; pr[i].v = (b[i] - a[i]);
+        vt[i].p = c[i]; vt[i].v = (d[i] - c[i]);
+    }
+    double ans = 0;
+    FOR(i,0,n){
+        FOR(j,0,n){
+            node p1,p2,p3,p4;
+            p1 = getcross(pr[i],vt[j]);
+            p2 = getcross(pr[i+1],vt[j]);
+            p3 = getcross(pr[i+1],vt[j+1]);
+            p4 = getcross(pr[i],vt[j+1]);
+            double area = getarea(p1,p2,p3) + getarea(p3,p4,p1);
+            ans = MAX(ans,area);
+        }
+    }
+    printf("%.6lf\n",ans);
+}
+int main(void){
+    while(EOF != scanf("%d",&n) && n)solve();
+    return 0;
+}

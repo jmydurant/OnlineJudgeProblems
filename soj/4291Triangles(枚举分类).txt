@@ -1,0 +1,62 @@
+#include <iostream>   //根据三角形面积公式对x，y的奇偶性进行分类即可做出。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int main(void)
+{
+    LL m,n;
+    while(cin >> m >> n)
+    {
+        if(m == 1 || n == 1)
+        {
+            cout << 0 << endl;
+            continue;
+        }
+        LL res = 0;
+        int x1,x2,x3;
+        int y1,y2,y3;
+        for(x1 = 0;x1<2;x1++)
+            for(y1 = 0;y1<2;y1++)
+            for(x2 = 0;x2<2;x2++)
+            for(y2 = 0;y2<2;y2++)
+            for(x3 = 0;x3<2;x3++)
+            for(y3 = 0;y3<2;y3++)
+            if(abs((x3-x1)*(y2-y1)-(x2-x1)*(y3-y1))%2 == 1)
+            {
+                //x1 = 1-x1; y1 = 1-y1; x2 = 1-x2; y2 = 1-y2; x3 = 1-x3; y3 = 1-y3;
+                LL ans = 1;
+                ans = ans*((n+x1)/2)%mod;
+                ans = ans*((n+x2)/2)%mod;
+                ans = ans*((n+x3)/2)%mod;
+                ans = ans*((m+y1)/2)%mod;
+                ans = ans*((m+y2)/2)%mod;
+                ans = ans*((m+y3)/2)%mod;
+                res += ans;
+                res %= mod;
+            }
+        cout << res << endl;
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+

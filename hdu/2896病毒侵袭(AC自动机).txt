@@ -1,0 +1,113 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //裸题。。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define maxn 110000
+#define INF 1000000000
+#define mod 1000003LL
+#define base 105000
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int pos,fail;
+    int nxt[128];             //擦。。那么多字母
+    void INIT(void){
+        pos = fail = 0;
+        rst(nxt,0);
+    }
+}tree[maxn];
+bool visit[510];
+int tot,n,m;
+bool virus;
+void Insert(char *s,int _pos){
+    int now = 0;
+    for(;*s;s++){
+        int c = *s;
+        if(tree[now].nxt[c] == 0){
+            tot++; tree[tot].INIT();
+            tree[now].nxt[c] = tot;
+        }
+        now = tree[now].nxt[c];
+    }
+    tree[now].pos = _pos;
+}
+void bfs(void){
+    int now = 0;
+    queue<int> q;
+    q.push(0);
+    while(!q.empty()){
+        now = q.front(); q.pop();
+        for(int i = 0;i<128;i++){
+            if(tree[now].nxt[i]){
+                int temp = tree[now].nxt[i];
+                if(now){
+                    tree[temp].fail = tree[tree[now].fail].nxt[i];
+                }
+                q.push(temp);
+            }else tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+        }
+    }
+}
+
+void Match(char *s){
+    int now = 0;
+    for(;*s;s++){
+        int c = *s;
+        now = tree[now].nxt[c];
+        for(int temp = now;temp;temp = tree[temp].fail){
+            if(tree[temp].pos){
+                virus = true;
+                visit[tree[temp].pos] = true;
+            }
+        }
+    }
+}
+char str[maxn];
+void solve(void){
+    tree[0].INIT();
+    tot = 0;
+    for(int i = 1;i<=n;i++){
+        scanf("%s",str);
+        Insert(str,i);
+    }
+    bfs();
+    scanf("%d",&m);
+    int ans = 0;
+    FOR(i,1,m){
+        virus = false;
+        scanf("%s",str);
+        rst(visit,false);
+        Match(str);
+        if(virus){
+            printf("web %d:",i);
+            for(int i = 1;i<=n;i++)if(visit[i])printf(" %d",i);
+            printf("\n");
+            ans++;
+        }
+    }
+    printf("total: %d\n",ans);
+}
+int main(void){
+    while(EOF != scanf("%d",&n))solve();
+    return 0;
+}

@@ -1,0 +1,18 @@
+#include<stdio.h>
+int main()                         //和1026差不多。。。所以这个就当水题了。。。尼玛不科学。。。
+{
+  int N,m,t;
+  int i;
+  while(EOF!=scanf("%d",&N)&&N)
+  {
+    for(m=1;m<N-1;m++)
+    {
+      t=0;
+      for(i=1;i<N;i++)
+        t=(t+m)%i;
+      if(t==11) break;
+    }
+    printf("%d\n",m);
+  }
+  return 0;
+}

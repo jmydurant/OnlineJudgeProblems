@@ -1,0 +1,64 @@
+#include<iostream>   //差点时间就挂了。。我的方法相当不好。。因为把他化简成01背包来做了。。。所以弄的我好痛苦。。还有上限这个东西。。
+#include<cstring>    //要稍微排一下序。。。否则就出错了。。今天晚上再好好想想。。赶紧把时间复杂度给降下来。。。
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#define INF -100000000
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+using namespace std;
+int dp[50000];
+struct node
+{
+    int a,h;
+}block[4100];
+bool cmp(node a,node b)
+{
+    return a.a<b.a;
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int total=0;
+        int maxh=0;
+        for(int i=1;i<=N;i++)
+        {
+            int x,y,z;
+            scanf("%d%d%d",&x,&y,&z);
+            if(y>maxh)maxh=y;
+            for(int j=1;j<=z;j++)
+            {
+                total++;
+                block[total].h=x;
+                block[total].a=y;
+            }
+        }
+        sort(block+1,block+total+1,cmp);
+        //printf("%d %d\n",total,maxh);
+        for(int i=1;i<=maxh;i++)dp[i]=INF;
+        dp[0]=0;
+        for(int i=1;i<=total;i++)
+        {
+            for(int j=maxh;j>=block[i].h;j--)
+            {
+                if(j<=block[i].a&&dp[j-block[i].h]>=0)
+                {
+                    //printf("pass\n");
+                    dp[j]=MAX(dp[j],(dp[j-block[i].h]+1));
+                }
+            }
+        }
+        //printf("%d %d\n",dp[34],dp[48]);
+        for(int i=maxh;i>=0;i--)
+        {
+            if(dp[i]>=0)
+            {
+                printf("%d\n",i);
+                break;
+            }
+        }
+    }
+    return 0;
+}
+

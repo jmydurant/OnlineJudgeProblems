@@ -1,0 +1,66 @@
+#include<iostream>    //这道题思路太绝了。。很强大。。老子想不出。。。
+#include<cstring>     //首先。。搞出小于250的素数。。然后。。把1---50000的数进行过滤。。。如果有一个素数平方的因子就直接过滤掉。。
+#include<cstdio>      //（因为肯定会被其他的数字覆盖）。。然后。。计算其质因子的个数。。就像容斥原理中。。如果是奇数个集合就是加号。。偶数个集合就是减号
+#include<algorithm>   //最后再进行答案二分。。。神啊。。感觉做了这题之后老子的容斥原理思想要上升一个档次。。。
+#include<climits>
+using namespace std;
+int digit[51000];
+bool visit[500];
+int prime[500];
+void IINT(void)
+{
+    memset(visit,false,sizeof(visit));
+    int tot=0;
+    for(int i=2;i<=250;i++)
+    {
+        if(!visit[i])prime[++tot]=i;
+        for(int j=i;j*j<=250;j+=i)visit[j]=true;  //莫比乌斯反演算法。。。
+    }
+    //printf("%d %d\n",prime[5],prime[4]);
+    for(int i=2;i<=50000;i++)
+    {
+        int k=i;
+        digit[i]=1;
+        for(int j=1;prime[j]*prime[j]<=i;j++)
+        {
+            if(0==k%prime[j])
+            {
+                digit[i]=-digit[i];
+                k/=prime[j];
+                if(0==k%prime[j])
+                {
+                    digit[i]=0;
+                    break;
+                }
+            }
+        }
+        if(k>1 && digit[i]!=0)
+        {
+            digit[i]=-digit[i];
+        }
+    }
+}
+int main(void)
+{
+    IINT();
+    int casenum;  scanf("%d",&casenum);
+    long long N;
+    while(casenum--)
+    {
+        scanf("%lld",&N);
+        long long left,right,middle;
+        left=1;right=1644934082;
+        long long ans;
+        while(left<=right)
+        {
+            middle=(left+right)/2;
+            long long i;
+            ans=middle;
+            for(i=2;i*i<=middle;i++)ans+=((middle/(i*i))*digit[i]);
+            if(ans>=N)right=middle-1;
+            else left=middle+1;
+        }
+        printf("%lld\n",left);
+    }
+    return 0;
+}

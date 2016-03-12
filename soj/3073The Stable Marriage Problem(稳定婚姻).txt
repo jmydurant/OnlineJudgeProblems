@@ -1,0 +1,77 @@
+#include <cstdio>   //很有趣的问题。。只要男的不停的追女的。。最后的结果一定是对男生有利(这不是废话么。。)
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#define MAXN 50
+using namespace std;
+
+int mname[MAXN],mfavo[MAXN][MAXN];//男生姓名。。对女生的排名
+int wname[MAXN],wrank[MAXN][MAXN];//女生姓名。。对于每个编号的喜好值。。注意和男生的不同哈。。
+int mchose[MAXN],wchose[MAXN];
+char s[MAXN];
+queue<int> danshenhan;  //单身汉队列。。
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n; scanf("%d",&n);
+        while(!danshenhan.empty()) danshenhan.pop();
+        for(int i = 0;i<n;i++)
+        {
+            scanf("%s",s);
+            mname[i] = s[0] - 'a';
+        }
+        sort(mname,mname+n);
+        for(int i = 0;i<n;i++)
+        {
+            scanf("%s",s);
+            wname[i] = s[0] - 'A';
+        }
+        for(int i = 0;i<n;i++)
+        {
+            scanf("%s",s);
+            for(int j = 0;j<n;j++)
+            {
+                mfavo[i][j] = s[j+2] - 'A';
+            }
+        }
+        for(int i = 0;i<n;i++)
+        {
+            scanf("%s",s);
+            for(int j = 0;j<n;j++)
+            {
+                wrank[i][s[j+2]-'a'] = n - j;
+            }
+            wrank[i][n] = 0;
+            wchose[i] = n;
+        }
+        memset(mchose,0,sizeof(mchose));
+        for(int i = 0;i<n;i++) danshenhan.push(mname[i]);
+        while(!danshenhan.empty())
+        {
+            int male = danshenhan.front();
+            int female = mfavo[male][mchose[male]];
+            if(wrank[female][male] > wrank[female][wchose[female]])
+            {
+                danshenhan.pop();
+                if(wchose[female] != n)
+                {
+                    danshenhan.push(wchose[female]);
+                    mchose[wchose[female]] ++;
+                }
+                wchose[female] = male;
+            }
+            else
+            {
+                mchose[male] ++;
+            }
+        }
+        for(int i = 0;i<n;i++)
+        {
+            printf("%c %c\n",mname[i]+'a',mfavo[mname[i]][mchose[mname[i]]]+'A');
+        }
+        printf("\n");
+    }
+}

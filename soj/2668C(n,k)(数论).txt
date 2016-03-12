@@ -1,0 +1,52 @@
+#include<cstring>   //判断C(N,K)是奇数还是偶数的问题。。结论证明比较巧妙。。。。粘在下面哈。。
+#include<cstdio>
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<algorithm>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+using namespace std;
+int main(void)
+{
+    int N,K;
+    while(2==scanf("%d%d",&N,&K) && (N || K))
+    {
+        if((N&K)==K)printf("%d\n",1);
+        else printf("%d\n",0);
+    }
+}
+证明没有这么麻烦  
+C(n,k)%2==1得出  n!中 2的因子 等于 (n-k)!与k!中2的因子之和
+所以 n/2+n/4+n/8+...+0==(n-k)/2+k/2+(n-k)/4+k/4+(n-k)/8+k/8+....+0+0
+
+而  n/2>=(n-k)/2+k/2(取==条件为(n-k),k不能同时为奇数  也就是k,(n-k)二进制位最后一位至少有一个为0)
+  再n=n/2,k=k/2;  同理可以得出k,(n-k)二进制倒数第二位至少有一个为0
+  依此类推
+ 整理结论 得出 ((n-k)&k)==0
+这个式子应该和  (n&k)==k等价
+再来一个证明。。
+数论中有个基本结论：
+设A(n!)=[n/2]+[n/4]+[n/8]+...+0+...，r(n)=n的二进制表示中1的个数
+则A(n!) = n - r(n)
+
+故C(n,k) % 2 == 1
+即A(n!) = A((n-k)!) + A(n!)
+即n-r(n) = n-k-r(n-k) + k - r(k)
+即r(n) = r(n-k) + r(k)
+可以看出，n的二进制表示中1的个数为n-k和k中的1的个数之和，这即是(n-k)&k == 0,也就是n&k==k
+
+那个基本结论的证明也很简单：
+对于n的二进制表示中的每个1，对n他贡献了2^m,即他所在位置权值为2^m,则他对于A(n!)就贡献了2^(m-1) + 2^(m-2) +....+1 = 2^m - 1，故A(n!) = n - r(n)
+举个例子1011
+n/2 = 101
+n/4 = 10
+n/8 = 1
+即权值为2^3的1在A(n!)中贡献了2^2 + 2^1 + 2^0
+
+综上。

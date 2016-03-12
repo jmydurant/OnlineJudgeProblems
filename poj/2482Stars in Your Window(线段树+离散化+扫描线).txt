@@ -1,0 +1,121 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>   //是一道好题。。把每个星星可以辐射的范围变成矩形。然后投影到y轴。。从左到右不断扫描即可。。结果为某一时刻线段上的最大值
+#include <cstring>  // 线段上的值可以用线段树来维护。。同理。先离散化y轴的坐标。注意端点的处理。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;   //再敲一个扫描线。。这次完全用我习惯的模板方式
+
+struct line{
+    long long x , y1,y2;
+    int w;
+    int flag; // 1代表左边的边线
+    bool operator < (const line & temp) const{
+        if(x == temp.x)return flag > temp.flag;
+        return x < temp.x;
+    }
+}scan[maxn];
+int n,W,H;
+long long y[maxn];     //对y进行离散化的对象
+struct node{            //注意。。点重合也算能量相加。不需要有重合段
+    //int l[maxn<<2] , r[maxn<<2];
+    int sum[maxn<<2] , lazy[maxn<<2];
+    inline void pushdown(int ind){
+        if(lazy[ind]){
+            sum[lson] += lazy[ind];
+            sum[rson] += lazy[ind];
+            lazy[lson] += lazy[ind];
+            lazy[rson] += lazy[ind];
+            lazy[ind] = 0;
+        }
+    }
+    inline void update(int ind){
+        sum[ind] = MAX(sum[lson] , sum[rson]);
+    }
+    void build(int l,int r,int ind){
+        sum[ind] = lazy[ind] = 0;
+        if(l == r) return;
+        int mid = (l+r)>>1;
+        build(l,mid,lson);
+        build(mid+1,r,rson);
+    }
+    void change(int l,int r,int ind,LL Ql,LL Qr,int ww){
+        if(Ql <= y[l] && y[r] <= Qr){
+            lazy[ind] += ww;
+            sum[ind] += ww;
+            return;
+        }
+        pushdown(ind);
+        int mid = (l+r)>>1;
+        if(Qr <= y[mid]){
+            change(l,mid,lson,Ql,Qr,ww);
+        }else if(Ql > y[mid]){
+            change(mid+1,r,rson,Ql,Qr,ww);
+        }else{
+            change(l,mid,lson,Ql,y[mid],ww);
+            change(mid+1,r,rson,y[mid+1],Qr,ww);
+        }
+        update(ind);
+    }
+}sb;
+void solve(void){
+    REP(ind,n){
+        LL xx , yy , ww; scanf("%I64d%I64d%I64d",&xx,&yy,&ww);
+        scan[lson].x = xx;
+        scan[lson].y1 = scan[rson].y1 = yy;
+        scan[lson].y2 = scan[rson].y2 = yy + H - 1;
+        scan[lson].w = scan[rson].w = ww;
+        scan[lson].flag = 1;
+        scan[rson].x = xx + W;
+        scan[rson].flag = 0;
+        y[lson] = yy; y[rson] = yy + H - 1;
+    }
+    sort(y,y+2*n);
+    sort(scan,scan+2*n);
+    int tot = unique(y,y+2*n) - y;
+    //printf("tot is %d\n",tot);
+    int ans = 0;
+    sb.build(0,tot-1,1);
+    REP(i,2*n){
+        bool can_go = scan[i].y1 <= scan[i].y2;
+        if(scan[i].flag && can_go){
+            sb.change(0,tot-1,1,scan[i].y1,scan[i].y2,scan[i].w);
+        }else if((!scan[i].flag) && can_go){
+            sb.change(0,tot-1,1,scan[i].y1,scan[i].y2,-scan[i].w);
+        }
+        if(i < 2*n-1 && scan[i].x == scan[i+1].x)continue;
+        ans = MAX(ans, sb.sum[1]);
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&W,&H)) solve();
+    return 0;
+}

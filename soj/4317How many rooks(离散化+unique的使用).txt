@@ -1,0 +1,42 @@
+#include <cstdio>  //注意unique使用之前要先sort过才可以。。。
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 1001000
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+int r[maxn];
+int c[maxn];
+
+int main(void)
+{
+    LL n;
+    int k;
+    while(EOF != scanf("%lld%d",&n,&k))
+    {
+        REP(i,k)
+        {
+            int a,b;scanf("%d%d",&a,&b);
+            r[i] = a;
+            c[i] = b;
+        }
+        LL s1,s2;
+        sort(r,r+k);
+        sort(c,c+k);
+        s1 = unique(r,r+k)-r;
+        s2 = unique(c,c+k)-c;
+        LL ans = (LL)n*n-(n-s1)*(n-s2);
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+

@@ -1,0 +1,22 @@
+#include<cstdio>     //妨碍咱刷水题的都是渣渣。。
+#include<cstring>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+using namespace std;
+int dp[251000],digit[251000];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        for(int i=1;i<=N;i++)scanf("%d",digit+i);
+        dp[0]=0;
+        int res=INT_MIN;
+        for(int i=1;i<=N;i++)
+        {
+            dp[i]=MAX(dp[i-1],0)+digit[i];
+            res=MAX(res,dp[i]);
+        }
+        printf("%d\n",res);
+    }
+}

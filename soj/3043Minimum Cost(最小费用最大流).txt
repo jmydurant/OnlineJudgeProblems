@@ -1,0 +1,126 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //对于每一种产品都做一次。。图很好建。。源点---商店---shopkeeper--汇点。。费用为距离。。流量为需求和提供量。。这样就ok了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 1100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int r[200][200] , cost[200][200];
+int n,m,k,op,ed;
+int need[51][51] , supply[51][51];
+int fa[200] , dis[200] , visit[200];
+int maxflow , mincost;
+void spfa(void){
+    FOR(i,0,ed) dis[i] = INF , fa[i] = -1 , visit[i] = false;
+    queue<int> q;
+    q.push(op); visit[op] = true;
+    dis[op] = 0;
+    while(!q.empty()){
+        int u = q.front(); q.pop(); visit[u] = false;
+        for(int i = 0;i<=ed;i++){
+            if(r[u][i] > 0 && dis[i] > dis[u] + cost[u][i]){
+                dis[i] = dis[u] + cost[u][i];
+                fa[i] = u;
+                if(!visit[i]){
+                    visit[i] = true;
+                    q.push(i);
+                }
+            }
+        }
+    }
+}
+void MCMF(void){
+    maxflow = 0 , mincost = 0;
+    while(true){
+        spfa();
+        if(fa[ed] == -1)break;
+        int minflow = INF;
+        int u = ed;
+        while(fa[u] != -1){
+            minflow = MIN(minflow , r[fa[u]][u]);
+            u = fa[u];
+        }
+        u = ed;
+        while(fa[u] != -1){
+            r[fa[u]][u] -= minflow;
+            r[u][fa[u]] += minflow;
+            u = fa[u];
+        }
+        maxflow += minflow;
+        mincost += minflow * dis[ed];
+    }
+}
+void solve(void){
+    FOR(i,1,n){
+        FOR(j,1,k) scanf("%d",&need[i][j]);
+    }
+    FOR(i,1,m){
+        FOR(j,1,k) scanf("%d",&supply[i][j]);
+    }
+    bool flag = false;
+    int ans = 0;
+    FOR(i,1,k){
+        int allneed = 0 , allsupply = 0;
+        rst(cost,0); rst(r,0);
+        FOR(aa,1,n){
+            FOR(bb,1,m){
+                scanf("%d",&cost[bb][aa+m]);
+                cost[aa+m][bb] = -cost[bb][aa+m];
+            }
+        }
+        if(flag)continue;
+        op = 0 , ed = m + n + 1;
+        FOR(tt,1,m) r[op][tt] = supply[tt][i] , allsupply += supply[tt][i];
+        FOR(tt,1,n) r[tt+m][ed] = need[tt][i] , allneed += need[tt][i];
+        if(allneed > allsupply){
+            flag = true;
+            continue;
+        }
+        FOR(aa,1,n){
+            FOR(bb,1,m){
+                r[bb][aa+m] = INF;
+            }
+        }
+        MCMF();
+        if(maxflow < allneed){
+            flag = true;
+            continue;
+        }
+        ans += mincost;
+    }
+    if(flag)printf("-1\n");
+    else printf("%d\n",ans);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&m,&k)){
+        if(n == 0 && m == 0 && k == 0)break;
+        solve();
+    }return 0;
+}

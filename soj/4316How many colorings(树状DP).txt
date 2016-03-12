@@ -1,0 +1,84 @@
+#include <iostream>   //考虑dp[u][i]代表的是u节点用i颜色的方法数。。当然是乘以子节点不用i颜色的方法数咯。。
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <climits>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 5010
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+struct node
+{
+    int t,nxt;
+}edge[maxn*2];
+int headline[maxn];
+int dp[maxn][maxn];
+int tot[maxn];
+int n,m;
+int E;
+void add(int f,int t)
+{
+    E++;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E;
+}
+
+void dfs(int u,int fa)
+{
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(v != fa)
+        {
+            dfs(v,u);
+            FOR(j,1,m)
+            {
+                dp[u][j] = (LL)dp[u][j]*(tot[v]-dp[v][j]+mod)%mod;
+            }
+        }
+    }
+    FOR(i,1,m)
+    tot[u] = (tot[u]+dp[u][i])%mod;
+}
+int main(void)
+{
+    while(2 == scanf("%d%d",&n,&m))
+    {
+        E = 0;
+        FOR(i,1,n)
+        {
+            headline[i] = -1;
+            tot[i] = 0;
+            FOR(j,1,m)dp[i][j] = 0;
+        }
+        FOR(i,1,n)
+        {
+            int k; scanf("%d",&k);
+            while(k--)
+            {
+                int c; scanf("%d",&c);
+                dp[i][c] = 1;
+            }
+        }
+        REP(i,n-1)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            add(a,b);
+            add(b,a);
+        }
+        dfs(1,-1);
+        printf("%d\n",tot[1]);
+    }
+    return 0;
+}

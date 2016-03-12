@@ -1,0 +1,48 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#define INF 1<<15
+using namespace std;  //怎么说呢。。开始我读题错误。。以为是求最长的凹凸链。。最后发现是求所有凹凸链的长度和
+int num[30001];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N,result=1;
+        int now;
+        bool down_pre=false;  //很重要。。因为开始如果是下降才会算是。。开始上升是不算的。。
+        scanf("%d",&N);
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",num+i);
+        }
+        now=num[1];
+        for(int i=2;i<=N;i++)
+        {
+            if(now>num[i]&&down_pre)
+            {
+                now=num[i];
+            }
+            else if(now<num[i]&&!down_pre)
+            {
+                now=num[i];
+            }
+            else if(now>num[i]&&!down_pre)
+            {
+                result++;
+                down_pre=true;
+                now=num[i];
+            }
+            else if(now<num[i]&&down_pre)
+            {
+                result++;
+                down_pre=false;
+                now=num[i];
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

@@ -1,0 +1,71 @@
+#include <iostream>    //一道不错的数学题目。。。虽然数组是循环的。。但是对于ai，他会在最小公倍数串中匹配所有满足i=jmod（k）的字符
+#include <cstdio>      //其中k = gcd(la，lb)..然后对y串按字母统计模k余m的字母xxx有多少个。。然后再遍历x字符串就可以了。。
+#include <cstring>     //注意。。i=jmod(k)的字符串他们这辈子只会见一次面。。
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <deque>
+#include <climits>
+#include <cmath>
+#include <vector>
+#include <set>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 1001000
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 20100403LL
+#define h(i,j) (i*col+j)
+#define eps 1e-10
+using namespace std;
+typedef long long LL;
+
+LL dp[26][maxn];
+char a[maxn],b[maxn];
+LL ta,tb;
+
+LL gcd(LL x,LL y)
+{
+    LL temp;
+    while(y)
+    {
+        temp = x%y;
+        x = y;
+        y = temp;
+    }
+    return x;
+}
+
+LL lcm(LL x,LL y)
+{
+    return x/gcd(x,y)*y;
+}
+
+int main(void)
+{
+    while(2 == scanf("%I64d%I64d",&ta,&tb))
+    {
+        scanf("%s",a);
+        scanf("%s",b);
+        LL alen = strlen(a);
+        LL blen = strlen(b);
+        LL ggcd = gcd(alen,blen);
+        LL llcm = lcm(alen,blen);
+        //rst(dp,0);   //不能初始化啊。。数组太大了。。囧。。
+        REP(i,blen)
+        {
+            LL k = i%ggcd;
+            dp[b[i]-'a'][k]++;
+        }
+        LL ans = llcm;
+        REP(i,alen)
+        {
+            ans -= dp[a[i]-'a'][i%ggcd];
+        }
+        printf("%I64d\n",ans*(ta*alen/llcm));
+    }
+    return 0;
+}

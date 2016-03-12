@@ -1,0 +1,77 @@
+#include <iostream>  //思路是这样的。。r-l = x; u-d = y; r+l+u+d = k; 所以得到l+d = (k-x-y)/2;所以可以枚举l
+#include <cstdio>    // 对于每一个l则方法数为  k!/(l!*(l+x)!*d!*(d+y)!)
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define INF 2000000001
+#define maxn 420100
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+void ex_gcd(LL a,LL b,LL &d,LL &x,LL &y)
+{
+    if(!b){d = a; x = 1; y = 0;}
+    else
+    {
+        ex_gcd(b,a%b,d,y,x);
+        y -= x*(a/b);
+    }
+}
+
+LL inv(LL a)
+{
+    LL d,x,y;
+    ex_gcd(a,mod,d,x,y);
+    return (x+mod)%mod;
+}
+
+LL p[maxn];
+LL ni[maxn];
+void INIT(void)
+{
+    p[0] = 1; ni[0] = 1;
+    FOR(i,1,100000)
+    {
+        p[i] = p[i-1]*i;
+        p[i] %= mod;
+        ni[i] = inv(p[i]);
+    }
+    //cout << ni[1];
+}
+
+int main(void)
+{
+    INIT();
+    LL x,y,k;
+    while(cin >> x >> y >>k)
+    {
+        if(k-x-y<0 || (k-x-y)%2)
+            cout << 0 << endl;
+        else
+        {
+            LL m = (k-x-y)/2;
+            LL ans = 0;
+            for(LL i = 0;i<=m;i++)
+            {
+                LL temp = p[k];
+                temp *= ni[i]; temp %= mod;
+                temp *= ni[i+x]; temp %= mod;
+                temp *= ni[m-i]; temp %= mod;
+                temp *= ni[m-i+y]; temp %= mod;
+                ans += temp; ans %= mod;
+            }
+            cout << ans << endl;
+        }
+    }
+    return 0;
+}

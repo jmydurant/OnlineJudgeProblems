@@ -1,0 +1,77 @@
+#include<cstdio>
+#include<cstring>    //不小心把中间调试的东西给输出出来了。。。蛋疼。。。
+#include<queue>       //公式和求M字段和的差不多。。。关键是记录路径。。所以每一次得到dp值的时候顺便把切点给记录下来。。。
+#include<cmath>
+#define INF 400000000
+using namespace std;
+int dp[100][100],sum[100][100],path[100][100];
+int cut[100];
+int pinlv[100];
+char a[100],b[100];
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    int abc=0;
+    while(casenum--)
+    {
+        abc++;
+        int key,letter;
+        scanf("%d%d",&key,&letter);getchar();
+        memset(dp,0,sizeof(dp));
+        memset(sum,0,sizeof(sum));
+        memset(path,0,sizeof(path));
+        gets(a);gets(b);
+        for(int i=1;i<=letter;i++)scanf("%d",pinlv+i);
+        for(int i=1;i<=letter;i++)
+        {
+            for(int j=i;j<=letter;j++)
+            {
+                sum[i][j]=sum[i][j-1]+(j-i+1)*pinlv[j];
+                //printf("%d\n",sum[i][j]);
+            }
+        }
+        for(int i=1;i<=letter;i++)
+        {
+            dp[i][1]=sum[1][i];
+        }
+        for(int j=2;j<=key;j++)
+        {
+            for(int i=j;i<=letter;i++)
+            {
+                dp[i][j]=INF;
+                for(int k=j-1;k<=i-1;k++)
+                {
+                    if(dp[i][j]>dp[k][j-1]+sum[k+1][i])
+                    {
+                        dp[i][j]=dp[k][j-1]+sum[k+1][i];
+                        path[i][j]=k;
+                    }
+                    else if(dp[i][j]==dp[k][j-1]+sum[k+1][i])
+                    {
+                        if(path[i][j]>k)path[i][j]=k;
+                    }
+                }
+            }
+        }
+        int jishu=0;int p=key,q=letter;
+        while(q)
+        {
+            cut[++jishu]=path[q][p];
+            q=cut[jishu];//printf("%d\n",q);
+            p--;
+        }
+        cut[0]=letter;
+
+        printf("Keypad #%d:\n",abc);
+        for(int i=0;i<key;i++)
+        {
+            printf("%c: ",a[i]);
+            for(int j=cut[jishu];j<cut[jishu-1];j++)
+                printf("%c",b[j]);
+            printf("\n");
+            jishu--;
+        }
+        printf("\n");
+    }
+    return 0;
+}

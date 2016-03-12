@@ -1,0 +1,99 @@
+#include <iostream>   //我是沙茶.....
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define maxn 10010
+#define INF 2100001000
+#define mod 10007
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    double x,y;
+    node (double _x = 0.0,double _y = 0.0){x = _x; y = _y;}
+    node operator + (const node & temp){
+        return node(x + temp.x , y + temp.y);
+    }
+    node operator - (const node & temp){
+        return node(x - temp.x , y - temp.y);
+    }
+    node operator * (double tt){
+        return node(x*tt,y*tt);
+    }
+};
+typedef node vv;
+double dis(node a,node b){
+    return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+}
+struct line{
+    node p;
+    vv v;
+    line(node _p,vv _v){p = _p; v = _v;}
+    node getp(double t){
+        return p + v*t;
+    }
+};
+struct circle{
+    node n;
+    double r;
+    circle(node _n,double _r){n = _n; r = _r;}
+};
+inline int dcmp(double x){            //我觉得今天学到的精髓还不是射线于圆相交。。反而是这个东西。。
+    return (x > eps) - (x < -eps);
+}
+double x,y,vx,vy,rm,R,r;
+int getans(circle c,line l,node& ans1,node& ans2){
+    double a = vx*vx + vy*vy,   b = vx*x + vy*y,   d = x*x+y*y-c.r*c.r;
+    double deta = b*b - a*d;
+    if(dcmp(deta) < 0)return 0;
+    else if(dcmp(deta) == 0){
+        double t = (-b)/a;
+        if(dcmp(t) < 0)return 0;
+        ans1 = l.getp(t);
+        return 1;
+    }else{
+        double t1 = (-b + sqrt(deta))/a;
+        double t2 = (-b - sqrt(deta))/a;
+        if(dcmp(t1) < 0 || dcmp(t2) < 0)return 0;
+        ans1 = l.getp(t1);   ans2 = l.getp(t2);
+        return 2;
+    }
+}
+
+
+int main(void){
+    while(cin >> rm >> R >> r >> x >> y >> vx >> vy){
+        double ans = 0.0;
+        circle c1(node(0,0),R+r);
+        circle c2(node(0,0),rm+r);
+        line l(node(x,y),vv(vx,vy));
+        double vv = sqrt(vx*vx + vy*vy);
+        node a1,a2,a3,a4;
+        int cnt1 = getans(c1,l,a1,a2);
+        int cnt2 = getans(c2,l,a3,a4);
+        if(cnt1 == 2 && cnt2 == 2){
+            ans = (dis(a1,a2) - dis(a3,a4)) / vv;
+        }else if(cnt1 == 2){
+            ans = (dis(a1,a2)) / vv;
+        }
+        printf("%lf\n",ans);
+    }return 0;
+}

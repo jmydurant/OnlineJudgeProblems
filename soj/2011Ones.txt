@@ -1,0 +1,26 @@
+#include<stdio.h>
+
+int main(void)
+{
+    long long ones;
+    int n;int count;
+    while(EOF!=scanf("%d",&n))
+    {
+        ones=1;
+        count=1;
+        if(n==1)
+        {
+            printf("%d\n",1);
+        }
+        else
+        {
+            while(ones%n)
+            {
+                ones=(10*ones+1)% n;     //这一行是精髓。。我还没有搞懂为什么要弄%n，，，从一个前辈那里搞到的公式。。。好奇葩
+                count++;                 //弄懂了。。。每次先同余出n对以后乘法运算没有影响。。毕竟最终结果要与0同余n，先同余出去可以简化步骤
+            }
+        }
+        printf("%d\n",count);
+    }
+    return 0;
+}

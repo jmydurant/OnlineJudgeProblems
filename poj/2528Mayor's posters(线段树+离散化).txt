@@ -1,0 +1,111 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //比较基础的题目。。但是poj有个细节没有处理。。区间覆盖不是点覆盖。。所以覆盖端点是不对的。。连里面的内容也必须覆盖才行。
+#include <cstring>    //我的代码删掉一点就过了。其实不应该删除的。。见下。。
+#include <algorithm>  //lazy标记的应用。。比较简单。。
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 41000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int aa[21000] , n , tot;
+bool visit[41000];
+struct abc{
+    int l,r;
+}pp[maxn];
+struct node{
+    int color[maxn<<2],lazy[maxn<<2];
+    void init(int l,int r,int ind){
+        color[ind] = 1;
+        lazy[ind] = 0;
+        if(l == r)return;
+        int mid = (l+r)>>1;
+        init(l,mid,lson);
+        init(mid+1,r,rson);
+    }
+    inline void pushdown(int ind){
+        if(lazy[ind]){
+            lazy[lson] = lazy[rson] = lazy[ind];
+            color[lson] = color[rson] = lazy[ind];
+            lazy[ind] = 0;
+        }
+    }
+    void change(int l,int r,int ind,int Ql,int Qr,int _c){
+        if(Ql <= l && r <= Qr){
+            color[ind] = _c;
+            lazy[ind] = _c;
+            return;
+        }
+        pushdown(ind);
+        int mid = (l+r)>>1;
+        color[ind] = 0;
+        if(Ql <= mid)change(l,mid,lson,Ql,Qr,_c);
+        if(Qr > mid) change(mid+1,r,rson,Ql,Qr,_c);
+    }
+    void req(int l,int r,int ind){
+        if(color[ind]){
+            visit[color[ind]] = true;
+            return;
+        }
+        pushdown(ind);
+        int mid = (l+r)>>1;
+        req(l,mid,lson);
+        req(mid+1,r,rson);
+    }
+}sb;
+void solve(void){
+    scanf("%d",&n);
+    REP(i,n){
+        scanf("%d%d",aa+i*2, aa+i*2+1);
+        pp[i].l = aa[2*i] , pp[i].r = aa[2*i+1];
+    }
+    sort(aa,aa+2*n);
+    tot = unique(aa,aa+2*n) - aa;
+    int maxr = -1;
+    REP(i,n){
+        pp[i].l = upper_bound(aa,aa+2*n,pp[i].l) - aa;
+        pp[i].r = upper_bound(aa,aa+2*n,pp[i].r) - aa;
+        //pp[i].l <<= 1;               //这个地方是关键。。poj的数据错就错在这里。不应该注释掉
+        //pp[i].r <<= 1;
+        //printf("l is %d r is %d\n",pp[i].l , pp[i].r);
+        maxr = MAX(pp[i].r , maxr);
+    }
+    sb.init(1,maxr,1);
+    REP(i,n){
+        sb.change(1,maxr,1,pp[i].l,pp[i].r,i+2);
+    }
+    rst(visit,false);
+    sb.req(1,maxr,1);
+    int ans = 0;
+    FOR(i,2,n+1)if(visit[i])ans++;
+    printf("%d\n",ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

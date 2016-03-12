@@ -1,0 +1,129 @@
+#include <cstdio>             //用vs2012写的感觉好爽。。。
+#include <cstring>            //不得不说粘过来的代码好难看。。
+#include <algorithm>          //主要思想见一下几篇博文..其实不好懂啊啊啊啊啊啊。
+#include <queue>              //http://www.matrix67.com/blog/archives/276
+#include <iostream>           //http://hi.baidu.com/ccsu_010/item/7847a3c17f6fe2bc0d0a7b89
+#define  REP(i,n) for(int i = 0;i<(n);i++)
+#define  FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define  rst(x,k) memset(x,k,sizeof(x))
+#define  maxn 110
+#define  mod 100000LL
+#define  INF 1000000000
+using namespace  std;
+typedef long long LL;
+int _size;
+struct mat{
+	LL a[maxn][maxn];
+	mat(){rst(a,0);}
+	void INIT(void){
+		rst(a,0);
+		REP(i,_size) a[i][i] = 1;
+	}
+	mat operator * (const mat & temp){
+		mat ans;
+		REP(i,_size){
+			REP(k,_size){
+				if(a[i][k])REP(j,_size){
+					ans.a[i][j] += a[i][k] * temp.a[k][j];
+				}
+			}
+		}
+		REP(i,_size)REP(j,_size) ans.a[i][j] %= mod;
+		return ans;
+	}
+	void show(){
+		REP(i,_size){
+			REP(j,_size){
+				printf("%I64d ",a[i][j]);
+			}printf("\n");
+		}
+	}
+};
+struct node{
+	int fail,cnt;
+	int nxt[4];
+	void INIT(void){
+		fail = cnt = 0;
+		rst(nxt,0);
+	}
+}tree[maxn];
+int n,m,tot;
+int GET(char x){
+	if(x == 'A')return 0;
+	if(x == 'C')return 1;
+	if(x == 'G')return 2;
+	return 3;
+}
+void Insert(char *s){
+	int now = 0;
+	for(;*s;s++){
+		int c = GET(*s);
+		if(tree[now].nxt[c] == 0){
+			tot++; tree[tot].INIT();
+			tree[now].nxt[c] = tot;
+		}
+		now = tree[now].nxt[c];
+	}
+	tree[now].cnt = 1;
+}
+void bfs(void){
+	int now = 0;
+	queue<int> q;
+	q.push(0);
+	while (!q.empty()){
+		now = q.front(); q.pop();
+		REP(i,4){
+			if(tree[now].nxt[i]){
+				int temp = tree[now].nxt[i];
+				if(now){
+					tree[temp].fail = tree[tree[now].fail].nxt[i];
+				}
+				tree[temp].cnt |= tree[tree[temp].fail].cnt;
+				//printf("temp is %d\n",temp);
+				//system("pause");
+				q.push(temp);
+			}else tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+		}
+	}
+}
+
+LL cal(int len){
+	mat a;
+	REP(i,_size){
+		REP(j,4){
+			if(!tree[i].cnt){
+				int temp = tree[i].nxt[j];
+				if(temp){
+					if(!tree[temp].cnt)a.a[i][temp]++;
+				}else a.a[i][0]++;
+			}
+		}
+	}
+	//a.show();
+	mat b; b.INIT();
+	while (len){
+		if(len & 1) b = (b * a);
+		//b.show();
+		a = (a * a);
+		len >>= 1;
+	}
+	LL ans = 0;
+	REP(i,_size) ans += b.a[0][i];
+	ans = (ans % mod + mod) % mod;
+	return ans;
+}
+char s[maxn];
+void solve(void){
+	tree[0].INIT(); tot = 0;
+	REP(i,n){
+		scanf("%s",s);
+		Insert(s);
+	}
+	bfs();
+	_size = tot+1;
+	printf("%I64d\n",cal(m));
+}
+int main(void){
+	while (2 == scanf("%d%d",&n,&m))solve();
+	return 0;
+}

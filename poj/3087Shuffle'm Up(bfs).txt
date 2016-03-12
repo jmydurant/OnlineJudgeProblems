@@ -1,0 +1,80 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>   //真不能算是一个bfs。。因为只是一个模拟洗牌过程的题目。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int n,iCase;
+struct node{
+    char a[210];
+    node(){rst(a,0);}
+    bool operator < (const node & temp)const{
+        return strcmp(a,temp.a) < 0;
+    }
+    bool operator == (const node & temp)const{
+        return strcmp(a,temp.a) == 0;
+    }
+};
+char c1[110] , c2[110] ;
+node ss;
+map<node,int> bst;
+int bfs(void){
+    int ans = 0;
+    while(true){
+        node u;
+        strcpy(u.a,c1);
+        strcat(u.a,c2);
+        if(u == ss)return ans;
+        if(bst[u])return -1;
+        bst[u] = 1; ans++;
+        REP(i,n){
+            u.a[i*2] = c2[i];
+            u.a[i*2 + 1] = c1[i];
+        }
+        REP(i,n){
+            c1[i] = u.a[i];
+            c2[i] = u.a[i+n];
+        }
+    }return -1;
+}
+void solve(void){
+    bst.clear();
+    scanf("%d%s%s%s",&n,c1,c2,ss.a);
+    int ans = bfs();
+    printf("%d %d\n",++iCase,ans);
+}
+int main(void){
+    iCase = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

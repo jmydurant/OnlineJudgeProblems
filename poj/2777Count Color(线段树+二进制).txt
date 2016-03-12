@@ -1,0 +1,109 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //因为颜色比较少。所以可以用二进制加速运算。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 201000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int L,asdfg,Q;
+struct node{
+    int color[maxn<<2],lazy[maxn<<2];
+    void init(int l,int r,int ind){
+        lazy[ind] = 0;
+        color[ind] = 1;
+        if(l == r)return;
+        int mid = (l+r)>>1;
+        init(l,mid,lson);
+        init(mid+1,r,rson);
+    }
+    inline void pushdown(int ind){
+        if(lazy[ind]){
+            lazy[lson] = lazy[rson] = lazy[ind];
+            color[lson] = color[rson] = lazy[ind];
+            lazy[ind] = 0;
+        }
+    }
+    inline void update(int ind){
+        color[ind] = (color[lson] | color[rson]);
+    }
+    void change(int l,int r,int ind,int Ql,int Qr,int _c){
+        if(Ql <= l && r <= Qr){
+            lazy[ind] = color[ind] = _c;
+            return;
+        }
+        pushdown(ind);
+        int mid = (l+r)>>1;
+        if(Ql <= mid)change(l,mid,lson,Ql,Qr,_c);
+        if(Qr > mid) change(mid+1,r,rson,Ql,Qr,_c);
+        update(ind);
+    }
+    int req(int l,int r,int ind,int Ql,int Qr){
+        //printf("%d   %d   %d   %d\n",l,r,Ql,Qr);
+        //system("pause");
+        if(Ql <= l && r <= Qr) return color[ind];
+        pushdown(ind);
+        int mid = (l+r)>>1;
+        if(Qr <= mid)return req(l,mid,lson,Ql,Qr);
+        else if(Ql > mid)return req(mid+1,r,rson,Ql,Qr);
+        else {
+            int sa = req(l,mid,lson,Ql,mid);
+            int sb = req(mid+1,r,rson,mid+1,Qr);
+            return sa|sb;
+        }
+    }
+}sb;
+int cal(int tt){
+    int ans = 0;
+    while(tt){
+        ans += (tt&1);
+        tt >>= 1;
+    }return ans;
+}
+void solve(void){
+    char op[10];
+    int a,b,c;
+    sb.init(1,L,1);
+    while(Q--){
+        scanf("%s%d%d",op,&a,&b);
+        if(a > b)swap(a,b);
+        if(op[0] == 'C'){
+            scanf("%d",&c);
+            sb.change(1,L,1,a,b,(1<<(c-1)));
+        }else{
+            int ans = sb.req(1,L,1,a,b);
+            ans = cal(ans);
+            printf("%d\n",ans);
+        }
+    }
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&L,&asdfg,&Q)) solve();
+    return 0;
+}

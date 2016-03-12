@@ -1,0 +1,61 @@
+#include<cstdio>     //这道题可以转换成01背包来做。。。以s值为包。。f值为物品。。。因为可以有负数。所以开始背包容量被直接扩充了100000；
+#include<cstring>    //还有注意循环方向。。。。当权值为正时。。01背包正常方向。。负时。。反方向。。为了保证每次循环所用数值都为上次循环的。。
+#include<queue>      //虽然背包是DP的一部分。。但是题目分类上还是指明背包比较好。。不然方向就想偏了。。。
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#define INF 400000000
+using namespace std;
+int dp[200100];
+int s[110],f[110];
+int MAX(int a,int b){return a>b?a:b;}
+int main(void)
+{
+    int ABC=100000;
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d%d",s+i,f+i);
+        }
+        for(int i=0;i<=200010;i++)
+        {
+            dp[i]=INT_MIN;
+        }
+        dp[ABC]=0;
+        for(int i=1;i<=N;i++)
+        {
+            if(s[i]>0)
+            {
+                for(int j=200000;j>=s[i];j--)
+                {
+                    if(dp[j-s[i]]!=INT_MIN)
+                    {
+                        dp[j]=MAX(dp[j],dp[j-s[i]]+f[i]);
+                    }
+                }
+            }
+            else
+            {
+                for(int j=0;j<=200000+s[i];j++)
+                {
+                    if(dp[j-s[i]]!=INT_MIN)
+                    {
+                        dp[j]=MAX(dp[j],dp[j-s[i]]+f[i]);
+                    }
+                }
+            }
+        }
+        int result=0;
+        for(int i=ABC;i<=200000;i++)
+        {
+            if(dp[i]>=0&&dp[i]+i-ABC>result)
+            {
+                result=dp[i]+i-ABC;
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

@@ -1,0 +1,117 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>    //先用凸包方法判断是否为凸多边形。。注意有些边的斜率是相等的。。
+#include <algorithm>  //然后再去判断圆心是否在凸多边形内部。最后判断相交情况。。我写的比较挫。。
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    double x,y;
+    node(double _x = 0.0 , double _y = 0.0){x = _x ; y = _y;}
+    void init(double _x,double _y){
+        x = _x; y = _y;
+    }
+}vv[310];
+node operator + (node &a,node &b){
+    return node(a.x+b.x , a.y+b.y);
+}
+node operator - (node &a,node &b){
+    return node(a.x-b.x , a.y-b.y);
+}
+inline double cross(node x,node y){
+    return x.x*y.y - x.y*y.x;
+}
+inline double cross(node x,node y,node m){
+    return cross(x-m , y-m);
+}
+inline int zero(double x){
+    if(fabs(x) < eps)return 0;
+    if(x > 0.0)return 1;
+    return -1;
+}
+inline double dis(node a,node b){
+    return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y));
+}
+inline double getarea(node a,node b,node c){
+    double ans = cross(a,b,c);
+    ans = fabs(ans) / 2.0;
+    return ans;
+}
+void m1(){printf("HOLE IS ILL-FORMED\n");}
+void m2(){printf("PEG WILL FIT\n");}
+void m3(){printf("PEG WILL NOT FIT\n");}
+int n;
+double ra;
+node pp;
+void solve(void){
+    cin >> ra >> pp.x >> pp.y;
+    REP(i,n){
+        cin >> vv[i].x >> vv[i].y;
+    }
+    bool exist = false;
+    int flag;
+    FOR(i,0,n-1){
+        int kk = zero(cross(vv[(i+n-1)%n],vv[(i+1)%n],vv[i]));
+        if(kk != 0 && exist == false){
+            exist = true;
+            flag = kk;
+            continue;
+        }
+        if(kk * flag < 0){
+            m1();
+            return;
+        }
+    }
+    FOR(i,0,n-1){
+        if(zero(cross(vv[i],pp,vv[(i+1)%n])) * flag < 0){
+            m3();
+            return;
+        }
+    }
+    FOR(i,0,n-1){
+        if(dis(vv[i],pp) < ra){
+            m3();
+            return;
+        }
+    }
+    FOR(i,0,n-1){
+        double area = getarea(vv[i],vv[(i+1)%n],pp);
+        double line = area * 2.0 / dis(vv[i],vv[(i+1)%n]);
+        if(line < ra){
+            m3();
+            return;
+        }
+    }
+    m2();
+}
+int main(void){
+    while(EOF != scanf("%d",&n) && n>=3) solve();
+    return 0;
+}

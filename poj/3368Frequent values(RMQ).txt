@@ -1,0 +1,95 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>    //简单的说一下思路。将区间离散化缩成点。。然后建立RMQ。。对于查询。。找左右端点解答就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int dp[maxn][50];     //裸写一个RMQ
+int n,Q , tot;
+int a[maxn] , b[maxn];
+int _hash[maxn*2+10];
+struct node{
+    int l,r,sum;
+}qq[maxn];
+void buildST(void){
+    rst(dp,0);
+    FOR(i,1,tot){
+        dp[i][0] = qq[i].sum;
+    }
+    for(int j = 1;(1<<j) <= tot;j++){
+        for(int i = 1;i+(1<<j)-1 <= tot;i++){
+            dp[i][j] = MAX(dp[i][j-1] , dp[i+(1<<(j-1))][j-1]);
+        }
+    }
+}
+int RMQ(int l,int r){
+    if(l > r)return 0;
+    int k = 0;
+    while((1<<(k+1)) <= r - l + 1)k++;
+    return MAX(dp[l][k] , dp[r-(1<<k)+1][k]);
+}
+void solve(void){
+    scanf("%d",&Q);
+    REP(i,n){
+        scanf("%d" , a+i);
+        b[i] = a[i];
+    }
+    a[n] = INF;
+    tot =  unique(b,b+n) - b;   //现在离散化用的爽啊。。
+    int tt = 0;
+    FOR(i,1,tot){
+        qq[i].sum = 1;
+        qq[i].l = tt+1;
+        _hash[a[tt] + maxn] = i;
+        while(a[tt] == a[tt+1]){
+            qq[i].sum++;
+            tt++;
+        }
+        qq[i].r = tt+1;
+        tt++;
+    }
+    buildST();
+    while(Q--){
+        int l,r; scanf("%d%d",&l,&r);
+        int lrange = _hash[a[l-1]+maxn] , rrange = _hash[a[r-1]+maxn];
+        if(lrange == rrange){
+            printf("%d\n",r - l + 1);
+            continue;
+        }
+        int ans = RMQ(lrange+1,rrange-1);
+        int tt = MAX(qq[lrange].r - l , r - qq[rrange].l) + 1;
+        printf("%d\n",MAX(ans,tt));
+    }
+}
+int main(void){
+    while(EOF != scanf("%d",&n) && n) solve();
+    return 0;
+}

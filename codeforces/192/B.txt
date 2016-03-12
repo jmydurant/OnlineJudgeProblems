@@ -1,0 +1,42 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1<<15
+using namespace std;
+
+bool visit[1100];
+int main(void)
+{
+    int N,M;
+    while(2==scanf("%d%d",&N,&M))
+    {
+        memset(visit,false,sizeof(visit));
+        for(int i=1; i<=M; i++)
+        {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            visit[a] = true;
+            visit[b] = true;
+        }
+        int start;
+        for(int i=1; i<=N; i++)
+        {
+            if(!visit[i])
+            {
+                start = i;
+                break;
+            }
+        }
+        printf("%d\n",N-1);
+        for(int i=1; i<=N; i++)
+        {
+            if(i!=start)
+            {
+                printf("%d %d\n",start,i);
+            }
+        }
+    }
+    return 0;
+}

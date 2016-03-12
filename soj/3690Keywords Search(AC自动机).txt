@@ -1,0 +1,104 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //模板题。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define maxn 1100000
+#define INF 1000000000
+#define mod 1000003LL
+#define base 105000
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int cnt;
+    int nxt[26];
+    int fail;
+    bool visit;
+    void INIT(void){
+        cnt = fail = visit = 0;
+        rst(nxt,0);
+    }
+}tree[maxn>>1];
+int tot,n,ans;
+void Insert(char *s){
+    int now = 0;
+    for(;*s;s++){
+        int c = *s - 'a';
+        if(tree[now].nxt[c] == 0){
+            tot++;
+            tree[now].nxt[c] = tot;
+            tree[tot].INIT();
+        }
+        now = tree[now].nxt[c];
+    }
+    tree[now].cnt++;
+}
+void bfs(void){
+    int now;
+    queue<int> q;
+    q.push(0);
+    while(!q.empty()){
+        now = q.front(); q.pop();
+        for(int i = 0;i<26;i++){
+            if(tree[now].nxt[i]){
+                int temp = tree[now].nxt[i];
+                if(now){
+                    tree[temp].fail = tree[tree[now].fail].nxt[i];
+                }
+                q.push(temp);
+            }else tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+        }
+    }
+}
+void Match(char *s){
+    int now = 0;
+    for(;*s;s++){
+        int c = *s - 'a';
+        now = tree[now].nxt[c];
+        for(int temp = now;temp && (!tree[temp].visit);temp = tree[temp].fail){
+            ans += tree[temp].cnt;
+            tree[temp].visit = true;
+        }
+    }
+}
+char s[maxn];
+void solve(void){
+    tot = 0;
+    scanf("%d",&n);
+    tree[0].INIT();
+    REP(i,n){
+        scanf("%s",s);
+        Insert(s);
+    }
+    bfs();
+    ans = 0;
+    scanf("%s",s);
+    Match(s);
+    printf("%d\n",ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--){
+        solve();
+    }
+}
+

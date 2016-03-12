@@ -1,0 +1,110 @@
+#include <cstdio>      //详细思想见http://blog.csdn.net/zxy_snow/article/details/6681086
+#include <cstring>
+#include <algorithm>
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define MAXN 100010
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+using namespace std;
+
+struct node
+{
+    int l,r;
+    int len(void){return r - l + 1;}
+    int MID(void){return (l+r)>>1;}
+}tree[MAXN<<3];
+int digit[MAXN];
+int seg[MAXN][20],lmin[MAXN][20]; //seg记录划分树的内容   lmin记录在第d层时i之前小鱼digit【mid】的个数(包括自己)
+int n,Q;
+
+void build_tree(int ind,int l,int r,int d)
+{
+    tree[ind].l = l;
+    tree[ind].r = r;
+    if(l == r)
+        return;
+    int mid = tree[ind].MID();
+    int lsum = mid - l + 1;
+    for(int i = l;i<=r;i++)
+    {
+        if(seg[i][d] < digit[mid])
+            lsum--;
+    }
+    int lt = l,rt = mid + 1;
+    for(int i = l;i<=r;i++)
+    {
+        if(i == l)
+            lmin[i][d] = 0;
+        else
+            lmin[i][d] = lmin[i-1][d];
+        if(seg[i][d] < digit[mid])
+        {
+            seg[lt++][d+1] = seg[i][d];
+            lmin[i][d]++;
+        }
+        else if(seg[i][d] == digit[mid] && lsum>0)
+        {
+            lsum--;
+            seg[lt++][d+1] = seg[i][d];
+            lmin[i][d]++;
+        }
+        else
+        {
+            seg[rt++][d+1] = seg[i][d];
+        }
+    }
+    build_tree(lson,l,mid,d+1);
+    build_tree(rson,mid+1,r,d+1);
+}
+
+int req_tree(int ind,int l,int r,int d,int v)
+{
+    if(tree[ind].l == tree[ind].r)
+    {
+        return seg[l][d];
+    }
+    int ll,rl;
+    if(l == tree[ind].l)
+        ll = 0;
+    else
+        ll = lmin[l-1][d];
+    rl = lmin[r][d];
+    int sum = rl - ll;
+    int mid = tree[ind].MID();
+    if(sum>=v)
+    {
+        return req_tree(lson,tree[ind].l+ll,tree[ind].l+rl-1,d+1,v);
+    }
+    else
+    {
+        int lr = l - tree[ind].l - ll;        //记录tree.l 到 l-1中有多少个进入右边了
+        int rr = r - tree[ind].l + 1 - rl;    //记录tree.l 到 r 有多少个进入右边了。。。
+        return req_tree(rson,mid+lr+1,mid+rr,d+1,v-sum);
+    }
+}
+
+
+
+int main(void)
+{
+    while(2 == scanf("%d%d",&n,&Q))
+    {
+        memset(seg,0,sizeof(seg));
+        memset(lmin,0,sizeof(lmin));
+        memset(digit,0,sizeof(digit));
+        for(int i = 1;i<=n;i++)
+            scanf("%d",digit+i);
+        for(int i = 1;i<=n;i++)
+            seg[i][1] = digit[i];
+        sort(digit+1,digit+n+1);
+        build_tree(1,1,n,1);
+        for(int i = 1;i<=Q;i++)
+        {
+            int l,r,k;
+            scanf("%d%d%d",&l,&r,&k);
+            printf("%d\n",req_tree(1,l,r,1,k));
+        }
+    }
+    return 0;
+}

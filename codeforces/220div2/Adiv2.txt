@@ -1,0 +1,49 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //好题。。陷阱很多。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+using namespace std;
+typedef long long LL;
+int n,m;
+int x,y,a,b;
+int test(int x1,int x2,int x3,int x4,int x5,int x6){
+    if(abs(x3 - x1)/x5 * x5 == abs(x3 - x1) && abs(x4 - x2)/x6 * x6 == abs(x4 - x2)){
+        int f1 = abs(x3 - x1)/x5, f2 = abs(x4 - x2)/x6;
+        if((f1 + f2) % 2)return INF;
+        if((f1 != 0 && max(abs(x4 - 1),abs(m - x4)) < b) ||(f2 != 0 && max(abs(x3 - 1),abs(n - x3)) < a))return INF;
+        int ans = MAX(f1,f2);
+        return ans;
+    }
+    return INF;
+}
+int main(void){
+    while(6 == scanf("%d%d%d%d%d%d",&n,&m,&x,&y,&a,&b)){
+        int ans = INF;
+        ans = MIN(ans,test(1,1,x,y,a,b));
+        ans = MIN(ans,test(n,1,x,y,a,b));
+        ans = MIN(ans,test(1,m,x,y,a,b));
+        ans = MIN(ans,test(n,m,x,y,a,b));
+        if(ans == INF)printf("Poor Inna and pony!\n");
+        else printf("%d\n",ans);
+    }return 0;
+}

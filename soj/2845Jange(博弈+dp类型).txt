@@ -1,0 +1,103 @@
+#include <iostream>   //首先把模型抽象出来。。7代表可以两个石子的堆。。3,6代表一个石子的
+#include <cstdio>     // dp(c1,c2,top)代表有c1 个 一个石子的堆 ，c2个两个石子的堆。。最顶面有top个石子（top的那一层是不计入c1,c2）
+#include <cstring>    // 然后就可以状态转移了。。因为顶上的层只有凑满3个才能继续堆。。所以转移方程就简单多了。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define lowbit(x) ((x)&(-(x)))
+#define p(i,j) ((i*5)+j)
+#define MAXN 11010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+#define link fasdfasdf
+using namespace std;
+typedef long long LL;
+bool dp[2010][2010][4];
+bool visit[2010][2010][4];
+bool dfs(int c1,int c2,int top)
+{
+    if(visit[c1][c2][top])
+        return dp[c1][c2][top];
+    visit[c1][c2][top] = true;
+    if(c1>0)
+    {
+        int temp;
+        if(top == 3)
+            temp = dfs(c1-1,c2+1,1);
+        else
+            temp = dfs(c1-1,c2,top+1);
+        if(temp == 0)
+        {
+            return dp[c1][c2][top] = 1;
+        }
+    }
+    if(c2>0)
+    {
+        int temp;
+        if(top == 3)
+        {
+            temp = dfs(c1+1,c2,1);
+            if(temp == 0)
+                return dp[c1][c2][top] = 1;
+            temp = dfs(c1,c2,1);
+            if(temp == 0)
+                return dp[c1][c2][top] = 1;
+        }
+        else
+        {
+            temp = dfs(c1+1,c2-1,top+1);
+            if(temp == 0)
+                return dp[c1][c2][top] = 1;
+            temp = dfs(c1,c2-1,top+1);
+            if(temp == 0)
+                return dp[c1][c2][top] = 1;
+        }
+    }
+    return dp[c1][c2][top] = 0;
+}
+
+int cal(int state)
+{
+    int ans = 0;
+    while(state)
+    {
+        if(state&1)
+            ans++;
+        state >>= 1;
+    }
+    return ans;
+}
+
+int main(void)
+{
+    memset(visit,0,sizeof(visit));
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n; scanf("%d",&n);
+        int n1 = 0,n2 = 0;
+        int k;
+        for(int i = 1;i<n;i++)
+        {
+            scanf("%d",&k);
+            if(k == 7)
+            {
+                n2++;
+            }
+            else if(k == 3 || k == 6)
+            {
+                n1++;
+            }
+        }
+        scanf("%d",&k);
+        if(0 == dfs(n1,n2,cal(k)))
+            printf("Lady first!\n");
+        else
+            printf("I have to go\n");
+    }
+    return 0;
+}

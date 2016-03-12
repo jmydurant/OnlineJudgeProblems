@@ -1,0 +1,113 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //大概思路。。找重心。。然后分治计算点对。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define maxn 11000
+#define INF 1000000000
+#define mod 1000000007LL
+#define base 160
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+    int w;
+    bool used;
+}edge[maxn<<1];
+int headline[maxn],E;
+int q[maxn];                 //队列。q[0]代表队列长度...
+int n,lim,ans,root;
+int maxr;
+int s[maxn],dis[maxn],size,f[maxn];
+void add(int f,int t,int w){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].w = w;
+    edge[E].used = true;
+    headline[f] = E++;
+}
+void findrt(int u,int fa){
+    s[u] = 1; f[u] = 0;
+    for(int i = headline[u];i != -1;i = edge[i].nxt){
+        int v = edge[i].t; if(v == fa || (!edge[i].used)) continue;
+        findrt(v,u);
+        f[u] = MAX(f[u],s[v]); s[u] += s[v];
+    }
+    f[u] = MAX(f[u],size-s[u]);
+    if(f[u] < f[root]) root = u;
+}
+void dfs(int u,int fa){
+    q[0]++;q[q[0]] = dis[u];
+    s[u] = 1;
+    for(int i = headline[u];i != -1;i = edge[i].nxt){
+        int v = edge[i].t; if(v == fa || (!edge[i].used)) continue;
+        dis[v] = dis[u] + edge[i].w;
+        dfs(v,u);
+        s[u] += s[v];
+    }
+}
+int cal(int u,int tort){
+    dis[u] = tort;
+    q[0] = 0;
+    dfs(u,0);
+    sort(q+1,q+q[0]+1);
+    int l = 1,r = q[0];
+    int ans = 0;
+    while(l < r){
+        if(q[l]+q[r] <= lim){
+            ans += (r-l); l++;
+        }else r--;
+    }return ans;
+}
+void kill_la_kill(int u){
+    //printf("root is  %d\n",u);
+    //system("pause");
+    ans += cal(u,0);
+    for(int i = headline[u];i != -1;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(edge[i].used){
+            edge[i ^ 1].used = false;
+            ans -= cal(v,edge[i].w);
+            size = s[v]; root = 0; f[0] = size;
+            findrt(v,0);
+            kill_la_kill(root);
+        }
+    }
+}
+
+void solve(void){
+    rst(headline,-1); E = ans = 0;
+    REP(i,n-1){
+        int a,b,w; scanf("%d%d%d",&a,&b,&w);
+        add(a,b,w); add(b,a,w);
+    }
+    root = 0; size = f[0] = n;
+    findrt(1,0);
+    //FOR(i,1,n)printf("%d  ",s[i]);printf("\n");
+    kill_la_kill(root);
+
+    printf("%d\n",ans);
+}
+int main(void){
+    while(EOF != scanf("%d%d",&n,&lim) && (n || lim))solve();
+    return 0;
+}

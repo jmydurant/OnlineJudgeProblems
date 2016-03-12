@@ -1,0 +1,42 @@
+#include<cstring>   //从这道题目上面学习的期望DP。。。方法已经在soj的4273上说了。。。这个是简化版本的。。。。
+#include<cstdio>    //话说真是奇葩。。老子G++交了几次都没过。。然后用C++交了就过了。。奇葩。。。
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+double dp[1010][1010];
+int main(void)
+{
+    int N,M;
+    while(2==scanf("%d%d",&N,&M))
+    {
+        //memset(dp,0,sizeof(dp));
+        dp[N][M]=0.0;
+        for(int i=N;i>=0;i--)
+        {
+            for(int j=M;j>=0;j--)
+            {
+                if(i==N && j==M)continue;
+                double abc=(1.0*N*M);
+                double p1=(1.0*i*j)/abc;
+                double p2=(1.0*i*(M-j))/abc;
+                double p3=(1.0*(N-i)*j)/abc;
+                double p4=(1.0*(N-i)*(M-j))/abc;
+                dp[i][j]=1.0+p2*dp[i][j+1]+p3*dp[i+1][j]+p4*dp[i+1][j+1];
+                dp[i][j]/=(1.0-p1);
+            }
+        }
+        printf("%.4lf\n",dp[0][0]);
+    }
+    return 0;
+}

@@ -1,0 +1,122 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+struct node                      //实现这个并查集。。我是用链表做的。。效率也不是多好。但好歹是过了
+{
+    int left;
+    int right;
+    node() {left=0;right=0;}
+}roads[10010];
+int visit;                        //visit表示findway找没找过。。如果找过了。。visit=1；但是每次插入元素和确认元素之前都要初始化。。
+int findway(int x,int y);         
+void insertway(int x,int y);    //因为插入的时候我是用的递归。。然后每次都检查一下是不是x和y已经连起来了（防止连成一个圈）所以在其中用了findway
+int main(void)                  //但是为了防止findway的调用太多。。故用visit来减少调用的次数。。。
+{
+    int N,M,Q;
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int i;
+        int a,b;
+        scanf("%d%d%d",&N,&M,&Q);
+        for(i=1;i<=N;i++)
+        {
+            roads[i].left=0;
+            roads[i].right=0;
+        }
+        for(i=1;i<=M;i++)
+        {
+            scanf("%d%d",&a,&b);
+            visit=0;
+            insertway(a,b);
+        }
+        for(i=1;i<=Q;i++)
+        {
+            int ok;
+            scanf("%d%d",&a,&b);
+            visit=0;
+            ok=findway(a,b);
+            if(ok)
+            {
+                printf("Yes\n");
+            }
+            else
+            {
+                printf("No\n");
+            }
+        }
+    }
+    return 0;
+}
+void insertway(int x,int y)
+{
+    if(findway(x,y))
+    {
+        return;
+    }
+    else
+    {
+        if(0==roads[x].right&&0==roads[y].left)
+        {
+            roads[x].right=y;
+            roads[y].left=x;
+            return;
+        }
+        else if(0!=roads[x].right&&0==roads[y].left)
+        {
+            insertway(roads[x].right,y);
+            return;
+        }
+        else if(0==roads[x].right&&0!=roads[y].left)
+        {
+            insertway(x,roads[y].left);
+            return;
+        }
+        else
+        {
+            insertway(roads[x].right,roads[y].left);
+            return ;
+        }
+    }
+}
+int findway(int x,int y)
+{
+    if(visit)
+    {
+        return 0;
+    }
+    else
+    {
+        int i,j;
+        i=roads[x].left;
+        while(i)
+        {
+            if(y==i)
+            {
+                visit=1;
+                return 1;
+            }
+            else
+            {
+                i=roads[i].left;
+            }
+        }
+        j=roads[x].right;
+        while(j)
+        {
+            if(y==j)
+            {
+                visit=1;
+                return 1;
+            }
+            else
+            {
+                j=roads[j].right;
+            }
+        }
+        visit=1;
+        return 0;
+    }
+}

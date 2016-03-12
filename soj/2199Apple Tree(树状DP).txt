@@ -1,0 +1,72 @@
+#include<cstdio>    //原理见下。。。我次奥。。我初始化错了两次。。没有仔细看题啊。。。。以后还是得把心沉下来啊。。。
+#include<cstring>
+#include<algorithm>
+#include<deque>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+using namespace std;
+int dp[110][210][2];
+int puzzle[110][110];
+int fa[110];
+int value[110];
+void dfs(int root);
+void son_find(int n);
+int N,HP;
+int main(void)
+{
+    while(2==scanf("%d%d",&N,&HP))
+    {
+        memset(dp,0,sizeof(dp));
+        memset(puzzle,0,sizeof(puzzle));
+        memset(fa,-1,sizeof(fa));
+        for(int i=1;i<=N;i++)scanf("%d",value+i);
+        for(int i=1;i<=N-1;i++)
+        {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            puzzle[a][b]=1;puzzle[b][a]=1;
+        }
+        son_find(1);//printf("%d %d\n",fa[1],fa[2]);
+        dfs(1);
+        printf("%d\n",MAX(dp[1][HP][1],dp[1][HP][0]));
+    }
+    return 0;
+}
+void dfs(int root)
+{
+    for(int i=0;i<=HP;i++)
+    {
+        dp[root][i][0]=value[root];
+        dp[root][i][1]=value[root];
+    }
+    for(int son=1;son<=N;son++)
+    {
+        if((!puzzle[root][son])||(fa[son]!=root))continue;
+        dfs(son);
+        for(int i=HP;i>=0;i--)
+        {
+            for(int k=1;k<=i;k++)
+            {
+                dp[root][i][1]=MAX(dp[root][i-k][0]+dp[son][k-1][1],dp[root][i][1]);
+                if(0==k%2)
+                {
+                    dp[root][i][1]=MAX(dp[root][i-k][1]+dp[son][k-2][0],dp[root][i][1]);
+                    dp[root][i][0]=MAX(dp[root][i-k][0]+dp[son][k-2][0],dp[root][i][0]);
+                }
+            }
+        }
+    }
+}
+void son_find(int n)
+{
+    for(int i=1;i<=N;i++)
+    {
+        if((!puzzle[n][i])||(fa[n]==i))continue;
+        fa[i]=n;
+        son_find(i);
+    }
+}
+//树形dp，比较经典的一个树形dp。首先很容易就可以想到用dp[root][k]表示以root为根的子树中最多走k时所能获得的最多苹果数，接下去我们很习惯地会想到将k步在root的所有子结点中分配，也就是进行一次背包，就可以得出此时状态的最优解了，但是这里还有一个问题，那就是在进行背包的时候，对于某个孩子son走完之后是否回到根结点会对后面是否还能分配有影响，为了解决这个问题，我们只需要在状态中增加一维就可以了，用dp[root][k][0]表示在子树root中最多走k步，最后还是回到root处的最大值，dp[root][k][1]表示在子树root中最多走k步，最后不回到root处的最大值。由此就可以得出状态转移方程了：
+dp[root][j][0] = MAX (dp[root][j][0] , dp[root][j-k][0] + dp[v][k-2][0]);
+dp[root][j]][1] = MAX(  dp[root][j][1] , dp[root][j-k][0] + dp[v][k-1][1]) ;
+dp[root][j][1] = MAX (dp[root][j][1] , dp[root][j-k][1] + dp[v][k-2][0]);

@@ -1,0 +1,70 @@
+#include<stdio.h>
+#include<string.h>
+char result[20];
+int problemtime[30];                    //不管怎么水。。。该刷还是得刷。。。
+char title[30];
+int totaltime;
+int main(void)
+{
+    int submit;
+    while(EOF!=scanf("%d",&submit)&&submit)
+    {
+        char zimu;
+        int i;
+        int count=0;
+        int quest=0;
+        totaltime=0;
+        getchar();
+        memset(problemtime,0,sizeof(problemtime));
+        for(i=1;i<=submit;i++)
+        {
+            int j=1;
+            int time;
+            int find=0;
+            zimu=getchar();
+            scanf("%d",&time);
+            getchar();
+            gets(result);
+
+            for(j=1;j<=quest;j++)
+            {
+                if(title[j]==zimu)
+                {
+                    find=1;
+                    break;
+                }
+            }
+            if(find)
+            {
+                if(strcmp(result,"correct"))
+                {
+                    problemtime[j]+=20;
+                }
+                else
+                {
+                    count++;
+                    problemtime[j]+=time;
+                    totaltime+=problemtime[j];
+                }
+            }
+            else
+            {
+                title[j]=zimu;
+                quest++;
+                if(strcmp(result,"correct"))
+                {
+                    problemtime[j]+=20;
+                }
+                else
+                {
+                    count++;
+                    problemtime[j]+=time;
+                    totaltime+=problemtime[j];
+                }
+            }
+        }
+        printf("%d %d\n",count,totaltime);
+    }
+    return 0;
+
+}

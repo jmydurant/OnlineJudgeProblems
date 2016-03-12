@@ -1,0 +1,101 @@
+#include<cstring>   //对于polya定理的奇葩优化方法。。。直接见下面吧。。幸亏欧拉函数已经学过了。。。
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+bool visit[40010];
+int prime[4001];
+int tot;
+int mod;
+void IINT(void)
+{
+    tot=0;
+    memset(visit,false,sizeof(visit));
+    for(int i=2;i*i<=1000001000;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot]=i;
+            for(int j=i*i;j<40000 ;j+=i)visit[j]=true;
+        }
+    }
+}
+int phi(int n)
+{
+    int ans=n;
+    if(n==1)return 1%mod;
+    for(int i=1;prime[i]*prime[i]<=n && i<=tot;i++)
+    {
+        if(0==n%prime[i])
+        {
+            ans-=(ans/prime[i]);
+            while(0==n%prime[i])n/=prime[i];
+        }
+    }
+    if(n>1)ans-=(ans/n);
+    return ans;
+}
+int p_pow(int a,int n)
+{
+    a%=mod;
+    int ans=1;
+    while(n)
+    {
+        if(n%2)
+        {
+            ans*=a;
+            ans%=mod;
+        }
+        a*=a;
+        a%=mod;
+        n/=2;
+    }
+    return ans;
+}
+int main(void)
+{
+    IINT();
+   // printf("%d",prime[tot]*prime[tot]);
+   int casenum; scanf("%d",&casenum);
+   while(casenum--)
+   {
+       int ans=0;
+       int c; scanf("%d%d",&c,&mod);
+       int i;
+       for(i=1;i*i<c;i++)
+       {
+           if(0==c%i)
+           {
+               ans+=(phi(c/i)%mod)*(p_pow(c,i-1));
+               ans%=mod;
+               ans+=(phi(i)%mod)*(p_pow(c,c/i-1));
+               ans%=mod;
+           }
+       }
+       if(i*i==c)
+       {
+           ans+=(phi(i)%mod)*(p_pow(c,i-1));
+           ans%=mod;
+       }
+       printf("%d\n",ans);
+   }
+   return 0;
+}
+楼教主出的题目，经典的Polya计数问题，要求统计考虑旋转后用n种颜色对n个珠子的项链染色的方案数，n<=10^9。
+
+       对于n比较小的情况我们可以直接暴力枚举置换群并统计其对应的C（f），考虑旋转i个珠子的循环群，我们可以证明其对应的不动的染色方案C（fi）=n^gcd(i,n)。为什么呢？我们可以这样考虑，假设珠子编号为0～n-1，对于旋转i个珠子的循环群，由于相邻间的珠子对应的旋转后位置还是相邻，所以这个循环群的环必然是大小相等的。假设其环的大小为T，那么就有(T*i)%n=0。假设T*i=k*n，i=g*x，n=g*y，其中g=gcd(i,n)。那么T=k*y/x，因为k为整数，x、y互质，所以使得T最小且为正整数的k=x，那么T=y，整个循环群中环的个数=n/T=g。所以我们可以得到C（fi）=n^gcd(i,n)。那么这个题目就转化为求sum{n^gcd(i,n)}，1<=i<=n。
+
+       但是n<=10^9，这个数据范围太大，直接枚举必然超时，我们要考虑优化。观察上面的公式，我们发现虽然i的范围很大，但是gcd(i,n)的值却不多，最多为n的因子的个数。如果我们可以很快求出gcd(i,n)=g时i的个数，那么我们就能够得到一个很高效的算法。假设i=g*x，n=g*y，gcd(i,n)=g的条件为x、y互质，又因为1<=x<=y。所以满足条件的x的个数就是[1,y]里和y互质的数的个数，这就等于phi(y)。欧拉函数的值可以在O(n^(1/2))的复杂度内算出来，于是我们就得到了一个高效的算法。
+
+       实现的时候简单一点的话可以直接枚举找因子，只用枚举到n^1/2，也可以先质因数分解n，然后DFS统计，这样代码复杂一些，但效率要高上不少。

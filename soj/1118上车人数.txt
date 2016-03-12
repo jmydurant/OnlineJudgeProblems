@@ -1,0 +1,31 @@
+#include<stdio.h>
+#include<string.h>
+long long a[1000];
+long long k[1000];
+int main(void)
+{
+    long long onbus,n,m,x;                 //又在昧良心的刷水题了^-^.....
+    memset(a,0,sizeof(a));
+    memset(k,0,sizeof(k));
+    while(EOF!=scanf("%lld%lld%lld%lld",&onbus,&n,&m,&x))
+    {
+        long long i;
+        long long p,q;
+        a[1]=1;
+        a[2]=1;
+        a[3]=2;
+        k[4]=1;
+        if(0==a[n-1])
+        {
+            for(i=4;i<n;i++)
+           {
+            a[i]=(a[i-1]+a[i-2]-1);
+            k[i]=(k[i-1]+k[i-2]+1);
+           }
+        }
+        p=(m-a[n-1]*onbus)/k[n-1];
+        q=a[x]*onbus+k[x]*p;
+        printf("%lld\n",q);
+    }
+    return 0;
+}

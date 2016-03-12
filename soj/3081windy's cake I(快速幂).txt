@@ -1,0 +1,25 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>  //为了保险起见。。全都是long long型变量。。。
+#include<climits>
+using namespace std;
+int main(void)
+{
+    long long N,num;
+    while(EOF!=scanf("%lld%lld",&N,&num))
+    {
+        long long result=num%19871118;
+        N--;num--;
+        while(N>0)
+        {
+            if(N%2)
+			{
+				result=(result*num)%19871118;
+			}
+            num=(num*num)%19871118;
+			N/=2;
+        }
+        printf("%lld\n",result);
+    }
+}
+

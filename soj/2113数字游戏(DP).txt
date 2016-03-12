@@ -1,0 +1,73 @@
+#include<cstdio>     //和M子串差不多。。。因为是环形的。。所以数组长度加倍就可以解决。。。地推公式自己推。。代码中也有。。。
+#include<cstring>      //这道题让我蛋疼了半天。。因为用的是long long 型。。输出时用%d会有大bug。。因为位数不一样。。所以缓冲的字符数目也不同。。
+#include<queue>     //两个数同时输出的时候。。第一个数有可能把第二个数给占据了。。导致第二个数输出为0.。这就是教训啊。。。
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#define inf 0x3f3f3f3f
+using namespace std;
+template<typename T>
+inline T MAX(T a,T b){return a>b?a:b;}
+template<typename T>
+inline T MIN(T a,T b){return a<b?a:b;}
+template<typename T>
+inline T MOD(T a){T b=a%10;if(b<0)b+=10;return b;}
+int num[110];
+long long sum[110],max_dp[110][12],min_dp[110][12];
+void chushihua(void);
+int main(void)
+{
+    int N,K;
+    while(EOF!=scanf("%d%d",&N,&K))
+    {
+        long long min_result=INT_MAX;
+        long long max_result=INT_MIN;//printf("%d\n",max_result);
+        memset(sum,0,sizeof(sum));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",num+i);
+            num[i+N]=num[i];
+        }
+        for(int i=1;i<=2*N;i++){sum[i]=sum[i-1]+num[i];}
+        for(int start=1;start<=N;start++)
+        {
+            //printf("%d\n",max_result);
+            chushihua();
+            for(int i=1;i<=N;i++)
+            {
+                min_dp[i+start-1][1]=MOD(sum[start+i-1]-sum[start-1]);
+                max_dp[i+start-1][1]=min_dp[i+start-1][1];
+              //  printf("%d\n",min_dp[i+start-1][1]);
+            }
+            for(int j=2;j<=K;j++)
+            {
+                for(int i=start+j-1;i<=start+N-1;i++)
+                {
+                    for(int k=i-1;k>=start+j-2;k--)
+                    {
+                        min_dp[i][j]=MIN(min_dp[i][j],min_dp[k][j-1]*MOD(sum[i]-sum[k]));
+                        max_dp[i][j]=MAX(max_dp[i][j],max_dp[k][j-1]*MOD(sum[i]-sum[k]));
+                    }
+                }
+            }
+            //printf("%d\n",max_result);
+            //printf("%d %d %d pass \n",start+N-1,max_dp[start+N-1][K],max_result);
+            if(min_result>min_dp[start+N-1][K])min_result=min_dp[start+N-1][K];
+            if(max_result<max_dp[start+N-1][K])max_result=max_dp[start+N-1][K];
+        }
+        printf("%lld\n%lld\n",min_result,max_result);
+    }
+    return 0;
+}
+void chushihua(void)
+{
+    for(int i=1;i<=109;i++)
+    {
+        for(int j=1;j<=11;j++)
+        {
+            max_dp[i][j]=-1;
+            min_dp[i][j]=INT_MAX;
+        }
+    }
+}

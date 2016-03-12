@@ -1,0 +1,70 @@
+#include<cstdio>    //二维dp可以解决。。每次走一个时间。。然后确定所有开合状态的最大值。。下面之处了转移方程。。
+#include<cstring>   //这种二维dp还算比较简单的。。没怎么想就做出来了。。。我呵♂呵。。。
+#include<queue>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#define INF 400000000
+using namespace std;
+int dp[110][30010];
+struct abc
+{
+    int t;
+    int p;
+    int s;
+}gangster[110];
+int MAX(int a,int b,int c)
+{
+    if(a<b)a=b;
+    if(a<c)a=c;
+    return a;
+}
+bool cmp(abc a,abc b)
+{
+    return a.t<b.t;
+}
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int result=0;
+        int N,K,T;
+        scanf("%d%d%d",&N,&K,&T);
+        for(int i=1;i<=N;i++)scanf("%d",&gangster[i].t);
+        for(int i=1;i<=N;i++)scanf("%d",&gangster[i].p);
+        for(int i=1;i<=N;i++)scanf("%d",&gangster[i].s);
+        sort(gangster+1,gangster+N+1,cmp);
+        memset(dp,-1,sizeof(dp));
+        dp[0][0]=0;
+        int ren=1;
+        while(gangster[ren].t==0&&ren<=N)
+        {
+            if(gangster[ren].s==0)
+            {
+                dp[0][0]+=gangster[ren].p;
+            }
+            ren++;
+        }
+        for(int i=1;i<=T;i++)
+        {
+            dp[0][i]=(dp[0][i-1]>dp[1][i-1])?dp[0][i-1]:dp[1][i-1];
+            for(int j=1;j<=K;j++)
+            {
+                dp[j][i]=MAX(dp[j-1][i-1],dp[j][i-1],dp[j+1][i-1]);//转移方程dp（i，j）为j时间，i开合度的最大p值。。。
+            }
+            while(gangster[ren].t==i&&ren<=N)
+            {
+                if(dp[gangster[ren].s][i]>=0)dp[gangster[ren].s][i]+=gangster[ren].p;
+                ren++;
+            }
+        }
+        for(int i=0;i<=K;i++)
+        {
+            if(result<dp[i][T])result=dp[i][T];
+           // printf("%d %d\n",dp[i][T],i);
+        }
+        printf("%d\n\n",result);
+    }
+    return 0;
+}

@@ -1,0 +1,34 @@
+#include <iostream>   //soj2403的加强版本。。。坑爹啊。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 10010
+#define INF 100000000
+#define lowbit(x) ((x)&(-(x)))
+using namespace std;
+int a[MAXN];
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n; scanf("%d",&n);
+        a[0] = 0;
+        for(int i = 1;i<=n;i++)
+            scanf("%d",a+i);
+        sort(a,a+n+1);
+        int ans = 0;
+        for(int i = n;i>0;i-=2)
+        {
+            int temp = a[i] - a[i-1] - 1;
+            ans ^= temp;
+        }
+        if(ans)
+            printf("windy will win\n");
+        else
+            printf("wqb will win\n");
+    }
+    return 0;
+}

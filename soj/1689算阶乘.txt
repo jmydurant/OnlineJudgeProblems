@@ -1,0 +1,45 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+int result[36001];
+int main(void)
+{
+    int casenum;
+    int n;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int k;
+        int i;
+        scanf("%d",&n);
+        memset(result,0,sizeof(result));
+        result[0]=1;
+        for(k=1;k<=n;k++)
+        {
+            for(i=0;i<36000;i++)
+            {
+                result[i]*=k;
+            }
+            for(i=0;i<36000;i++)
+            {
+                if(result[i]>=10)
+                {
+                    result[i+1]+=(result[i]/10);    //这种题以后也会变成水题级别的。。。我赌五毛钱
+                    result[i]%=10;
+                }
+            }
+        }
+
+        for(k=36000;0==result[k];k--)
+        {
+            ;
+        }
+        for(;k>=0;k--)
+        {
+            printf("%d",result[k]);
+        }
+        printf("\n");
+    }
+    return 0;
+}

@@ -1,0 +1,99 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>      //比较简单的覆盖问题。。匹配完的都是单个的。。就解出来了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[4000];
+int headline[500] , E;
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int row,col;
+int dx[] = {1,-1,0,0};
+int dy[] = {0,0,1,-1};
+char puzzle[50][50];
+int visit[500] , link[500];
+int ind;
+inline int t(int i,int j){return (i)*col + j;}
+inline bool judge(int i,int j){
+    if(i >= 0 && i < row && j >= 0 && j <col)return true;
+    return false;
+}
+bool Hungary(int u){
+    for(int i = headline[u];~i; i = edge[i].nxt){
+        int v = edge[i].t;
+        if(visit[v] == ind)continue;
+        visit[v] = ind;
+        if(link[v] == -1 || Hungary(link[v])){
+            link[v] = u;
+            return true;
+        }
+    }return false;
+}
+void solve(void){
+    E = 0; rst(headline,-1);
+    rst(visit,-1); rst(link,-1);
+    scanf("%d%d",&row,&col);
+    REP(i,row) scanf("%s",puzzle[i]);
+    int tot = 0;
+    REP(i,row){
+        REP(j,col){
+            if(puzzle[i][j] == '*'){
+                tot++;
+                REP(k,4){
+                    int sx = i + dx[k] , sy = j + dy[k];
+                    if(judge(sx,sy) && puzzle[sx][sy] == '*'){
+                        add(t(i,j) , t(sx,sy));
+                    }
+                }
+            }
+        }
+    }
+    int ans = 0;
+    REP(i,row){
+        REP(j,col){
+            ind = t(i,j);
+            if((i+j)%2 && Hungary(t(i,j))) ans++;
+            //printf("in %d  %d\n",i,j);
+        }
+    }
+    printf("%d\n",tot - ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

@@ -1,0 +1,73 @@
+#include<iostream>    //在搜素方面。。我果然是个渣渣。。原来的数据。。30秒都没过。。我次奥。。30秒啊！！！！！！！
+#include<cstring>     //优化的细节。。对订单的钱数排序。。如果搜索中剩余的钱数就算全加上也不是最优解的话。。直接回溯。。
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+using namespace std;
+int people[10];
+int sum[25];
+void dfs(int order,int earn);
+int result;
+struct abc
+{
+    int up,down,num;
+    int money;
+}item[25];
+bool cmp(abc a,abc b){return a.money>b.money;}
+int HP,N,m;
+int main()
+{
+    while(EOF!=scanf("%d%d%d",&HP,&N,&m))
+    {
+        if(HP==N&&HP==m&&m==0)break;
+        sum[0]=0;
+        for(int i=1;i<=m;i++)
+        {
+            int a,b,c;
+            scanf("%d%d%d",&a,&b,&c);
+            item[i].up=a;
+            item[i].down=b;
+            item[i].num=c;
+            item[i].money=(b-a)*c;
+            sum[i]=sum[i-1]+item[i].money;
+        }
+        sort(item+1,item+m+1,cmp);
+        result=0;
+        dfs(1,0);
+        printf("%d\n",result);
+    }
+    return 0;
+}
+void dfs(int order,int earn)
+{
+    if(order>m)return ;
+    if(result>earn+sum[m]-sum[order-1])return;
+    int flag=1;
+    for(int i=item[order].up;i<item[order].down;i++)
+    {
+        people[i]+=item[order].num;
+        if(people[i]>HP)flag=0;
+    }
+    if(flag&&item[order].money+earn>result)result=item[order].money+earn;
+    if(flag)
+    {
+        dfs(order+1,earn+item[order].money);
+        for(int i=item[order].up;i<item[order].down;i++)
+        {
+            people[i]-=item[order].num;
+        }
+        dfs(order+1,earn);
+    }
+    else
+    {
+        for(int i=item[order].up;i<item[order].down;i++)
+        {
+            people[i]-=item[order].num;
+        }
+        dfs(order+1,earn);
+    }
+}
+
+
+
+

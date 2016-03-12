@@ -1,0 +1,77 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //仔细即可。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 140000000
+#define maxn 21000
+//#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+char a[10] , b[10] , c[10];
+int power[10];
+bool Match(char *s,int x){
+    int len = strlen(s);
+    if(x == 0 && len == 1 && (s[0] == '*' || s[0] == '0'))return true;
+    FORD(i,len-1,0){
+        if(x == 0)return false;
+        if(s[i] == '*'){
+            x /= 10;
+            continue;
+        }
+        if(s[i] - '0' != x % 10)return false;
+        x /= 10;
+    }
+    if(x != 0)return false;
+    return true;
+}
+void solve(void){
+    scanf("%s %s %s",a,b,c);
+    int la = strlen(a) , lb = strlen(b);
+    for(int i = power[la-1];i<power[la];i++){
+        if(Match(a,i)){
+            for(int j = power[lb-1];j<power[lb];j++){
+                if(Match(b,j)){
+                    int ss = i * j;
+                    if(Match(c,ss)){
+                        //printf("ss is %d i is %d  j is %d\n",ss,i,j);
+                        printf("Yes\n");
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    printf("No\n");
+}
+int main(void){
+    power[0] = 1;
+    for(int i = 1;i<=7;i++) power[i] = power[i-1] * 10;
+    power[0] = 0;
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

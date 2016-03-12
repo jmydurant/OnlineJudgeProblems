@@ -1,0 +1,88 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>    //对每个割点枚举切掉之后会有多少个剩余的部分。。然后加上剩下的和他们不连接的连通分量就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 10100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,m;
+struct node{
+    int t,nxt;
+}edge[maxn<<3];
+int headline[maxn] , E;
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int sub[maxn] , low[maxn] , dfn[maxn] , tot , fa , ans ,scc;
+void dfs(int u){
+    low[u] = dfn[u] = ++tot;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            dfs(v);
+            low[u] =  MIN(low[u] , low[v]);
+            if(dfn[u] <= low[v]) sub[u]++;
+        }else{
+            low[u] = MIN(low[u] , dfn[v]);
+        }
+    }
+    if(u != fa) ans = MAX(ans , sub[u] + 1);
+    else if(sub[fa] > 1) ans = MAX(ans , sub[u]);
+}
+void tarjan(int u){
+    fa = u;
+    dfs(u);
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    tot = 0; rst(dfn,0); rst(low,0);
+    rst(sub,0);
+    REP(i,m){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a,b); add(b,a);
+    }
+    ans = scc = 0;
+    REP(i,n){
+        if(!dfn[i]){
+            scc++;
+            tarjan(i);
+        }
+    }
+    //printf("scc is %d\n",scc);
+    printf("%d\n",scc - 1 + ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)){
+        if(n == 0 && m == 0)break;
+        solve();
+    }return 0;
+}

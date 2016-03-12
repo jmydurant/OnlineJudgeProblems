@@ -1,0 +1,129 @@
+#include <cstdio>   //一道经典的强连通题目。。先把强连通弄出来之后。。再缩点。。然后把每个点的最大值求出来之后再DP。。
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 200100
+#define rst(x,k) memset(x,k,sizeof(x))
+using namespace std;
+struct node
+{
+    int f,t,nxt;
+}edge[maxn*2];
+int E;
+int tot,cnt,top;
+int headline[maxn],reheadline[maxn];
+int n,m;
+bool instack[maxn];
+int dfn[maxn],low[maxn],Stack[maxn];
+int belong[maxn];
+int dp[maxn];
+bool visit[maxn];
+void INIT(void)
+{
+    E = tot = cnt = top = 0;
+    rst(headline,-1);
+    rst(reheadline,-1);
+    rst(instack,0);
+    rst(dfn,-1);
+    rst(dp,-1);
+    rst(visit,0);
+}
+
+void add(int *head,int f,int t)
+{
+    E++;
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = head[f];
+    head[f] = E;
+}
+
+void tarjan(int u)
+{
+    dfn[u] = low[u] = cnt++;
+    instack[u] = true;
+    Stack[++top] = u;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(dfn[v] == -1)
+        {
+            tarjan(v);
+            low[u] = MIN(low[u],low[v]);
+        }
+        else if(instack[v])
+        {
+            low[u] = MIN(low[u],dfn[v]);
+        }
+    }
+    if(low[u] == dfn[u])
+    {
+        tot++;
+        while(true)
+        {
+            int j = Stack[top--];
+            instack[j] = false;
+            belong[j] = tot;
+            if(j == u)
+                break;
+        }
+    }
+}
+
+int dfs(int u)
+{
+    if(visit[u]) return dp[u];
+    visit[u] = true;
+    for(int i = reheadline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        dp[u] = MAX(dp[u],dfs(v));
+    }
+    return dp[u];
+}
+
+int main(void)
+{
+    while(2 == scanf("%d%d",&n,&m))
+    {
+        INIT();
+        REP(i,m)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            add(headline,a,b);
+        }
+        FOR(i,1,n)
+        {
+            if(dfn[i] == -1)
+                tarjan(i);
+        }
+        int fasdfa = E;
+        FOR(i,1,fasdfa)
+        {
+            int f = edge[i].f , t = edge[i].t;
+            if(belong[f] != belong[t])
+                add(reheadline,belong[f],belong[t]);
+        }
+        FOR(i,1,n)
+        {
+            dp[belong[i]] = MAX(dp[belong[i]],i);
+        }
+        //FOR(i,1,tot) printf("dp%d is %d\n",i,belong[i]);
+        FOR(i,1,tot)
+        {
+            if(!visit[i])
+                dfs(i);
+        }
+        FOR(i,1,n)
+        {
+            printf("%d%c",dp[belong[i]],i==n?'\n':' ');
+        }
+    }
+    return 0;
+}
+

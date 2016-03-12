@@ -1,0 +1,117 @@
+#include<cstdio>   //原理见下。。。就是那个同余模定理对我来说是新的知识。。原理见下。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+char A[120];
+int digit[40];
+bool visit[2000000];
+int prime[100010];
+int tot=0;
+void IINT(void)
+{
+    memset(visit,false,sizeof(visit));
+    for(int i=2;i<=1001000;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot]=i;
+            for(int j=i*i; i<1100 && j<=1001000;j+=i)visit[j]=true;
+        }
+    }
+    //printf("%d %d\n",prime[tot],tot);
+}
+bool mod(int k,int c)
+{
+    //printf("%d\n",k);
+    int ans=digit[k]%c;
+    //printf("%d\n",ans);
+    for(int i=k-1;i>=1;i--)
+    {
+        ans=(ans*1000+digit[i])%c;
+    }
+    //printf("%d\n",ans);
+    if(0==ans)return true;
+    return false;
+}
+int main(void)
+{
+    IINT();
+    int N;
+    while(EOF!=scanf("%s",A))
+    {
+        scanf("%d",&N);
+        //printf("%s  %d\n",A,N);
+        if(0==strcmp(A,"0") && 0==N)break;
+        int len=strlen(A);
+        memset(digit,0,sizeof(digit));
+        int k=0;
+        for(int i=len-1;i>=0;i-=3)
+        {
+            if(i<=2)
+            {
+                int p=0;
+                k++;
+                for(;p<=i;p++)
+                {
+                    digit[k]*=10;
+                    digit[k]+=(A[p]-'0');
+                }
+                break;
+            }
+            k++;
+            int p=i-2;
+            for(;p<=i;p++)
+            {
+                digit[k]*=10;
+                digit[k]+=(A[p]-'0');
+            }
+        }
+        //printf("%d\n",digit[k]);
+        bool flag=true;
+        for(int i=1;prime[i]<N && i<=tot;i++)
+        {
+            if(mod(k,prime[i]))
+            {
+                printf("BAD %d\n",prime[i]);
+                flag=false;
+                break;
+            }
+        }
+        if(flag)
+        {
+            printf("GOOD\n");
+        }
+    }
+    return 0;
+}
+1、  Char格式读入K。把K转成千进制Kt，同时变为int型。
+把数字往大进制转换能够加快运算效率。若用十进制则耗费很多时间，会TLE。
+千进制的性质与十进制相似。
+例如，把K=1234567890转成千进制，就变成了：Kt=[  1][234][567][890]。
+为了方便处理，我的程序是按“局部有序，全局倒序”模式存放Kt
+即Kt=[890][567][234][1  ]  (一个中括号代表一个数组元素)
+2、  素数打表，把10^6内的素数全部预打表，在求模时则枚举到小于L为止。
+注意打表不能只打到100W，要保证素数表中最大的素数必须大于10^6，否则当L=100W且K为GOOD时，会因为数组越界而RE，这是因为越界后prime都是负无穷的数，枚举的while(prime[pMin]<L)循环会陷入死循环
+3、  高精度求模。
+主要利用Kt数组和同余模定理。
+例如要验证123是否被3整除，只需求模124%3
+但当123是一个大数时，就不能直接求，只能通过同余模定理对大数“分块”间接求模
+具体做法是：
+先求1%3 = 1
+再求（1*10+2）%3 = 0
+再求 （0*10+4）% 3 = 1
+那么就间接得到124%3=1，这是显然正确的
+而且不难发现， （1*10+2）*10+4 = 124
+这是在10进制下的做法，千进制也同理，*10改为*1000就可以了

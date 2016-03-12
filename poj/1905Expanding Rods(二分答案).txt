@@ -1,0 +1,38 @@
+#include<cstdio>   //原理很简单。。画一个圆弧然后勾股定理就行了。。但是因为方程没法解。。所以就二分答案。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const double Pi=asin(1.0);
+const double eps=1e-5; // 我的极小值设定是-5次方。。
+int main(void)
+{
+    double L,T,C;
+    while(3==scanf("%lf%lf%lf",&L,&T,&C))
+    {
+        if(L<0 && T<0 && C<0)break;
+        double S=(1.0+C*T)*L;
+        double left=0.0,right=L/2.0;
+        double mid=(left+right)/2;
+        while(right-left>eps)
+        {
+            double R=(L*L+4.0*mid*mid)/(8.0*mid);
+            if(2.0*R*asin(L/(2.0*R))<S)left=mid;
+            else right=mid;
+            mid=(left+right)/2;
+        }
+        printf("%.3lf\n",mid);
+    }
+    return 0;
+}

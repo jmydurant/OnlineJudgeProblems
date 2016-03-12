@@ -1,0 +1,43 @@
+#include<cstring>     //这题和另外一道ants run很像。。但是由于这题不能改变蚂蚁的顺序。。所以。。只需要让所以蚂蚁同时追上自己前面的蚂蚁就可以了。。
+#include<cstdio>       //设一个dv。。如果后面的蚂蚁速度比前面的蚂蚁快。。就加上速度差。。。否则就加上0.。最后用总路程除以这个数字就可以了。。
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const double Pi = 2.0*asin(1.0);
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;double R;
+        scanf("%d%lf",&N,&R);
+        int first;
+        int tot=0;scanf("%d",&first);
+        int tmpt=first;
+        for(int i=2;i<=N;i++)
+        {
+            int k; scanf("%d",&k);
+            if(k<tmpt)tot+=(tmpt-k);
+            tmpt=k;
+        }
+        if(tmpt>first)tot+=(tmpt-first);
+        if(0==tot)printf("Inf\n");
+        else
+        {
+            double dx=(double)tot;
+            double ans=2.0*Pi*R/dx;
+            printf("%.3lf\n",ans);
+        }
+    }
+    return 0;
+}

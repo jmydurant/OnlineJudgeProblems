@@ -1,0 +1,98 @@
+#include <iostream>   //其实停水的。。。每次按照查询的右边界排序。。然后如果遇到相同的。。删除那个位置的再在新位置添加就可以了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 100010
+#define INF 100000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+typedef pair<int,int> P;
+struct node
+{
+    int l,r,ind;
+    bool operator < (const node & temp)const
+    {
+        return r < temp.r;
+    }
+}ques[maxn];
+LL ans[maxn];
+LL c[maxn];
+int a[maxn];
+map<int,int> bst;
+int n,Q;
+void INIT(void)
+{
+    rst(c,0);
+}
+void update(int pos,int v)
+{
+    while(pos<=n)
+    {
+        c[pos] += v;
+        pos += lowbit(pos);
+    }
+}
+LL req(int pos)
+{
+    LL ans = 0;
+    while(pos>0)
+    {
+        ans += c[pos];
+        pos -= lowbit(pos);
+    }
+    return ans;
+}
+int main(void)
+{
+    int casenum;  scanf("%d",&casenum);
+    while(casenum--)
+    {
+        bst.clear();
+        INIT();
+        scanf("%d",&n);
+        FOR(i,1,n) scanf("%d",a+i);
+        scanf("%d",&Q);
+        REP(i,Q)
+        {
+            scanf("%d%d",&ques[i].l,&ques[i].r);
+            ques[i].ind = i;
+        }
+        sort(ques,ques+Q);
+        int tail = 0;
+        int _pos;
+        REP(i,Q)
+        {
+            while(tail<ques[i].r)
+            {
+                tail++;
+                if((_pos = bst[a[tail]]) != 0)
+                {
+                    update(_pos,-a[tail]);
+                }
+                bst[a[tail]] = tail;
+                update(tail,a[tail]);
+            }
+            ans[ques[i].ind] = req(ques[i].r) - req(ques[i].l-1);
+        }
+        REP(i,Q)
+        printf("%lld\n",ans[i]);
+    }
+    return 0;
+}

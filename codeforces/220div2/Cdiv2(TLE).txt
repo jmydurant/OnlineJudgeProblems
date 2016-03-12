@@ -1,0 +1,194 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //这是一道强连通建图缩点变为DAG之后再搜索最深长度的题目..艹cf的div2什么时候变得那么凶残了。。
+#include <cstring>    //然后光荣的TLE了。。。擦。。怎么那么凶残。。难道要裸搜么。。。
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 1510000
+using namespace std;
+typedef long long LL;
+
+/*************************buildgraph***************************/
+
+typedef pair<int,int> P;
+struct node{
+    int f,t,nxt;
+}edge[maxn<<1];
+int headline[maxn],E;
+inline void add(int f,int t){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+char puzzle[1010][1010];
+int st[1010][1010],ss;
+struct table{
+    int tt,nxt;
+}fuck[maxn<<1];
+inline void ontable(int x,int y,int _n){
+    fuck[ss].tt = _n;
+    fuck[ss].nxt = st[x][y];
+    st[x][y] = ss++;
+}
+int sx,sy;
+int dx[] = {0,0,1,-1};
+int dy[] = {1,-1,0,0};
+int n,m;
+int tot;
+inline bool judge(int _x,int _y){
+    if(_x <=n && _x >= 1 && _y <= m && _y >= 1)return true;
+    return false;
+}
+void dfs(int x,int y,int kind){
+    if(kind == 4){
+        tot++;
+        ontable(x,y,tot);
+        ontable(sx,sy,tot);
+        return;
+    }
+    REP(i,4){
+        int abx = x + dx[i], aby = y + dy[i];
+        if(!judge(abx,aby))continue;
+        if(kind == 1 && puzzle[abx][aby] == 'I')dfs(abx,aby,kind+1);
+        else if(kind == 2 && puzzle[abx][aby] == 'M')dfs(abx,aby,kind+1);
+        else if(kind == 3 && puzzle[abx][aby] == 'A')dfs(abx,aby,kind+1);
+    }
+}
+bool buildg(void){
+    E = tot = ss = 0;
+    rst(headline,-1);
+    rst(st,-1);
+    //rst(cnt,0);
+    FOR(i,1,n){
+        FOR(j,1,m){
+            if(puzzle[i][j] == 'D'){
+                sx = i,sy = j;
+                dfs(i,j,1);
+            }
+        }
+    }
+    FOR(i,1,n){
+        FOR(j,1,m){
+            if(puzzle[i][j] == 'D'){
+                REP(k,4){
+                    int abx = i + dx[k], aby = j + dy[k];
+                    if(judge(abx,aby) && puzzle[abx][aby] == 'A'){
+                        for(int pp = st[i][j]; ~pp; pp = fuck[pp].nxt){
+                            int d = fuck[pp].tt;
+                            for(int qq = st[abx][aby]; ~qq; qq = fuck[qq].nxt){
+                                int a = fuck[qq].tt;
+                                if(a == d)return false;
+                                add(a,d);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }return true;
+}
+
+/***********************SCC**********************************/
+
+bool instack[maxn],in[maxn];
+int Stack[maxn],dfn[maxn],low[maxn],belong[maxn],top,cnt,scc;
+int he[maxn];
+void tarjan(int u){
+    low[u] = dfn[u] = cnt++;
+    Stack[++top] = u;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(dfn[v] == -1){
+            tarjan(v);
+            low[u] = MIN(low[u],low[v]);
+        }else if(instack[v]){
+            low[u] = MIN(low[u],dfn[v]);
+        }
+    }
+    if(low[u] == dfn[u]){
+        scc++;
+        while(true)
+        {
+            int j = Stack[top--];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)
+                break;
+        }
+    }
+}
+void gethe(int u){
+    if(he[u])return;
+    he[u] = 1;
+    int maxr = 0;
+    for(int i = headline[u]; ~i ; i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!he[v])gethe(v);
+        maxr = MAX(maxr,he[v]);
+    }
+    he[u] += maxr;
+}
+void solve(void){
+    FOR(i,1,n)scanf("%s",puzzle[i]+1);
+    if(!buildg()){
+        printf("Poor Inna!\n");
+        return;
+    }
+    if(tot == 0){
+        printf("Poor Dima!\n");
+        return;
+    }
+    top = cnt = scc = 0;
+    rst(instack,false);
+    rst(dfn,-1);
+    rst(in,false);
+    rst(he,0);
+    FOR(i,1,tot){
+        if(dfn[i] == -1)tarjan(i);
+    }
+    bool ok = true;
+    REP(i,E){
+        int a = edge[i].f , b = edge[i].t;
+        if(belong[a] == belong[b]){
+            ok = false;
+            break;
+        }
+        in[b] = true;
+    }
+    if(!ok){
+        printf("Poor Inna!\n");
+        return;
+    }
+    int ans = 0;
+    FOR(i,1,tot){
+        if(!in[i]){
+            gethe(i);
+            ans = MAX(he[i],ans);
+        }
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m))solve();
+    return 0;
+}

@@ -1,0 +1,59 @@
+#include<cstdio>
+#include<cstring>
+#include<climits>
+using namespace std;  //最小生成树的prim算法。。。用邻接矩阵好像很蛋疼。。。但是算法写起来比较简单。。。
+int puzzle[60][60];
+int visit[60];
+int MIN(int a,int b){return a<b?a:b;}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        int R;
+        scanf("%d",&R);
+        for(int i=0;i<=N;i++)
+        {
+            for(int j=0;j<=N;j++)
+            {
+                puzzle[i][j]=INT_MAX;
+            }
+        }
+        memset(visit,0,sizeof(visit));
+        for(int i=1;i<=R;i++)
+        {
+            int a,b,c;
+            scanf("%d%d%d",&a,&b,&c);
+            if(puzzle[a][b]>c)
+            {
+                puzzle[a][b]=c;
+                puzzle[b][a]=c;
+            }
+        }
+        int result=0;visit[1]=1;
+        for(int i=1;i<=N-1;i++)
+        {
+            int minroad=INT_MAX,biaohao;
+            for(int j=2;j<=N;j++)
+            {
+                if(minroad>puzzle[1][j]&&0==visit[j])
+                {
+                    minroad=puzzle[1][j];
+                    biaohao=j;
+                }
+            }
+            result+=minroad;
+            visit[biaohao]=1;
+            for(int j=2;j<=N;j++)
+            {
+                if(0==visit[j])
+                {
+                    puzzle[1][j]=MIN(puzzle[1][j],puzzle[biaohao][j]);
+                    puzzle[j][1]=MIN(puzzle[1][j],puzzle[biaohao][j]);
+                }
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

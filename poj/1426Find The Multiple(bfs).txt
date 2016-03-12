@@ -1,0 +1,73 @@
+#include <cstdio>     //其实思路用下面的就好。。我说的不是很清楚。。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 3004
+using namespace std;
+
+int visit[maxn];
+int n;
+void bfs(void)
+{
+    queue<int> q;
+    visit[1] = 0;
+    q.push(1);
+    while(!q.empty())
+    {
+        int now = q.front();q.pop();
+        REP(i,2)
+        {
+            int ttt = (now*10+i)%n;
+            if(visit[ttt]<0)
+            {
+                visit[ttt] = now;
+                q.push(ttt);
+                if(ttt == 0)
+                    return;
+            }
+        }
+
+    }
+}
+
+void pri(int x)
+{
+    if(visit[x] == 0)
+    {
+        printf("1");
+        return;
+    }
+    int s = visit[x];
+    pri(s);
+    if(s*10%n == x)
+        printf("0");
+    else
+        printf("1");
+}
+
+int main(void)
+{
+    while(EOF != scanf("%d",&n) && n)
+    {
+        rst(visit,-1);
+        bfs();
+        pri(0);
+        printf("\n");
+    }
+}
+题目是要求任意的0和1的组合，使它能被给定的N整除。
+这个乍看没什么想法。
+不过我们想这个0，1组合。也就是一个有2^200个结点的树。
+不过，我们现在选定了一个N。要求的结点是什么条件呢。k%n==0;
+既然这样。如果我当前状态S确定了，那么它在书上以后的分叉0，1就确定了。
+这样结点重复特征就出来了。
+以当前结点所代表的值对N的模作为特征。
+这样我们所需要扩展的结点就只有N个。
+这样BFS就可以轻易搞定了。

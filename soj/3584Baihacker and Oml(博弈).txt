@@ -1,0 +1,24 @@
+#include <cstdio>  //一个简单的巴什博奕。。开始第一个人是a-b范围。。之后相当于两个人都是2a-2b范围了。。
+#include <cstring>
+#include <algorithm>
+using namespace std;
+typedef long long LL; //卡int有意思么？？？？
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        LL a,b,c;
+        scanf("%lld%lld%lld",&a,&b,&c);
+        LL k = c%(2*a+2*b);
+        if(k<a || k-b>=2*a)
+        {
+            printf("yes\n");
+        }
+        else
+        {
+            printf("no\n");
+        }
+    }
+    return 0;
+}

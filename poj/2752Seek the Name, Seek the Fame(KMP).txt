@@ -1,0 +1,56 @@
+#include <iostream>   //我是沙茶.....nxt函数的一个应用
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 1010000
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+char a[maxn];
+int nxt[maxn],ans[maxn];
+void getnxt(){
+    nxt[0] = -1;
+    int len = strlen(a);
+    int k = -1;
+    FOR(i,1,len-1){
+        while(k>-1 && a[i] != a[k+1])k = nxt[k];
+        if(a[i] == a[k+1])k++;
+        nxt[i] = k;
+    }
+}
+void solve(){
+    getnxt();
+    int cnt = 0;
+    int len = strlen(a);
+    int k = len-1;
+    while(nxt[k] != -1){
+        ans[++cnt] = nxt[k]+1;
+        k = nxt[k];
+    }
+    FORD(i,cnt,1)printf("%d ",ans[i]);
+    printf("%d\n",len);
+}
+int main(void){
+    while(gets(a)){
+        solve();
+    }return 0;
+}

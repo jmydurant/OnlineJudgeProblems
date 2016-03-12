@@ -1,0 +1,28 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+using namespace std;   //基本思路。。能否构成三角形。。（共线也可以）
+int main(void)
+{
+    int a[3];
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int i;
+        for(i=0;i<3;i++)
+        {
+            scanf("%d",&a[i]);
+        }
+        sort(a,a+3);
+        if(a[0]+a[1]<a[2])
+        {
+            printf("NO\n");
+        }
+        else
+        {
+            printf("YES\n");
+        }
+    }
+    return 0;
+}

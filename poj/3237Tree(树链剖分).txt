@@ -1,0 +1,232 @@
+#include <iostream>  //继续怒写树链剖分。。。
+#include <cstdio>     //区间修改的话就用lazy标记就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 50010
+#define INF 2000000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn<<2];
+int cnt,E,headline[maxn];
+int son[maxn],fa[maxn],top[maxn],_hash[maxn],s[maxn],deep[maxn];
+int maxr[maxn<<2],minr[maxn<<2],lazy[maxn<<2];    //线段树
+int e[maxn][3];      //记录边的信息
+void INIT(void)
+{
+    E = cnt = 0;
+    rst(headline,-1);
+    rst(lazy,0);
+}
+
+void add(int f,int t)
+{
+    E++;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E;
+}
+void dfs(int u,int _fa,int _dp)
+{
+    fa[u] = _fa;
+    son[u] = -1;
+    s[u] = 1;
+    deep[u] = _dp;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(v != _fa)
+        {
+            dfs(v,u,_dp+1);
+            s[u] += s[v];
+            if(son[u] == -1 || s[son[u]] < s[v])
+                son[u] = v;
+        }
+    }
+}
+void dfn(int u,int sp)
+{
+    top[u] = sp;
+    cnt++; _hash[u] = cnt;
+    if(son[u] == -1) return;
+    dfn(son[u],sp);
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(v != fa[u] && v != son[u])
+            dfn(v,v);
+    }
+}
+void update(int ind)
+{
+    maxr[ind] = MAX(maxr[lson],maxr[rson]);
+    minr[ind] = MIN(minr[lson],minr[rson]);
+}
+void pushdown(int ind)
+{
+    if(lazy[ind])
+    {
+        maxr[lson] = -maxr[lson];
+        minr[lson] = -minr[lson];
+        swap(maxr[lson],minr[lson]);
+        maxr[rson] = -maxr[rson];
+        minr[rson] = -minr[rson];
+        swap(maxr[rson],minr[rson]);
+        lazy[lson] ^= 1;
+        lazy[rson] ^= 1;
+        lazy[ind] = 0;
+    }
+}
+void change(int ind,int l,int r,int _pos,int _v)
+{
+    if(l == r)
+    {
+        maxr[ind] = minr[ind] = _v;
+        lazy[ind] = 0;
+        return;
+    }
+    pushdown(ind);
+    int mid = (l+r)>>1;
+    if(_pos<=mid) change(lson,l,mid,_pos,_v);
+    else       change(rson,mid+1,r,_pos,_v);
+    update(ind);
+}
+void rev(int ind,int l,int r,int Ql,int Qr)
+{
+    if(Ql<=l && r<=Qr)
+    {
+        maxr[ind] = -maxr[ind];
+        minr[ind] = -minr[ind];
+        swap(maxr[ind],minr[ind]);
+        lazy[ind] ^= 1;
+        return;
+    }
+    pushdown(ind);
+    int mid = (l+r)>>1;
+    if(Qr <= mid) rev(lson,l,mid,Ql,Qr);
+    else if(Ql > mid) rev(rson,mid+1,r,Ql,Qr);
+    else
+    {
+        rev(lson,l,mid,Ql,mid);
+        rev(rson,mid+1,r,mid+1,Qr);
+    }
+    update(ind);
+}
+int getmax(int ind,int l,int r,int Ql,int Qr)
+{
+    if(Ql<=l && r<=Qr)
+        return maxr[ind];
+    pushdown(ind);
+    int mid = (l+r)>>1;
+    if(Qr<=mid) return getmax(lson,l,mid,Ql,Qr);
+    else if(Ql > mid)  return getmax(rson,mid+1,r,Ql,Qr);
+    else
+    {
+        int t1 = getmax(lson,l,mid,Ql,mid);
+        int t2 = getmax(rson,mid+1,r,mid+1,Qr);
+        t1 = MAX(t1,t2);
+        return t1;
+    }
+}
+void solverev(int u,int v)
+{
+    int f1 = top[u], f2 = top[v];
+    while(f1 != f2)
+    {
+        if(deep[f1] < deep[f2])
+        {
+            swap(f1,f2);
+            swap(u,v);
+        }
+        rev(1,1,cnt,_hash[f1],_hash[u]);
+        u = fa[f1]; f1 = top[u];
+    }
+    if(u == v)return;
+    if(deep[u] > deep[v])
+        swap(u,v);
+    rev(1,1,cnt,_hash[son[u]],_hash[v]);
+}
+int solvemax(int u,int v)
+{
+    int f1 = top[u], f2 = top[v];
+    int ans = -INF;
+    while(f1 != f2)
+    {
+        if(deep[f1] < deep[f2])
+        {
+            swap(f1,f2);
+            swap(u,v);
+        }
+        int temp = getmax(1,1,cnt,_hash[f1],_hash[u]);
+        ans = MAX(ans,temp);
+        u = fa[f1]; f1 = top[u];
+    }
+    if(u == v) return ans;
+    if(deep[u] > deep[v])
+        swap(u,v);
+    int temp = getmax(1,1,cnt,_hash[son[u]],_hash[v]);
+    ans = MAX(ans,temp);
+    return ans;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        INIT();
+        int n; scanf("%d",&n);
+        FOR(i,1,n-1)
+        {
+            scanf("%d%d%d",&e[i][0],&e[i][1],&e[i][2]);
+            add(e[i][0],e[i][1]);
+            add(e[i][1],e[i][0]);
+        }
+        dfs(1,0,0);
+        dfn(1,1);
+        FOR(i,1,n-1)
+        {
+            if(deep[e[i][0]] > deep[e[i][1]]) swap(e[i][0],e[i][1]);
+            change(1,1,cnt,_hash[e[i][1]],e[i][2]);
+        }
+        //for(int i = 1;i<=6;i++)printf("tree%d is %d\n",i,maxr[i]);
+        char op[10];
+        while(true)
+        {
+            scanf("%s",op);
+            if(op[0] == 'D')break;
+            int a,b; scanf("%d%d",&a,&b);
+            if(op[0] == 'C')
+            {
+                change(1,1,cnt,_hash[e[a][1]],b);
+            }
+            else if(op[0] == 'N')
+            {
+                solverev(a,b);
+            }
+            else
+            {
+                printf("%d\n",solvemax(a,b));
+            }
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,56 @@
+#include <iostream>   //珊WA曾肝。。。愛。。。
+#include <cstdio>
+#include <cstring>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 11000
+using namespace std;
+typedef long long LL;
+char s[20][100];
+int c[20][30];
+int tot[20];
+int ans[30];
+int n;
+void init(void)
+{
+    memset(c,0,sizeof(c));
+    memset(tot,0,sizeof(tot));
+    memset(ans,0,sizeof(ans));
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        init();
+        scanf("%d",&n);
+        for(int i = 1;i<=n;i++)
+        {
+            scanf("%s",s[i]);
+            tot[i] = strlen(s[i]);
+            for(int j = 0;j<tot[i];j++)
+            {
+                c[i][s[i][j]-'a']++;
+            }
+        }
+        for(int i = 1;i<=n;i++)
+        {
+            for(int j = 0;j<26;j++)
+            {
+                if(c[i][j]>0)
+                    ans[j]++;
+            }
+        }
+        printf("document count: %d\n",n);
+        for(int i = 1;i<=n;i++)
+        {
+            printf("words count of document %d: %d\n",i,tot[i]);
+            for(int j = 0;j<26;j++)
+                printf("%d%c",c[i][j],j==25?'\n':' ');
+        }
+        printf("\n");
+        for(int i = 0;i<26;i++)
+            printf("%d%c",ans[i],i==25?'\n':' ');
+        printf("\n");
+    }
+    return 0;
+}

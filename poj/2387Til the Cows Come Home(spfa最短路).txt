@@ -1,0 +1,77 @@
+#include <stdio.h>     //ÂãµÄ¡£¡£¡£
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <cmath>
+#include <map>
+#include <string>
+#define INF 0x0f0f0f70f
+#define MAXN 51000
+#define eps 1e-10
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+struct Edge
+{
+    int s,e,w;
+    int next;
+}l[5000];
+int headline[2000];
+int dis[2000];
+bool visit[2000];
+int N;
+int spfa(void)
+{
+    memset(visit,0,sizeof(visit));
+    memset(dis,INF,sizeof(dis));
+    //printf("%d  pass\n",dis[3]);
+    visit[1]=true;
+    dis[1]=0;
+    int start=1;
+    queue<int> q;
+    q.push(start);
+    while(!q.empty())
+    {
+        start=q.front();
+        q.pop();
+        visit[start]=false;
+        for(int i=headline[start];i!=-1;i=l[i].next)
+        {
+            int tail=l[i].e;
+            if(dis[tail]>dis[start]+l[i].w)
+            {
+                dis[tail]=dis[start]+l[i].w;
+                if(!visit[tail])
+                {
+                    visit[tail]=true;
+                    q.push(tail);
+                }
+            }
+        }
+    }
+    return dis[N];
+}
+int main(void)
+{
+    int M;
+    while(2==scanf("%d%d",&M,&N))
+    {
+        memset(headline,-1,sizeof(headline));
+        //printf("%d passsss\n",headline[100]);
+        for(int i=1;i<=2*M;i+=2)
+        {
+            scanf("%d%d%d",&l[i].s,&l[i].e,&l[i].w);
+            l[i].next=headline[l[i].s];
+            headline[l[i].s]=i;
+            l[i+1].s=l[i].e;
+            l[i+1].e=l[i].s;
+            l[i+1].w=l[i].w;
+            l[i+1].next=headline[l[i+1].s];
+            headline[l[i+1].s]=i+1;
+        }
+        int ans=spfa();
+        printf("%d\n",ans);
+    }
+}

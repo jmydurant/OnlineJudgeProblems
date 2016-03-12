@@ -1,0 +1,80 @@
+#include<cstring>   //方法就是找到所有的循环节。。。详细见下面。。
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define MOD 1000003LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+bool visit[10010];
+int pos[10010];
+int cow[10010];
+bool cmp(int a,int b)
+{
+    return cow[a]<cow[b];
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int minn=INT_MAX;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",cow+i);
+            pos[i]=i;
+            minn=MIN(minn,cow[i]);
+        }
+        sort(pos+1,pos+N+1,cmp);
+        //for(int i=1;i<=N;i++)printf("%d ",pos[i]); printf("\n");
+        int ans=0;
+        memset(visit,false,sizeof(visit));
+        for(int i=1;i<=N;i++)
+        {
+            if(pos[i]==i || visit[i])continue;
+            visit[i]=true;
+            int tmpt=cow[i];
+            int cnt=1;
+            int j=pos[i];
+            int sum=cow[i];
+            while(j!=i)
+            {
+                visit[j]=true;
+                cnt++;
+                tmpt=MIN(cow[j],tmpt);
+                sum+=cow[j];
+                j=pos[j];
+            }
+            ans+=MIN(sum+(cnt-2)*tmpt,sum+(cnt+1)*minn+tmpt);
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+1.找出初始状态和目标状态。明显，目标状态就是排序后的状态。
+2.画出置换群，在里面找循环。例如，数字是8 4 5 3 2 7
+明显，目标状态是2 3 4 5 7 8，能写为两个循环：
+(8 2 7)(4 3 5)。
+3.观察其中一个循环，明显地，要使交换代价最小，应该用循环里面最小的数字2，去与另外的两个数字，7与8交换。这样交换的代价是：
+sum - min + (len - 1) * min
+化简后为：
+sum + (len - 2) * min
+其中，sum为这个循环所有数字的和，len为长度，min为这个环里面最小的数字。
+
+4.考虑到另外一种情况，我们可以从别的循环里面调一个数字，进入这个循环之中，使交换代价更小。例如初始状态：
+1 8 9 7 6
+可分解为两个循环：
+(1)(8 6 9 7)，明显，第二个循环为(8 6 9 7)，最小的数字为6。我们可以抽调整个数列最小的数字1进入这个循环。使第二个循环变为：(8 1 9 7)。让这个1完成任务后，再和6交换，让6重新回到循环之后。这样做的代价明显是：
+sum + min + (len + 1) * smallest
+其中，sum为这个循环所有数字的和，len为长度，min为这个环里面最小的数字，smallest是整个数列最小的数字。
+
+5.因此，对一个循环的排序，其代价是sum - min + (len - 1) * min和sum + min + (len + 1) * smallest之中小的那个数字。

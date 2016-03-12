@@ -1,0 +1,87 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 211080
+#define mod 1000000007LL
+#define fr first
+#define se second
+using namespace std;
+typedef long long LL;
+int c[maxn];
+int a[maxn];
+int l,r,n,lnum,rnum,tot;
+void update(int pos,int val){
+    while(pos <= n){
+        c[pos] += val;
+        pos += lowbit(pos);
+    }
+}
+int req(int pos){
+    int ans = 0;
+    while(pos > 0){
+        ans += c[pos];
+        pos -= lowbit(pos);
+    }return ans;
+}
+int main(void){
+    while(EOF != scanf("%d",&n)){
+        rst(c,0);
+        tot = n;
+        FOR(i,1,n){
+            update(i,1);
+        }
+        FOR(i,1,n){
+            scanf("%d",a+i);
+            if(a[i])rnum++;
+            else lnum++;
+        }
+        l = 1,r = n;
+        LL ans = 0;
+        while(true){
+            if(lnum == 0 || rnum == 0)break;
+            while(l <= n && a[l]){
+                l++;
+            }
+            while(r > 0 && a[r] == 0){
+                r--;
+            }
+            if(l > n || r <= 0)break;
+            int lx = req(l) - 1 , rx = tot - req(r);
+            tot--;
+            if(lx <= rx){
+                ans += lx;
+                update(l,-1);
+                l++;
+                lnum--;
+            }else {
+                ans += rx;
+                update(r,-1);
+                r--;
+                rnum--;
+            }
+        }
+        printf("%I64d\n",ans);
+    }return 0;
+}

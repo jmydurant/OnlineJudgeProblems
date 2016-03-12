@@ -1,0 +1,177 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //仍然是三进制记录状态。。然后不断极大极小搜索即可。。有一个强剪枝就是如果当前肯定平局。。那么就直接返回。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 50000000
+#define maxn 5000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int visit[4][4];
+int vx[4] , vy[4] , vcross[2];   //记录工具vx代表行vy代表列xcross代表对角线
+char puzzle[6][6];
+struct node{
+    int x,y;
+    void INIT(int _x,int _y){x = _x , y = _y;}
+}pp[15] , bestp;
+int tot , cap , res;
+int dp[550000];
+int p[13];
+void do_with_it(int x,int y,int tick){
+    int val = (puzzle[x][y] == 'x') ? 1 : 8;
+    vx[x] += val * tick;
+    vy[y] += val * tick;
+    if(x == y)vcross[0] += val * tick;
+    if(x + y == 3)vcross[1] += val * tick;
+}
+int cal(void){
+    REP(i,4){
+        if((vx[i] & 4) || (vy[i] & 4))return 1;
+        if((vx[i] & 32) || (vy[i] & 32))return -1;
+    }
+    REP(i,2){
+        if(vcross[i] & 4)return 1;
+        if(vcross[i] & 32)return -1;
+    }
+    return 0;
+}
+int checkdraw(void){
+    bool ok = true;
+    REP(i,4){
+        if( (!(vx[i] & 56)) || (!(vx[i] & 7)) ){
+            ok = false;break;
+        }
+        if( (!(vy[i] & 56)) || (!(vy[i] & 7)) ){
+            ok = false;break;
+        }
+    }
+    REP(i,2){
+        if( (!(vcross[i] & 56)) || (!(vcross[i] & 7)) ){
+            ok = false;break;
+        }
+    }
+    if(ok)return 0;
+    int tt = cal();
+    if(tt != 0)return tt;
+    return -INF;
+}
+int findmax(int,int,int);
+int findmin(int,int,int);
+int findmax(int used,int deep,int state){
+    //printf("maxused is %d and dp is %d\n",used , dp[state]);
+    if(dp[state] != -INF)return dp[state];
+    if(used == cap){
+        dp[state] = cal();
+        return dp[state];
+    }
+    int tt = checkdraw();
+    if(tt != -INF){
+        dp[state] = tt;
+        return dp[state];
+    }
+    int ans = -INF;
+    REP(i,tot){
+        if(!(h(i) & used)){
+            puzzle[pp[i].x][pp[i].y] = 'x';
+            do_with_it(pp[i].x , pp[i].y , 1);
+            //if(i == 2)printf("vcross[1] is %d\n",vcross[1]);
+            //ystem("pause");
+            int tt = findmin(used | h(i) , deep+1 , state + p[i]);
+            //printf("there tt is %d\n",tt);
+            do_with_it(pp[i].x , pp[i].y , -1);
+            puzzle[pp[i].x][pp[i].y] = '.';
+            if(tt > ans) ans = tt;
+            if(deep == 0){
+                if(tt == 1){
+                    res = tt;
+                    bestp = pp[i];
+                    return 0;
+                }
+            }
+        }
+    }
+    dp[state] = ans;
+    return dp[state];
+}
+int findmin(int used,int deep,int state){
+    //printf("minused is %d and dp is %d\n",used , dp[state]);
+    if(dp[state] != -INF)return dp[state];
+    if(used == cap){
+        dp[state] = cal();
+        return dp[state];
+    }
+    int tt = checkdraw();
+    //printf("checkdraw is %d\n",tt);
+    if(tt != -INF){
+        dp[state] = tt;
+        return dp[state];
+    }
+    int ans = INF;
+    REP(i,tot){
+        if(!(h(i) & used) ){
+            puzzle[pp[i].x][pp[i].y] = 'o';
+            do_with_it(pp[i].x , pp[i].y , 1);
+            int tt = findmax(used | h(i) , deep+1 , state + 2 * p[i]);
+            do_with_it(pp[i].x , pp[i].y , -1);
+            puzzle[pp[i].x][pp[i].y] = '.';
+            if(tt < ans)ans = tt;
+        }
+    }
+    dp[state] = ans;
+    return dp[state];
+}
+void solve(void){
+    REP(i,4) scanf("%s",puzzle[i]);
+    tot = 0;
+    rst(vx,0); rst(vy,0); rst(vcross,0);
+    REP(i,4)REP(j,4){
+        if(puzzle[i][j] == '.'){
+            pp[tot].INIT(i,j); tot++;
+        }
+        else do_with_it(i,j,1);
+    }
+    //REP(i,4)printf("vx%d is %d\n",i,vx[i]);
+    //REP(i,4)printf("vy%d is %d\n",i,vy[i]);
+    //REP(i,2)printf("vcross%d is %d\n",i,vcross[i]);
+    res = -INF;
+    cap = (h(tot) - 1);
+    REP(i,p[tot]) dp[i] = -INF;
+    findmax(0,0,0);
+    if(res > 0){
+        printf("(%d,%d)\n",bestp.x , bestp.y);
+    }else printf("#####\n");
+}
+void INIT(void){
+    p[0] = 1;
+    FOR(i,1,12) p[i] = p[i-1] * 3;
+}
+int main(void){
+    INIT();
+    while((~scanf("%s",puzzle[0])) && strcmp(puzzle[0] , "$") != 0) solve();
+    return 0;
+}

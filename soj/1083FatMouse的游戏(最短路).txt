@@ -1,0 +1,82 @@
+#include <cstdio>             //用vs2012写的感觉好爽。。。
+#include <cstring>            //把每个字符串当成一个点。。然后最短路即可。。
+#include <algorithm>
+#include <queue>
+#include <iostream>
+#include <climits>
+#include <cmath>
+#define  REP(i,n) for(int i = 0;i<(n);i++)
+#define  FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define  FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define  rst(x,k) memset(x,k,sizeof(x))
+#define  maxn 256
+#define  mod 18446744073709551616LL
+#define  ni 10330176681277348905LL
+#define  INF 100000000
+#define  base 128
+using namespace  std;
+typedef unsigned long long LL;
+char s[210][8];
+int puzzle[210][210];
+int dis[210],fa[210],son[210];
+bool visit[210];
+int n,Q;
+int st,en;
+int judge(int i,int j){
+	int same = 0;
+	REP(step,4)if(s[i][step] != s[j][step]) same++;
+	if(same == 1)return 1;
+	return INF;
+}
+void dijstra(int fr,int se){
+	FOR(i,1,n) dis[i] = INF;
+	rst(visit,false);
+	dis[fr] = 0; visit[fr] = true; fa[fr] = fr;
+	int now = fr;
+	while (now != en){
+		FOR(i,1,n){
+			if(!visit[i]){
+				if(dis[i] > dis[now] + puzzle[now][i]){
+					fa[i] = now;
+					dis[i] = dis[now] + puzzle[now][i];
+				}
+			}
+		}
+		int maxr = INF,id;
+		FOR(i,1,n){
+			if((!visit[i]) && dis[i] < maxr){
+				maxr = dis[i];
+				id = i;
+			}
+		}
+		now = id; visit[now] = true;
+	}
+	while (now != fr){
+		son[fa[now]] = now;
+		now = fa[now];
+	}
+	while(now != se){
+		printf("%s ",s[now]);
+		now = son[now];
+	}
+	printf("%s\n",s[now]);
+}
+void solve(void){
+	FOR(i,1,n) scanf("%s",s[i]);
+	FOR(i,1,n)FOR(j,1,n){puzzle[i][j] = judge(i,j);}
+	while (Q--){
+		char ss[8]; scanf("%s",ss);
+		FOR(i,1,n)if(strcmp(ss,s[i]) == 0){
+			st = i; break;
+		}
+		scanf("%s",ss);
+		FOR(i,1,n)if(strcmp(ss,s[i]) == 0){
+			en = i; break;
+		}
+		dijstra(st,en);
+	}printf("\n");
+}
+int main(void){
+	while (2 == scanf("%d%d",&n,&Q))solve();
+	return 0;
+}

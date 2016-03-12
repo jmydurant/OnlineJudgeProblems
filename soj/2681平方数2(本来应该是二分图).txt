@@ -1,0 +1,23 @@
+#include<cstdio>
+#include<cstring>
+int pingfang[50];      //结果找规律做掉了。。。。
+int main(void)
+{
+    int i,num;
+    for(i=0;i<=50;i++)
+    {
+        pingfang[i]=i*i;
+    }
+    for(i=2;i<50;i++)
+    {
+        pingfang[i]/=2;
+    }
+    while(scanf("%d",&num)&&num)
+    {
+        for(i=1;i<50;i++)
+        {
+            if(pingfang[i]>num)break;
+        }
+        printf("%d\n",i-1);
+    }
+}

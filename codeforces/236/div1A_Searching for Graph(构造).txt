@@ -1,0 +1,70 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //每次删点至少要删两个边那我先构造一个K5.。然后后来的每个点都和K5有两个边。如果还有边没有连就随意连就可以了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 1100
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,p;
+int puzzle[30][30];
+void solve(void){
+    cin >> n >> p ;
+    rst(puzzle,0);
+    for(int i = 1;i<=5;i++){
+        for(int j = i+1;j<=5;j++){
+            printf("%d %d\n",i,j);
+            puzzle[i][j] = puzzle[j][i] = 1;
+        }
+    }
+    p = 2 * n + p;
+    p -= 10;
+    for(int i = 6;i<=n;i++){
+        printf("1 %d\n2 %d\n",i,i);
+        puzzle[1][i] = puzzle[i][1] = puzzle[2][i] = puzzle[i][2] = 1;
+        p -= 2;
+    }
+    while(p > 0){
+        for(int i = n;i>=1;i--){
+            for(int j = i-1;j>=1;j--){
+                if(!puzzle[i][j]){
+                    p--;
+                    puzzle[i][j] = puzzle[j][i] = 1;
+                    printf("%d %d\n",i,j);
+                    if(p == 0)return;
+                }
+            }
+        }
+    }
+}
+int main(void){
+    int casenum; cin >> casenum;
+    while(casenum--) solve();
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<algorithm>
+#include<climits>
+#include<cmath>
+using namespace std;             //搓死了。。最后输出格式有错。。WA了三次。。白白的失误啊。。
+int dp[10010];                   //把二维背包给化成一维了。。。是用01完全背包法。。。基础要扎实。。
+int w[510];
+int p[510];
+int MAX(int a,int b){return a>b?a:b;}
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int E,F,HP;int itemnum;
+        scanf("%d%d%d",&E,&F,&itemnum);
+        HP=F-E;
+        for(int i=1;i<=itemnum;i++)
+        {
+            scanf("%d%d",&p[i],&w[i]);
+            p[i]=-p[i];                       // 把价值变成负数就可以求装满背包的最小值了。。。
+        }
+        for(int i=1;i<=HP;i++){dp[i]=-10000000;}
+        dp[0]=0;
+        for(int i=1;i<=itemnum;i++)
+        {
+            for(int j=w[i];j<=HP;j++)
+            {
+                dp[j]=MAX(dp[j],dp[j-w[i]]+p[i]);
+            }
+        }
+        if(-10000000==dp[HP]){printf("This is impossible.\n");}
+        else printf("The minimum amount of money in the piggy-bank is %d.\n",-dp[HP]);
+    }
+    return 0;
+}

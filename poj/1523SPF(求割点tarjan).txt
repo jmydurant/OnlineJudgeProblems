@@ -1,0 +1,82 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>   //和tarjan很像。。就改了一个小地方。。所以。。因为没让求双联通分量。。所以连栈也没用。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;   
+int n ,  dfn[1010] , low[1010];
+bool puzzle[1010][1010];
+int sub[1010] , tot;
+int st[2020] , top;
+void dfs(int u){
+    dfn[u] = low[u] = ++tot;
+    FOR(i,1,n){
+        if(!puzzle[i][u])continue;
+        if(!dfn[i]){
+            dfs(i);
+            low[u] = MIN(low[i] , low[u]);
+            if(low[i] >= dfn[u]) sub[u]++;
+        }else{
+            low[u] = MIN(dfn[i] , low[u]);
+        }
+    }
+}
+void tarjan(void){
+    tot = top = 0;
+    dfs(1);
+}
+int main(void){
+    int aa,bb;
+    int iCase = 0;
+    while(EOF != scanf("%d" , &aa) && aa){
+        rst(puzzle,0); rst(dfn,0) ; rst(low,0); rst(sub,0);
+        n = 0;
+        scanf("%d",&bb); puzzle[aa][bb] = puzzle[bb][aa] = 1;
+        n = MAX(n,aa) ; n = MAX(n,bb);
+        while(scanf("%d",&aa) && aa){
+            scanf("%d",&bb);
+            puzzle[aa][bb] = puzzle[bb][aa] = 1;
+            n = MAX(n,aa) ; n = MAX(n,bb);
+        }
+        tarjan();
+        if(sub[1] >= 1)sub[1]--;
+        bool flag = false;
+        printf("Network #%d\n",++iCase);
+        FOR(i,1,n){
+            if(sub[i]){
+                printf("  SPF node %d leaves %d subnets\n",i,sub[i]+1);
+                flag = true;
+            }
+        }
+        if(!flag)printf("  No SPF nodes\n");
+        printf("\n");
+    }return 0;
+}

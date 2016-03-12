@@ -1,0 +1,158 @@
+#include <iostream>  //继续怒写树链剖分。。。
+#include <cstdio>    //写一个树状数组版本的..点修改。。求区间值
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 100100
+#define INF 2000000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+struct node
+{
+    int t,nxt;
+}edge[maxn*2];
+int E,cnt,headline[maxn];
+int fa[maxn],son[maxn],top[maxn],deep[maxn],s[maxn],_hash[maxn];
+int e[maxn][3];             //可耻的存边....
+int c[maxn];                //树状数组...
+void INIT(void)
+{
+    E = cnt = 0;
+    rst(headline,-1);
+    rst(c,0);
+}
+void add(int f,int t)
+{
+    E++;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E;
+}
+void dfs(int u,int _fa,int dp)
+{
+    fa[u] = _fa;
+    son[u] = -1;
+    deep[u] = dp;
+    s[u] = 1;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(v != _fa)
+        {
+            dfs(v,u,dp+1);
+            s[u] += s[v];
+            if(son[u] == -1 || s[v] > s[son[u]])
+                son[u] = v;
+        }
+    }
+}
+void dfn(int u,int sp)
+{
+    top[u] = sp;
+    cnt++; _hash[u] = cnt;
+    if(son[u] == -1) return;
+    dfn(son[u],sp);
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(v != fa[u] && v != son[u])
+        {
+            dfn(v,v);
+        }
+    }
+}
+void update(int pos,int v)
+{
+    while(pos<=cnt)
+    {
+        c[pos] += v;
+        pos += lowbit(pos);
+    }
+}
+int req_(int pos)
+{
+    int ans = 0;
+    while(pos>0)
+    {
+        ans += c[pos];
+        pos -= lowbit(pos);
+    }
+    return ans;
+}
+int solve(int u,int v)
+{
+    int f1 = top[u], f2 = top[v];
+    int ans = 0;
+    while(f1 != f2)
+    {
+        if(deep[f1] < deep[f2])
+        {
+            swap(f1,f2);
+            swap(u,v);
+        }
+        ans += req_(_hash[u]);
+        ans -= req_(_hash[f1]-1);
+        u = fa[f1], f1 = top[u];
+    }
+    if(v == u) return ans;
+    if(deep[u] > deep[v]) swap(u,v);
+    ans += req_(_hash[v]);
+    ans -= req_(_hash[son[u]]-1);
+    return ans;
+}
+
+int n,Q,sssss;
+int main(void)
+{
+    while(3 == scanf("%d%d%d",&n,&Q,&sssss))
+    {
+        INIT();
+        FOR(i,1,n-1)
+        {
+            scanf("%d%d%d",&e[i][0],&e[i][1],&e[i][2]);
+            add(e[i][0],e[i][1]);
+            add(e[i][1],e[i][0]);
+        }
+        dfs(1,1,0);
+        dfn(1,1);
+        FOR(i,1,n-1)
+        {
+            if(deep[e[i][0]] > deep[e[i][1]]) swap(e[i][0],e[i][1]);
+            update(_hash[e[i][1]],e[i][2]);
+        }
+        while(Q--)
+        {
+            int op; scanf("%d",&op);
+            if(op == 0)
+            {
+                int uuuu; scanf("%d",&uuuu);
+                printf("%d\n",solve(sssss,uuuu));
+                sssss = uuuu;
+            }
+            else
+            {
+                int a,b; scanf("%d%d",&a,&b);
+                update(_hash[e[a][1]],-e[a][2]);
+                update(_hash[e[a][1]],b);
+                e[a][2] = b;
+            }
+        }
+    }
+    return 0;
+}

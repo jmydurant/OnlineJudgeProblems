@@ -1,0 +1,106 @@
+#include <iostream>   //对于x能成的话。。那么x-2一定可以成。。但是还是要小心。。因为l有可能是负数(测试数据比较贱)
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <deque>
+#include <climits>
+#include <cmath>
+#include <vector>
+#include <set>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 201000
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 20100403LL
+#define h(i,j) (i*col+j)
+#define eps 1e-10
+using namespace std;
+typedef long long LL;
+
+struct node
+{
+    int t,nxt;
+    int w;
+}edge[maxn];
+int headline[maxn];
+int E;
+void add(int f,int t,int w)
+{
+    E++;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].w = w;
+    headline[f] = E;
+}
+int n,Q;
+int mmax[2][maxn];
+int ans[2];
+
+void dfs(int u,int fa)
+{
+    mmax[0][u] = mmax[1][u] = 0;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        int w = edge[i].w;
+        if(v != fa)
+        {
+            dfs(v,u);
+            int temp[2];
+            temp[(0+w)%2] = mmax[0][v] + w;
+            temp[(1+w)%2] = mmax[1][v] + w;
+            if(mmax[1][v] == 0)
+            {
+                temp[(1+w)%2] = 0;
+            }
+            ans[0] = MAX(ans[0],temp[0]);
+            ans[1] = MAX(ans[1],temp[1]);
+            ans[0] = MAX(ans[0],mmax[0][u] + temp[0]);
+            if(mmax[1][u] != 0)
+                ans[1] = MAX(ans[1],mmax[1][u] + temp[0]);
+            if(temp[1] != 0)
+                ans[1] = MAX(ans[1],mmax[0][u] + temp[1]);
+            if(temp[1] != 0 && mmax[1][u] != 0)
+                ans[0] = MAX(ans[0],mmax[1][u] + temp[1]);
+            mmax[1][u] = MAX(mmax[1][u],temp[1]);
+            mmax[0][u] = MAX(mmax[0][u],temp[0]);
+        }
+    }
+}
+
+int main(void)
+{
+    while(2 == scanf("%d%d",&n,&Q))
+    {
+        E = 0;
+        rst(headline,-1);
+        REP(i,n-1)
+        {
+            int a,b,c; scanf("%d%d%d",&a,&b,&c);
+            add(a,b,c);
+            add(b,a,c);
+        }
+        ans[0] = ans[1] = 0;
+        dfs(1,-1);
+        //printf("%d    %d   is ans\n",ans[0],ans[1]);
+        while(Q--)
+        {
+            int k; scanf("%d",&k);
+            if(k<0)
+            {
+                puts("No");
+                continue;
+            }
+            if(ans[k%2]>=k)
+                puts("Yes");
+            else
+                puts("No");
+        }
+    }
+}

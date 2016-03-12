@@ -1,0 +1,45 @@
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<vector>
+#include<map>
+#include<climits>
+#include<stack>
+#include<cmath>
+#define INF 100000000   //背包不要动脑子。。好像比搜索慢一些。。。
+using namespace std;
+int dp[250];
+int w[35];
+int MIN(int a,int b){return a<b?a:b;}
+int main(void)
+{
+    int N,HP;
+    while(EOF!=scanf("%d%d",&HP,&N))
+    {
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",w+i);
+        }
+        for(int i=1;i<=HP;i++)
+        {
+            dp[i]=INF;
+        }
+        dp[0]=0;
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=HP;j>=w[i];j--)
+            {
+                dp[j]=MIN(dp[j],dp[j-w[i]])+1;
+            }
+        }
+        for(int i=HP;i>=0;i--)
+        {
+            if(dp[i]<INF)
+            {
+                printf("%d\n",i);
+                break;
+            }
+        }
+    }
+    return 0;
+}

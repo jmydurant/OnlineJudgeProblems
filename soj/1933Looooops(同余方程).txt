@@ -1,0 +1,83 @@
+#include <iostream>    //好久没有加新的题解了。。但是逐渐的感觉加普通的题解已经没有什么必要了。。
+#include <cstdio>      //这道题就是解决一个标准的 a == bx（mod k）的同余方程。。方法很简单。。自己看数论书就能解决(感觉最近自己数论强了不少)
+#include <cstring>
+#define MAXN 1000001
+using namespace std;
+typedef long long LL;
+
+LL gcd(LL a,LL b)
+{
+    LL temp;
+    while(b)
+    {
+        temp = a%b;
+        a = b;
+        b = temp;
+    }
+    return a;
+}
+
+void ex_gcd(LL a,LL b,LL& d,LL& x,LL& y)
+{
+    if(!b){d = a; x = 1; y = 0;}
+    else
+    {
+        ex_gcd(b,a%b,d,y,x);
+        y -= x*(a/b);
+    }
+}
+
+LL power(LL a,LL n,LL mod)
+{
+    LL ans = 1;
+    while(n)
+    {
+        if(n%2)
+        {
+            ans *= a;
+            ans %= mod;
+        }
+        a *= a;
+        a %= mod;
+        n /= 2;
+    }
+    return ans;
+}
+
+LL ni(LL a, LL n)
+{
+    LL d,x,y;
+    ex_gcd(a,n,d,x,y);
+    return (x+n)%n;
+}
+
+int main(void)
+{
+    LL a,b,c,k;
+    while(cin >> a >> b >> c >> k)
+    {
+        if(a == 0 && b == 0 && c == 0 && k == 0)
+            break;
+        LL mod = (1LL<<k);
+        LL d = ((b-a)%mod+mod)%mod;
+        c %= mod;
+        LL k = gcd(c,mod);
+        if(d == 0)
+        {
+            printf("0\n");
+            continue;
+        }
+        if(c == 0 || d%k!=0)
+        {
+            printf("FOREVER\n");
+            continue;
+        }
+        d /= k;
+        c /= k;
+        mod /= k;
+        d *= ni(c,mod);
+        d %= mod;
+        printf("%lld\n",d);
+    }
+    return 0;
+}

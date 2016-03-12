@@ -1,0 +1,85 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //三维最短路径问题。。bfs花的时间会很少。。而且编码难度不大。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+char puzzle[35][35][35];
+bool visit[35][35][35];
+int L,row,col;
+int sx,sy,sz,ex,ey,ez;
+int dx[] = {1,-1,0,0,0,0};
+int dy[] = {0,0,1,-1,0,0};
+int dz[] = {0,0,0,0,1,-1};
+int qx[50000] , qy[50000] , qz[50000] ,dis[50000] , head,tail;
+inline bool judge(int x,int y,int z){
+    if(x >= 0 && x < row && y >= 0 && y < col && z >= 0 && z < L)return true;
+    return false;
+}
+int bfs(void){
+    head = 0 , tail = 1;
+    rst(visit,false);
+    qx[head] = sx , qy[head] = sy , qz[head] = sz , dis[head] = 0;
+    visit[sz][sx][sy] = true;
+    while(head < tail){
+        sx = qx[head] , sy = qy[head] , sz = qz[head] ; int dd = dis[head];
+        head++;
+        REP(k,6){
+            int tx = sx + dx[k] , ty = sy + dy[k] , tz = sz + dz[k];
+            if(judge(tx,ty,tz) && (!visit[tz][tx][ty]) && puzzle[tz][tx][ty] != '#'){
+                if(tx == ex && ty == ey && tz == ez)return dd+1;
+                visit[tz][tx][ty] = true;
+                qx[tail] = tx , qy[tail] = ty , qz[tail] = tz , dis[tail] = dd+1; tail++;
+            }
+        }
+    }return -1;
+}
+void solve(void){
+    REP(i,L)REP(j,row) scanf("%s",puzzle[i][j]);
+    REP(i,L){
+        REP(j,row){
+            REP(k,col){
+                if(puzzle[i][j][k] == 'S')sx = j , sy = k , sz = i;
+                if(puzzle[i][j][k] == 'E')ex = j , ey = k , ez = i;
+            }
+        }
+    }
+    int ans = bfs();
+    if(ans != -1)printf("Escaped in %d minute(s).\n",ans);
+    else printf("Trapped!\n");
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&L,&row,&col)){
+        if(L == 0 && row == 0 && col == 0)return 0;
+        solve();
+    }return 0;
+}

@@ -1,0 +1,154 @@
+#include <cstdio>   //状态方程很好写。。然后就是解方程了。。注意最好先bfs一下。。数遍给各个点标一个号。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+#define maxn 1000
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define f(i,j)  (i*col+j)
+#define eps 1e-9
+using namespace std;
+typedef pair<int,int> P;
+double m[maxn][maxn];
+int row,col;
+queue<P> q;
+int s_x,s_y,e_x,e_y;
+int dx[] = {1,-1,0,0};
+int dy[] = {0,0,1,-1};
+char puzzle[maxn][maxn];
+int dis[maxn][maxn];
+int cnt ;
+inline bool judge(int x,int y)
+{
+    if(x>=0 && x<row && y>=0 && y<col && puzzle[x][y] != '#')
+        return true;
+    return false;
+}
+void bfs(void)
+{
+    cnt = 0;
+    while(!q.empty()) q.pop();
+    q.push(P(s_x,s_y));
+    while(!q.empty())
+    {
+        P start = q.front();
+        q.pop();
+        int i = start.first, j = start.second;
+        if(dis[i][j] == -1)
+            dis[i][j] = cnt++;
+        else continue;
+        REP(k,4)
+        {
+            int x = i+dx[k];
+            int y = j+dy[k];
+            if(judge(x,y)  && (dis[x][y] == -1))
+            {
+                q.push(P(x,y));
+            }
+        }
+    }
+}
+bool Gauss(void)
+{
+    double maxxxxx;
+    int id;
+    REP(i,cnt)
+    {
+        maxxxxx = fabs(m[i][i]);
+        id = i;
+        FOR(j,i+1,cnt-1)
+        {
+            if(fabs(m[j][i])>maxxxxx)
+                maxxxxx = fabs(m[j][i]), id = j;
+        }
+        //printf("looooooooop!\n");
+        if(maxxxxx<eps)
+            return false;
+        FOR(j,i,cnt) swap(m[i][j],m[id][j]);
+        FOR(j,i+1,cnt-1)
+        {
+            if(fabs(m[i][j])<eps)continue;
+            double deta = m[j][i]/m[i][i];
+            FOR(k,i,cnt)
+            {
+                m[j][k] -= deta*m[i][k];
+            }
+        }
+    }
+    FORD(i,cnt-1,0)
+    {
+        FOR(j,i+1,cnt-1)
+            m[i][cnt]-=m[i][j]*m[j][j];
+        m[i][i]=m[i][cnt]/m[i][i];
+    }
+    return true;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&row,&col);
+        REP(i,row) scanf("%s",puzzle[i]);
+        REP(i,row)REP(j,col)
+        {
+            if(puzzle[i][j] == 'A')s_x = i,s_y = j;
+            if(puzzle[i][j] == 'B')e_x = i,e_y = j;
+        }
+        rst(dis,-1);
+        bfs();
+        //printf("cnt is %d\n",cnt);
+        if(dis[e_x][e_y] == -1)
+        {
+            puts("-1");
+            continue;
+        }
+        rst(m,0);
+        REP(i,row)REP(j,col)
+        {
+            if(puzzle[i][j] != '#' && dis[i][j] != -1)
+            {
+                int ind = dis[i][j];
+                int tot = 0;
+                REP(k,4)
+                {
+                    int x = i+dx[k];
+                    int y = j+dy[k];
+                    if(judge(x,y) && dis[x][y] != -1)
+                    {
+                        tot++;
+                        m[ind][dis[x][y]] = -1;
+                    }
+                }
+                m[ind][ind] = tot;
+                m[ind][cnt] = tot;
+            }
+        }
+        rst(m[dis[e_x][e_y]],0);
+        m[dis[e_x][e_y]][dis[e_x][e_y]] = 1;
+        //FOR(i,0,cnt-1)
+        //{
+        //    FOR(j,0,cnt)
+        //    printf("%.1lf ",m[i][j]);
+        //    printf("\n");
+        //}
+        if(Gauss())
+        {
+            int ind = dis[s_x][s_y];
+            if(m[ind][ind]<1000000)
+                printf("%.3lf\n",m[ind][ind]);
+            else
+                puts("-1");
+        }
+        else
+        {
+            puts("-1");
+        }
+    }
+    return 0;
+}
+ 

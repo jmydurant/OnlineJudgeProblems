@@ -1,0 +1,50 @@
+#include<cstdio>   //基础题。。。WA到吐。。肿么回事没有状态。。。
+#include<cstring>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+using namespace std;
+int puzzle[110][110];
+int path[110];
+bool visit[110];
+void IINT(void)
+{
+    memset(puzzle,INF,sizeof(puzzle));
+    memset(visit,false,sizeof(visit));
+    path[1]=0;
+}
+int main(void)
+{
+    int N,M;
+    while(2==scanf("%d%d",&N,&M))
+    {
+        if(N==0 && M==0)break;
+        IINT();
+        for(int i=1;i<=M;i++)
+        {
+            int x,y,z; scanf("%d%d%d",&x,&y,&z);
+            puzzle[x][y]=MIN(z,puzzle[x][y]);
+            puzzle[y][x]=MIN(z,puzzle[y][x]);
+        }
+        for(int i=2;i<=N;i++)path[i]=puzzle[1][i];
+        int start=1;visit[start]=true;
+        while(start!=N)
+        {
+            int minroad=INF,tmpt;
+            for(int i=1;i<=N;i++)
+            {
+                if(!visit[i])
+                {
+                    path[i]=MIN(path[i],path[start]+puzzle[start][i]);
+                }
+                if(!visit[i] && path[i]<minroad)
+                {
+                    minroad=path[i];
+                    tmpt=i;
+                }
+            }
+            start=tmpt;visit[start]=true;
+        }
+        printf("%d\n",path[N]);
+    }
+    return 0;
+}

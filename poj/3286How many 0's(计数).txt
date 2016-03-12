@@ -1,0 +1,50 @@
+#include<cstdio>     //每次考虑0的位置一共有可能有几个0.。思路见下。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+using namespace std;
+long long pow[]={1,10,100,1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000,100000000000};
+long long make0(long long n)
+{
+    if(n<0)return -1;
+    long long res=0;
+    long long left;
+    for(int i=1;i<=11;i++)
+    {
+        left=n/pow[i]-1;
+        res+=left*pow[i-1];
+        long long chazhi=(n%pow[i]-n%pow[i-1])/pow[i-1];
+        if(chazhi>0)res+=pow[i-1];
+        else if(chazhi==0)res+=n%pow[i-1]+1;
+        if(n<pow[i])break;
+    }
+    return res;
+}
+int main(void)
+{
+    long long N,M;
+    while(2==scanf("%lld%lld",&N,&M)&&N>=0&&M>=0)
+    {
+        long long ans=make0(M)-make0(N-1);
+        printf("%lld\n",ans);
+    }
+}
+比如算4123中有多少个2
+
+ 
+
+按位统计,,,先算各位,,个位是2的情况有413种,,,因为各位左边可以0~412,,,而右边没有数字,,,
+
+然后是十位,,,十位是2的有41*10 + 1*4种,,当左边从0~40时,,,右边可以从0~9,,,而左边为41时,,右边只能从0~3
+
+然后是百位,,,,百位有4*100种,,,,即左边从0~3,,右边从0~99
+
+千位有  1*1000,,,左边没有数字,,,右边0~999,,,,
+
+上面是计算1~9,,,,计算0的时候比较特殊,,,,原因是除了0这一个数字之外,,,,0不能做开头,,,
+
+可以看到在求1~9的个数的时候,,,都是分为2部分相乘,,,这样0的处理也很简单,,只需把相乘的左半部分-1,,,,

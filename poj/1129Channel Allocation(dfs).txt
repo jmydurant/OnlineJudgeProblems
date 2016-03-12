@@ -1,0 +1,81 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个比较简单的着色问题。。因为是NP问题。。所以直接暴搜。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int n,puzzle[50][50],ans,c[50];
+char ss[50];
+void dfs(int ind,int cnum){
+    if(cnum >= ans)return;
+    if(ind == n + 1){
+        ans = MIN(ans,cnum);
+        return;
+    }
+    FOR(i,1,cnum){
+        bool ok = true;
+        FOR(j,1,ind-1){
+            if(puzzle[ind][j] && c[j] == i){
+                ok = false;
+                break;
+            }
+        }
+        if(ok){
+            c[ind] = i;
+            dfs(ind+1,cnum);
+            c[ind] = 0;
+        }
+    }
+    c[ind] = cnum+1;
+    dfs(ind+1,cnum+1);
+}
+void solve(void){
+    rst(puzzle,0);
+    FOR(i,1,n){
+        scanf("%s",ss);
+        int len = strlen(ss);
+        FOR(j,2,len-1){
+            puzzle[i][ss[j]-'A'+1] = 1;
+        }
+    }
+    //FOR(i,1,n){
+    //    FOR(j,1,n)printf("%d ",puzzle[i][j]);printf("\n");
+    //}
+    ans = n;
+    dfs(1,0);
+    if(ans == 1)printf("1 channel needed.\n");
+    else printf("%d channels needed.\n",ans);
+}
+int main(void){
+    while(EOF != scanf("%d",&n) && n) solve();
+    return 0;
+}

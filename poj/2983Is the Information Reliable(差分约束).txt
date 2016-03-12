@@ -1,0 +1,82 @@
+#include <cstdio>   //如果出现  sa-sb = c可以转换为 sa - sb >=c  与 sa - sb <= c两条边
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 1010
+#define rst(x) memset(x,0,sizeof(x))
+#define MAXV 101000
+#define INF 500000000
+using namespace std;
+struct node
+{
+    int s,t,w;
+}edge[MAXV];
+int tot;
+void add(int s,int t,int w)
+{
+    tot++;
+    edge[tot].s = s;
+    edge[tot].t = t;
+    edge[tot].w = w;
+}
+int dis[MAXN];
+int n,m;
+
+bool bellman_ford(void)
+{
+    for(int i = 1;i<=n;i++)
+        dis[i] = INF;
+    dis[0] = 0;
+    for(int step = 1;step<n;step++)
+    {
+        for(int i = 1;i<=tot;i++)
+        {
+            int a = edge[i].s;
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(dis[b] > dis[a] + w)
+                dis[b] = dis[a] + w;
+        }
+    }
+    for(int i = 1;i<=tot;i++)
+    {
+        int a = edge[i].s;
+        int b = edge[i].t;
+        int w = edge[i].w;
+        if(dis[b] > dis[a] + w)
+            return false;
+    }
+    return true;
+}
+int main(void)
+{
+    while(2 == scanf("%d%d",&n,&m))
+    {
+        tot = 0;
+        char op[10];
+        while(m--)
+        {
+            scanf("%s",op);
+            if(op[0] == 'P')
+            {
+                int a,b,w;
+                scanf("%d%d%d",&a,&b,&w);
+                add(a,b,-w);
+                add(b,a,w);
+            }
+            else
+            {
+                int a,b;
+                scanf("%d%d",&a,&b);
+                add(a,b,-1);
+            }
+        }
+        if(bellman_ford())
+            printf("Reliable\n");
+        else
+            printf("Unreliable\n");
+    }
+    return 0;
+}

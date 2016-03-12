@@ -1,0 +1,21 @@
+#include <cstdio>   //这并不是博弈。。。。
+#include <cstring>
+#include <queue>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 100
+#define MAXV 100100
+#define INF 0x7f7f7f7f
+using namespace std;
+
+int m,n;
+int main(void)
+{
+    while(2==scanf("%d%d",&m,&n))
+    {
+        if(m == 0 && n == 0)
+        break;
+        printf("%d\n",3*m-n);
+    }
+    return 0;
+}

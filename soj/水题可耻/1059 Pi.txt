@@ -1,0 +1,58 @@
+#include<cstring>     //照着题目做就行了。。。
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define INF 0x7f7f7f7f
+using namespace std;
+int num[55];
+int GCD(int x,int y)
+{
+    if(x%y)
+    {
+        int tmpt=x%y;
+        x=y;y=tmpt;
+        return GCD(x,y);
+    }
+    else
+    {
+        return y;
+    }
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        int tot=0,p=0;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",num+i);
+        }
+        for(int i=1;i<=N-1;i++)
+        {
+            for(int j=i+1;j<=N;j++)
+            {
+                tot++;
+                if(1==GCD(num[i],num[j]))p++;
+            }
+        }
+        //printf("%d %d\n",p,tot);
+        if(p)
+        {
+            float a=(float)tot,b=(float)p;
+            float res=sqrt(6.0*a/b);
+            printf("%f\n",res);
+        }
+        else
+        {
+            printf("No estimate for this data set.\n");
+        }
+    }
+    return 0;
+}
+
+
+

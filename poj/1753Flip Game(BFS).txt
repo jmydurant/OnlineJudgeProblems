@@ -1,0 +1,86 @@
+#include<cstdio>   //其实可以用高斯消元解线性方程组。。。见soj1139的题解。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+struct abc
+{
+    int step;
+    int state;
+}start;
+const int change[4][4] = {{51200, 58368, 29184, 12544}, {35968, 20032, 10016, 4880}, {2248, 1252, 626, 305}, {140, 78, 39, 19}};
+int visit[65540];
+int bfs(void);
+char puzzle[4][5];
+int main(void)
+{
+    while(gets(puzzle[0]))
+    {
+        int ok=0;
+        start.state=0;start.step=0;
+        memset(visit,0,sizeof(visit));
+        for(int i=1;i<4;i++)gets(puzzle[i]);
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<4;j++)
+            {
+                if('b'==puzzle[i][j])
+                {
+                    start.state<<=1;
+                    start.state+=1;
+                }
+                else
+                {
+                    start.state<<=1;
+                }
+            }
+        }
+       // printf("%d\n",start.state);
+        ok=bfs();
+        if(-1==ok)printf("Impossible\n");
+        else printf("%d\n",ok);
+    }
+    return 0;
+}
+int bfs()
+{
+    abc tmpt;
+    queue<abc>q;q.push(start);
+    visit[start.state]=1;
+    if(0==start.state||65535==start.state)
+    {
+        return 0;
+    }
+    while(!q.empty())
+    {
+        start=q.front();
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<4;j++)
+            {
+                tmpt=start;
+                tmpt.state^=change[i][j];
+                if(0==tmpt.state||65535==tmpt.state)return tmpt.step+1;
+                if(0==visit[tmpt.state])
+                {
+                    visit[tmpt.state]=1;
+                    tmpt.step++;
+                    q.push(tmpt);
+                }
+            }
+        }
+        q.pop();
+    }
+    return -1;
+}

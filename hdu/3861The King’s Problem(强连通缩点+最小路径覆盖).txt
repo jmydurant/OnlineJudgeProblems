@@ -1,0 +1,125 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //题意就让我理解了半天。。就是说。。如果有两个点。他们互相能到达。。那么肯定就是一个state里面
+#include <cstdio>     //对于state里面任意的两个点。。必须至少是单联通的。。而且之间的路不能出state。。
+#include <cstring>    //显然首先缩点。。然后对于可以合并的缩点。。必然是在一条路径上的。。而且不能和其他要缩的路径重合。。显然最小路径覆盖。。
+#include <algorithm>  //不得不说。。神题啊。。
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 5100
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+typedef pair<int,int> P;
+int n,m;
+struct node{
+    int f,t,nxt;
+}edge[400000];
+int headline[maxn] , E , reheadline[maxn];
+inline void add(int f,int t){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+inline void addr(int f,int t){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = reheadline[f];
+    reheadline[f] = E++;
+}
+int dfn[maxn] , low[maxn] , tot , st[maxn] , top , belong[maxn] , scc;
+bool instack[maxn];
+void tarjan(int u){
+    dfn[u] = low[u] = ++tot;
+    st[top] = u; top++;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(dfn[u] == low[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+map<P,int> bst;
+int link[maxn] , visit[maxn] , ind;
+bool Hungary(int u){
+    for(int i = reheadline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(visit[v] != ind){
+            visit[v] = ind;
+            if(link[v] == -1 || Hungary(link[v])){
+                link[v] = u;
+                return true;
+            }
+        }
+    }return false;
+}
+void solve(void){
+    rst(headline,-1); rst(reheadline,-1); E = 0;
+    scanf("%d%d",&n,&m);
+    FOR(i,1,m){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a,b);
+    }
+    rst(dfn,0); rst(instack,false);
+    tot = top = scc = 0;
+    FOR(i,1,n)if(!dfn[i]) tarjan(i);
+    bst.clear();
+    int tE = E;
+    REP(i,tE){
+        int a = belong[edge[i].f] , b = belong[edge[i].t];
+        if(a != b && (bst[P(a,b)]) == 0){
+            //printf("a is %d b is %d\n",a,b);
+            bst[P(a,b)] = 1;
+            addr(a , b);
+        }
+    }
+    rst(visit,0); rst(link,-1);
+    int ans = 0;
+    FOR(i,1,scc){
+        ind = i;
+        if(Hungary(i)) ans++;
+    }
+    ans = scc - ans;
+    printf("%d\n",ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

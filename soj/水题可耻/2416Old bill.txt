@@ -1,0 +1,40 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    int casenum;
+    int turkey;              //哎。。。今天一直在BFS和DFS上团团转。。。稍微放松一下。。。
+    int x,y,z;
+    int sum,sum1;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int ok=0;
+        int i,j;
+        scanf("%d",&turkey);
+        scanf("%d%d%d",&x,&y,&z);
+        sum=x*1000+y*100+z*10;
+        for(i=9;i>0;i--)
+        {
+            for(j=9;j>=0;j--)
+            {
+                sum1=10000*i+j+sum;
+                if(0==(sum1%turkey))
+                {
+                    ok=1;break;
+                }
+            }
+            if(ok)break;
+        }
+        if(ok)
+        {
+            printf("%d %d %d\n",i,j,sum1/turkey);
+        }
+        else
+        {
+            printf("%d\n",0);
+        }
+    }
+    return 0;
+}

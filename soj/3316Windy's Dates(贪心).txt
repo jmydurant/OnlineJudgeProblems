@@ -1,0 +1,104 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-5
+#define INF 50000000
+#define maxn 500
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int x,y;
+    bool operator < (const node & t)const{
+        if(t.y == y)return x < t.x;
+        return y < t.y;
+    }
+}pp[110],mm[110];
+int c[10101];
+void update(int pos , int val){
+    while(pos <= 10010){
+        c[pos] += val;
+        pos += lowbit(pos);
+    }
+}
+int req(int pos){
+    int ans = 0;
+    while(pos > 0){
+        ans += c[pos];
+        pos -= lowbit(pos);
+    }return ans;
+}
+int n,m;
+void solve(void){
+    REP(i,n){
+        scanf("%d%d",&pp[i].x , &pp[i].y);
+    }
+    int tot = 0;
+    REP(i,m){
+        scanf("%d%d",&mm[tot].x , &mm[tot].y);
+        REP(j,n){
+            if(mm[tot].x == mm[tot].y){
+                if(mm[tot].x >= pp[j].y || mm[tot].x <= pp[j].x)continue;
+                else {
+                    tot--;
+                    break;
+                }
+            }else{
+                if(pp[j].x > mm[tot].x && pp[j].x < mm[tot].y){
+                    tot--; break;
+                }
+                if(pp[j].y > mm[tot].x && pp[j].y < mm[tot].y){
+                    tot--; break;
+                }
+                if(mm[tot].x > pp[j].x && mm[tot].x < pp[j].y){
+                    tot--; break;
+                }
+                if(mm[tot].y > pp[j].x && mm[tot].y < pp[j].y){
+                    tot--; break;
+                }
+                if(pp[j].x == mm[tot].x && pp[j].y == mm[tot].y){
+                    tot--; break;
+                }
+            }
+        }
+        tot++;
+    }
+    sort(mm,mm+tot);
+    int ans = 0 , last = -1;
+    REP(i,tot){
+        if(mm[i].x >= last){
+            ans++;
+            last = mm[i].y;
+        }
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&m,&n)) solve();
+    return 0;
+}

@@ -1,0 +1,113 @@
+#include <iostream>    //和hdu的1760差不多。。。只是那题只要求一个sg就可以了。。这题有多个棋盘。。需要NIM和。。
+#include <cstdio>      //但是求sg值的方法一模一样。。。压缩状态加快速度。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <map>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define p(i,j) (i*col+j)
+#define h(x)  ((1LL<<(x)))
+#define eps 1e-5
+#define FOR(i,a,b) for(int i = (int)a; i<=(int)b ;i++)
+using namespace std;
+typedef long long LL;
+
+map<LL,int> sg;
+map<LL,bool> visit;
+LL step[1000];
+char ssssssssssssss[55][55];
+int puzzle[55][55];
+int row,col,tot;
+int dx[] = {0,1,0,1},dy[] = {0,0,1,1};
+LL check(int i,int j)
+{
+    LL ans = 0;
+    FOR(k,0,3)
+    {
+        int x = i+dx[k];
+        int y = j+dy[k];
+        if(x>=0 && x<row && y>=0 && y<col && (puzzle[x][y] == 0))
+        {
+            ans |= (h(p(x,y)));
+        }
+        else
+            return -1;
+    }
+    return ans;
+}
+int search_sg(LL state)
+{
+    bool test[52] = {0};
+    FOR(i,1,tot)
+    {
+        LL temp = (state&step[i]);
+        if(temp == 0)
+        {
+            temp = (state|step[i]);
+            if(visit[temp])
+            {
+                test[sg[temp]] = true;
+            }
+            else
+            {
+                test[search_sg(temp)] = true;
+            }
+        }
+    }
+    FOR(i,0,51)
+    {
+        if(!test[i])
+        {
+            visit[state] = true;
+            sg[state] = i;
+            return i;
+        }
+    }
+    return 0;
+}
+void init(void)
+{
+    sg.clear();  visit.clear();
+    tot = 0;
+    FOR(i,0,row-1)FOR(j,0,col-1)
+    {
+        LL temp = check(i,j);
+        if(temp != -1)
+        {
+            tot++;
+            step[tot] = temp;
+        }
+    }
+}
+int n;
+int main(void)
+{
+    while(EOF != scanf("%d",&n))
+    {
+        int yes = 0;
+        while(n--)
+        {
+            scanf("%d%d",&row,&col);
+            FOR(i,0,row-1)
+            scanf("%s",ssssssssssssss[i]);
+            FOR(i,0,row-1)FOR(j,0,col-1)
+            puzzle[i][j] = ssssssssssssss[i][j] - '0';
+            init();
+            LL ans = 0;
+            FOR(i,0,row-1)FOR(j,0,col-1)
+            {
+                if(puzzle[i][j])
+                    ans |= (h(p(i,j)));
+            }
+            yes ^= search_sg(ans);
+        }
+        if(yes)
+            printf("Yes\n");
+        else
+            printf("No\n");
+    }
+    return 0;
+}

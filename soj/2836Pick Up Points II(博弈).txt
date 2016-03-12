@@ -1,0 +1,92 @@
+#include <iostream>   //今天区域网络赛就有一个要搜索的博弈。。。这题异曲同工。。枚举所以连着的砖块。。然后开始搜
+#include <cstdio>     //压缩状态加快搜索速度。。。居然可以开下一个dp数组。。那么就可以记忆化搜索了。。坑爹。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define lowbit(x) ((x)&(-(x)))
+#define p(i,j) ((i*5)+j)
+#define MAXN 11010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+#define link fasdfasdf
+using namespace std;
+typedef long long LL;
+char dp[1<<25];
+int step[200];
+int tot;
+int row,col;
+int dx[] = {0,1};
+int dy[] = {1,0};
+int puzzle[10][10];
+inline void add(int i,int j)
+{
+    tot++;
+    step[tot] = ((1<<i)|(1<<j));
+}
+bool check(int state)
+{
+    if(state == 0 || ((state^lowbit(state)) == 0))
+        return false;
+    return true;
+}
+bool dfs(int state)
+{
+    if(dp[state] != -1)
+        return dp[state];
+    for(int i = 1;i<=tot;i++)
+    {
+        if(check(state&step[i]) && (!dfs(state^step[i])))
+        {
+            dp[state] = 1;
+            return true;
+        }
+    }
+    dp[state] = 0;
+    return false;
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    memset(dp,-1,sizeof(dp));
+    while(casenum--)
+    {
+        scanf("%d%d",&row,&col);
+        int state = 0;
+        for(int i = 0;i<row;i++)
+        {
+            for(int j = 0;j<col;j++)
+            {
+                scanf("%d",&puzzle[i][j]);
+                state |= (puzzle[i][j]<<p(i,j));
+            }
+        }
+        tot = 0;
+        for(int i = 0;i<row;i++)
+        {
+            for(int j = 0;j<col;j++)
+            {
+                if(puzzle[i][j])
+                {
+                    for(int k = 0;k<2;k++)
+                    {
+                        int x = i+dx[k];
+                        int y = j+dy[k];
+                        if(x>=0 && x<row && y>=0 && y<col && puzzle[x][y])
+                        {
+                            add(p(i,j),p(x,y));
+                        }
+                    }
+                }
+            }
+        }
+        if(dfs(state))
+            printf("loy wins\n");
+        else
+            printf("roam wins\n");
+    }
+}

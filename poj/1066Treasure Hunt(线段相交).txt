@@ -1,0 +1,140 @@
+#include<cstdio>    //只要判断端点中点和目的地连成的线段和所有其他线段有多少交点。。然后加1.。最后这样的最小值的点就是最优的起点。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 100000000
+#define lowbit(a) ((a)&(-(a)))
+#define MAXN 1001000
+#define esp 1e-8
+using namespace std;
+struct point{double x,y;};
+struct line{point a,b;};
+point wall[4][50];
+int tot[4],N;
+line l[50];
+bool cmp(point a,point b)
+{
+    if(abs(a.x-b.x)<esp)
+        return a.y<b.y;
+    return a.x<b.x;
+}
+int zero(double x)
+{
+    if(abs(x)<esp)
+        return 0;
+    if(x>0.0)
+        return 1;
+    return -1;
+}
+double cross(point a,point b,point c)
+{
+    return (a.x-c.x)*(b.y-c.y)-(b.x-c.x)*(a.y-c.y);
+}
+bool check(point a,point b,point c,point d)
+{
+    if(MAX(a.x,b.x)<MIN(c.x,d.x) ||
+       MAX(a.y,b.y)<MIN(c.y,d.y) ||
+       MAX(c.x,d.x)<MIN(a.x,b.x) ||
+       MAX(c.y,d.y)<MIN(a.y,b.y)
+       )
+       return false;
+    if(zero(cross(a,b,c))*zero(cross(a,b,d))>=0)
+        return false;
+    if(zero(cross(c,d,a))*zero(cross(c,d,b))>=0)
+        return false;
+    return true;
+}
+int main(void)
+{
+    while(EOF!=scanf("%d",&N))
+    {
+        memset(tot,0,sizeof(tot));
+        point aim;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%lf%lf%lf%lf",&l[i].a.x,&l[i].a.y,&l[i].b.x,&l[i].b.y);
+            if(zero(l[i].a.y)==0)
+            {
+                wall[0][++tot[0]].x=l[i].a.x;
+                wall[0][tot[0]].y=l[i].a.y;
+            }
+            else if(zero(l[i].a.x-100.0)==0)
+            {
+                wall[1][++tot[1]].x=l[i].a.x;
+                wall[1][tot[1]].y=l[i].a.y;
+            }
+            else if(zero(l[i].a.y-100.0)==0)
+            {
+                wall[2][++tot[2]].x=l[i].a.x;
+                wall[2][tot[2]].y=l[i].a.y;
+            }
+            else
+            {
+                wall[3][++tot[3]].x=l[i].a.x;
+                wall[3][tot[3]].y=l[i].a.y;
+            }
+            if(zero(l[i].b.y)==0)
+            {
+                wall[0][++tot[0]].x=l[i].b.x;
+                wall[0][tot[0]].y=l[i].b.y;
+            }
+            else if(zero(l[i].b.x-100.0)==0)
+            {
+                wall[1][++tot[1]].x=l[i].b.x;
+                wall[1][tot[1]].y=l[i].b.y;
+            }
+            else if(zero(l[i].b.y-100.0)==0)
+            {
+                wall[2][++tot[2]].x=l[i].b.x;
+                wall[2][tot[2]].y=l[i].b.y;
+            }
+            else
+            {
+                wall[3][++tot[3]].x=l[i].b.x;
+                wall[3][tot[3]].y=l[i].b.y;
+            }
+        }
+        wall[0][0].x=0.0; wall[0][++tot[0]].x=100.0;
+        wall[0][0].y=0.0; wall[0][tot[0]].y=0.0;
+        wall[1][0].x=100.0; wall[1][++tot[1]].x=100.0;
+        wall[1][0].y=0.0; wall[1][tot[1]].y=100.0;
+        wall[2][0].x=0.0; wall[2][++tot[2]].x=100.0;
+        wall[2][0].y=100.0; wall[2][tot[2]].y=100.0;
+        wall[3][0].x=0.0; wall[3][++tot[3]].x=0.0;
+        wall[3][0].y=0.0; wall[3][tot[3]].y=100.0;
+        for(int i=0;i<4;i++)
+            sort(wall[i],wall[i]+tot[i]+1,cmp);
+        scanf("%lf%lf",&aim.x,&aim.y);
+        //printf("%lf   %lf  pass\n",wall[2][1].x,wall[2][1].y);
+        int ans=INT_MAX;
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<tot[i];j++)
+            {
+                point mid;
+                int cnt=0;
+                mid.x=(wall[i][j].x+wall[i][j+1].x)/2.0;
+                mid.y=(wall[i][j].y+wall[i][j+1].y)/2.0;
+                for(int k=1;k<=N;k++)
+                {
+                    if(check(mid,aim,l[k].a,l[k].b))
+                        cnt++;
+                }
+                if(cnt<ans)
+                    ans=cnt;
+            }
+        }
+        printf("Number of doors = %d\n",ans+1);
+    }
+}
+
+

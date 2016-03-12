@@ -1,0 +1,81 @@
+#include<cstring>   //爽！！！！这道题目答案就是catalan数。。然后在modM就可以了。。我的方法是记录所有的质因数。。。然后再用快速幂来做。。。
+#include<cstdio>    //没想到中间结果连long long 都能超。。操蛋。。。
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+using namespace std;
+long long num[200020];
+long long prime[100000];
+bool visit[200010];
+long long N,M;
+inline long long q_pow(long long a,long long n)
+{
+    long long res=1;
+    while(n!=0)
+    {
+        if(n%2)
+        {
+            res*=a;
+            res%=M;
+        }
+        a*=a;
+        a%=M;
+        n/=2;
+    }
+    return res;
+}
+int main(void)
+{
+    memset(visit,0,sizeof(visit));
+    int tot=0;
+    for(int i=2;i*i<=200000;i++)
+    {
+        if(!visit[i])
+        {
+            for(int j=2*i;j<=200000;j+=i)
+            {
+                visit[j]=true;
+            }
+        }
+    }
+    for(int i=2;i<=200000;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot]=i;
+        }
+    }
+    //printf("%I64d %I64d\n",prime[6],prime[5]);
+    while(2==scanf("%lld%lld",&N,&M))
+    {
+        memset(num,0,sizeof(num));
+        for(int i=1;prime[i]<=2*N && i<=tot ;i++)
+        {
+            for(long long j=prime[i];j<=2*N;j*=prime[i])
+            {
+                num[prime[i]]+=(2*N)/j;
+                num[prime[i]]-=(N+1)/j;
+                num[prime[i]]-=(N/j);
+            }
+        }
+        long long ans=1;
+        for(int i=1;prime[i]<=2*N;i++)
+        {
+            if(num[prime[i]]>0)
+            {
+                ans*=q_pow(prime[i],num[prime[i]]);
+                ans%=M;
+            }
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}

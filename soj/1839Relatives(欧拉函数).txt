@@ -1,0 +1,53 @@
+#include<cstdio>   //尼玛。。整个一个战五渣的题目。。。欧拉函数的原理理解了之后其实还是很简单的。。。。。1Y啊。。。
+#include<cstring>
+#include<algorithm>
+using namespace std;
+int prime[40000];
+bool visit[40000];
+int inzi[41000];
+int main(void)
+{
+    memset(visit,false,sizeof(visit));
+    int tot=0;
+    for(int i=2;i<=31700;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot]=i;
+            for(int j=i*i;j<=31700;j+=i)visit[j]=true;
+        }
+    }
+    //printf("%d %d\n",prime[tot],prime[2]);
+    int N;
+    while(EOF!=scanf("%d",&N) && N)
+    {
+        int ans=N;
+        int jishu=0;
+        if(N==1)
+        {
+            printf("0\n");
+            continue;
+        }
+        memset(inzi,0,sizeof(inzi));
+        for(int i=1;prime[i]*prime[i]<=N;i++)
+        {
+            if(0==N%prime[i])inzi[++jishu]=prime[i];
+            while(0==N%prime[i])
+            {
+                N/=prime[i];
+            }
+        }
+        if(N>1)inzi[++jishu]=N;
+        for(int i=1;i<=jishu;i++)
+        {
+            ans/=inzi[i];
+            ans*=(inzi[i]-1);
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+
+
+
+

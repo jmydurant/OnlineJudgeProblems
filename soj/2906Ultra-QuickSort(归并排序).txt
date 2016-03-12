@@ -1,0 +1,68 @@
+#include<iostream>     //直接copy之前的代码。。好没节操。。注意结果好像要用long long 型。。。我就是这样WA了一次。。
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+using namespace std;
+long long mergesort(int a,int b);
+long long juti(int l,int mid,int r);
+int s[900100],t[900100];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        for(int i=0;i<N;i++)
+        {
+            scanf("%d",s+i);
+        }
+        printf("%lld\n",mergesort(0,N-1));
+    }
+    return 0;
+}
+long long mergesort(int a,int b)
+{
+    long long result=0;
+    if(a<b)
+    {
+        int mid=(a+b)/2;
+        result+=mergesort(a,mid);
+        result+=mergesort(mid+1,b);
+        result+=juti(a,mid,b);
+        return result;
+    }
+    return 0;
+}
+long long juti(int l,int mid,int r)
+{
+    int j=mid+1;
+    int i=l;
+    int jishu=l;
+    long long result=0;
+    while(j<=r&&i<=mid)
+    {
+        if(s[i]<=s[j])
+        {
+            t[jishu++]=s[i++];
+            ;
+        }
+        else
+        {
+            t[jishu++]=s[j++];
+            result+=j-jishu;
+        }
+    }
+    while(i<=mid)
+    {
+        t[jishu++]=s[i++];
+    }
+    while(j<=r)
+    {
+        t[jishu++]=s[j++];
+    }
+    for(int abc=l;abc<=r;abc++)
+    {
+        s[abc]=t[abc];
+    }
+    return result;
+}

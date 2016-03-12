@@ -1,0 +1,59 @@
+#include <iostream>   //一个地方没有初始化  WA两次。。。
+#include <cstdio>
+#include <cstring>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 1100
+#define lowbit(x) ((x)&(-(x)))
+using namespace std;
+bool visit[110][110];
+int sg[110][110];
+int dx[] = {-2,-2,-1,1};
+int dy[] = {-1,1,-2,-2};
+int row,col;
+
+int find_sg(int i,int j)
+{
+    if(visit[i][j])
+        return sg[i][j];
+    bool test[201] = {0};
+    for(int k = 0;k<4;k++)
+    {
+        int x = i + dx[k];
+        int y = j + dy[k];
+        if(x>=0 && x<row && y>=0 && y<col)
+        {
+            test[find_sg(x,y)] = true;
+        }
+    }
+    for(int s = 0;s<=200;s++)
+        if(!test[s])
+        {
+            sg[i][j] = s;
+            break;
+        }
+    visit[i][j] = true;
+    return sg[i][j];
+}
+
+int main(void)
+{
+    int k;
+    while(3 == scanf("%d%d%d",&row,&col,&k))
+    {
+        int ans = 0;
+        memset(visit,false,sizeof(visit));
+        memset(sg,0,sizeof(sg));
+        for(int i = 0;i<k;i++)
+        {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            ans ^= find_sg(a,b);
+           // printf(" kuma %d\n",find_sg(a,b));
+        }
+        if(ans)
+            printf("yes\n");
+        else
+            printf("no\n");
+    }
+    return 0;
+}

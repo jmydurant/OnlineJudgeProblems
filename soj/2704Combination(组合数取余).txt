@@ -1,0 +1,83 @@
+#include<cstring>    //真的是学了一招。。。很好用。。。尤其是求N!的因子的时候那个N/j+N/j^2+N/j^3......
+#include<cstdio>
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+using namespace std;
+struct item
+{
+    long long x;
+    long long num1,num2;
+}yueshu[100010];
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        long long N,M,K;
+        scanf("%lld%lld%lld",&N,&M,&K);
+        int tot=0;
+        for(long long i=2;i*i<=K;i++)
+        {
+            if(0==K%i)
+            {
+                yueshu[++tot].x=i;
+                yueshu[tot].num1=0;
+                yueshu[tot].num2=0;
+            }
+            while(0==K%i)
+            {
+                yueshu[tot].num1++;
+                K/=i;
+            }
+        }
+        if(K>1)
+        {
+            yueshu[++tot].x=K;
+            yueshu[tot].num1=1;
+            yueshu[tot].num2=0;
+        }
+        long long tmpt=N-M;
+        for(int i=1;yueshu[i].x<=tmpt && i<=tot;i++)
+        {
+            for(long long j=yueshu[i].x;j<=tmpt;j*=yueshu[i].x)
+            {
+                yueshu[i].num2-=(tmpt/j);
+            }
+        }
+        for(int i=1;yueshu[i].x<=M && i<=tot;i++)
+        {
+            for(long long j=yueshu[i].x;j<=M;j*=yueshu[i].x)
+            {
+                yueshu[i].num2-=(M/j);
+            }
+        }
+        for(int i=1;yueshu[i].x<=N && i<=tot;i++)
+        {
+            for(long long j=yueshu[i].x;j<=N;j*=yueshu[i].x)
+            {
+                yueshu[i].num2+=(N/j);
+            }
+        }
+        bool ok=true;
+        for(int i=1;i<=tot;i++)
+        {
+            if(yueshu[i].num1>yueshu[i].num2)
+            {
+                ok=false;
+                break;
+            }
+        }
+        if(ok) printf("Yes\n");
+        else printf("No\n");
+    }
+    return 0;
+}

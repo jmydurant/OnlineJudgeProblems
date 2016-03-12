@@ -1,0 +1,84 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //线段树区间修改。。裸的lazy思想题。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+#define mod 1000000007LL
+#define fr first
+#define se second
+using namespace std;
+typedef long long LL;
+struct node{
+    int s[maxn<<2] , lazy[maxn<<2];
+    int len[maxn<<2];
+    inline void pushdown(int ind){
+        if(!lazy[ind])return;
+        lazy[lson] = lazy[rson] = lazy[ind];
+        lazy[ind] = 0;
+        s[lson] = len[lson] * lazy[lson];
+        s[rson] = len[rson] * lazy[rson];
+    }
+    void build(int l,int r,int ind){
+        len[ind] = s[ind] = (r - l + 1);
+        lazy[ind] = 0;
+        if(l == r)return;
+        int mid = (l+r)>>1;
+        build(l,mid,lson);
+        build(mid+1,r,rson);
+    }
+    void change(int l,int r,int Ql,int Qr,int ind,int kind){
+        if(l >= Ql && Qr >= r){
+            lazy[ind] = kind;
+            s[ind] = len[ind] * kind;
+            return;
+        }
+        int mid = (l+r)>>1;
+        pushdown(ind);
+        if(Qr <= mid)change(l,mid,Ql,Qr,lson,kind);
+        else if(Ql > mid)change(mid+1,r,Ql,Qr,rson,kind);
+        else{
+            change(l,mid,Ql,mid,lson,kind);
+            change(mid+1,r,mid+1,Qr,rson,kind);
+        }
+        s[ind] = s[lson] + s[rson];
+    }
+}seg_tree;
+int casenum,n,iCase;
+void solve(void){
+    scanf("%d",&n);
+    seg_tree.build(1,n,1);
+    int Q; scanf("%d",&Q);
+    while(Q--){
+        int x,y,_kind;
+        scanf("%d%d%d",&x,&y,&_kind);
+        seg_tree.change(1,n,x,y,1,_kind);
+    }
+    printf("Case %d: The total value of the hook is %d.\n",++iCase,seg_tree.s[1] + seg_tree.lazy[1]);
+}
+int main(void){
+    iCase = 0;
+    scanf("%d",&casenum);
+    while(casenum--)solve();
+    return 0;
+}

@@ -1,0 +1,27 @@
+#include <cstdio>   //其实这个序号的转移是个二分图。。。右边是((i-2)%3 == 0 || i%6 == 0) 而且最后不能转移的1,3,4在左边
+#include <cstring>  //相当于对右边的进行nim游戏。。因为左边的如果转移过来n个。。你立即就能把他转移走。。
+#include <algorithm>
+using namespace std;
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    int tCase = 1;
+    while(casenum--)
+    {
+        int n; scanf("%d",&n);
+        int ans = 0;
+        for(int i = 1;i<=n;i++)
+        {
+            int k; scanf("%d",&k);
+            if((i-2)%3 == 0 || i%6 == 0)
+                ans ^= k;
+        }
+        printf("Case %d: ",tCase++);
+        if(ans)
+            printf("Alice\n");
+        else
+            printf("Bob\n");
+    }
+    return 0;
+}

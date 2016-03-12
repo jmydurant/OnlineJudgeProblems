@@ -1,0 +1,21 @@
+#include<cstdio>
+#include<cstring>//题目叙述有问题。。所以不讨论了。。。。
+#include<queue>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#define INF 400000000
+using namespace std;
+int main(void)
+{
+    int n,a,b;
+    while(EOF!=scanf("%d%d%d",&n,&a,&b))
+    {
+        n=n%(a+b);
+        if(n>=a&&n<=b)
+            printf("windy7926778\n");
+        else
+            printf("fgjlwj\n");
+    }
+    return 0;
+}

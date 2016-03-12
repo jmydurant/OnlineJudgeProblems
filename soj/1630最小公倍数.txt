@@ -1,0 +1,55 @@
+#include<cstdio>     //中间用long long 保存不会越界。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<cstdlib>
+#include<queue>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+inline long long gcd(long long a,long long b)
+{
+    long long tmpt;
+    while(b)
+    {
+        tmpt=a%b;
+        a=b;
+        b=tmpt;
+    }
+    return a;
+}
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;
+        scanf("%d",&N);
+        if(1==N)
+        {
+            int m;
+            scanf("%d",&m);
+            printf("%d\n",m);
+            continue;
+        }
+        else
+        {
+            long long tmpt;
+            scanf("%lld",&tmpt);
+            for(int i=2;i<=N;i++)
+            {
+                long long k;
+                scanf("%lld",&k);
+                tmpt=(tmpt/gcd(tmpt,k))*k;
+            }
+            printf("%lld\n",tmpt);
+        }
+    }
+    return 0;
+}

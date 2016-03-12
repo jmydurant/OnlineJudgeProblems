@@ -1,0 +1,44 @@
+#include<stdio.h>
+int Maxpossible(int num);
+int Minpossible(int num);
+int main(void)
+{
+    int a,b;
+    while(EOF!=scanf("%d%d",&a,&b))   //其实算是水题吧。。。无耻的把它放在这了
+    {
+        int x,y;
+        int n,m;
+        x=Maxpossible(a);
+        y=Maxpossible(b);
+        n=Minpossible(a);
+        m=Minpossible(b);
+        printf("%d %d\n",(m+n),(x+y));
+    }
+    return 0;
+}
+int Maxpossible(int num)
+{
+    int power=1;
+    for(;(num/power)>0;)
+    {
+        if(5==((num/power)%10))
+        {
+            num+=(power);
+        }
+        power*=10;
+    }
+    return num;
+}
+int Minpossible(int num)
+{
+    int power=1;
+    for(;(num/power)>0;)
+    {
+        if(6==((num/power)%10))
+        {
+            num-=(power);
+        }
+        power*=10;
+    }
+    return num;
+}

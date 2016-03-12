@@ -1,0 +1,49 @@
+#include<cstdio>   //公式非常容易看出来。。作死啊啊啊啊啊啊。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) ((a)&(-(a)))
+#define MAXN 1001000
+using namespace std;
+typedef long long LL;
+int main(void)
+{
+    long long M,N,K;
+    int casenum; scanf("%d",&casenum);
+    int iCase=0;
+    while(casenum--)
+    {
+        scanf("%I64d%I64d%I64d",&M,&N,&K);
+        iCase++;
+        printf("Case #%d: %I64d ",iCase,M*N*K-1LL);
+        long long ans=0;
+        M--;N--;K--;
+        while(M)
+        {
+            M/=2;
+            ans++;
+        }
+        while(N)
+        {
+            N/=2;
+            ans++;
+        }
+        while(K)
+        {
+            K/=2;
+            ans++;
+        }
+        printf("%I64d\n",ans);
+    }
+    return 0;
+}

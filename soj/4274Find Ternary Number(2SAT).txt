@@ -1,0 +1,305 @@
+//这将是个非常难写的2SAT..估计会WA到哭。。。  //大概的原理是先删去一个可能性。。然后就只有两个可能性了。。然后直接scc搞起
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = a;i<=b;i++)
+#define REP(i,n) for(int i = 0;i<n;i++)
+#define res(x,k) memset(x,k,sizeof(x))
+#define t(i) (i<<1)
+#define f(i) (i<<1|1)
+#define maxn 2000
+#define USE 1
+#define UNUSE 0
+using namespace std;
+
+int headline[maxn],reheadline[maxn];
+struct node
+{
+    int t,nxt;
+}edge[4000000];
+bool visit[maxn],instack[maxn];   //scc所需要的量
+int Stack[maxn];
+int low[maxn],dfn[maxn],belong[maxn],scc_id[maxn];
+int cnt,tot,top,note,etot;
+void add(int *x,int f,int t)
+{
+    etot++;
+    edge[etot].t = t;
+    edge[etot].nxt = x[f];
+    x[f] = etot;
+}
+void tarjan(int u)
+{
+    dfn[u] = low[u] = cnt++;
+    Stack[top++] = u;
+    instack[u] = true;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int b = edge[i].t;
+        if(dfn[b] == -1)
+        {
+            tarjan(b);
+            low[u] = MIN(low[u],low[b]);
+        }
+        else if(instack[b])
+            low[u] = MIN(low[u],dfn[b]);
+    }
+    if(low[u] == dfn[u])
+    {
+        tot++; scc_id[tot] = u;
+        while(true)
+        {
+            int j = Stack[--top];
+            instack[j] = false;
+            belong[j] = tot;
+            if(j == u) break;
+        }
+    }
+}
+
+
+int n,m;
+bool cannot[maxn][3];
+int must[maxn];
+int relationship[maxn*10][3];
+int num[maxn*2];               //存放每个数字的可能性..i<<1 代表是,1<<1|1代表否
+
+void build_graph(void)
+{
+    etot = 0;
+    res(headline,-1);
+    REP(i,note){
+        int u = t(relationship[i][1]);
+        int v = t(relationship[i][2]);
+        if(relationship[i][0] == 0)
+        {
+            if(num[u] == num[v]){
+                add(headline,u,v|1);
+                add(headline,v,u|1);
+            }
+            if(num[u] == num[v|1]){
+                add(headline,u,v);
+                add(headline,v|1,u|1);
+            }
+            if(num[u|1] == num[v]){
+                add(headline,u|1,v|1);
+                add(headline,v,u);
+            }
+            if(num[u|1] == num[v|1]){
+                add(headline,u|1,v);
+                add(headline,v|1,u);
+            }
+        }
+        else
+        {
+            if(num[u] != num[v]){
+                add(headline,u,v|1);
+                add(headline,v,u|1);
+            }
+            if(num[u] != num[v|1]){
+                add(headline,u,v);
+                add(headline,v|1,u|1);
+            }
+            if(num[u|1] != num[v]){
+                add(headline,u|1,v|1);
+                add(headline,v,u);
+            }
+            if(num[u|1] != num[v|1]){
+                add(headline,u|1,v);
+                add(headline,v|1,u);
+            }
+        }
+        //printf("etot is  %d\n",etot);
+    }
+}
+int color[maxn];
+
+bool disturb(int u)
+{
+    visit[u] = true;
+    bool flag = false;
+    for(int i = reheadline[u]; i != -1; i = edge[i].nxt){
+        int v = edge[i].t;
+        if(visit[v] || color[v] == USE) continue;
+        if(-1 == color[v]){
+            if(!visit[belong[scc_id[v]^1]]) flag |= disturb(v);
+            else flag = true;
+        }
+        else flag = true;
+    }
+    return flag;
+}
+
+void colorthis(int u)
+{
+    color[u] = USE;
+    color[belong[scc_id[u]^1]] = UNUSE;
+    for(int i = reheadline[u]; i != -1; i = edge[i].nxt){
+        int v = edge[i].t;
+        if(-1 == color[v]){
+            colorthis(v);
+        }
+    }
+}
+
+void drawcolor(void)
+{
+    res(color,-1);
+    REP(i,2*n){
+        int u = belong[i];
+        if(-1 == color[u]){
+            res(visit,false);
+            if(!disturb(u)){
+                colorthis(u);
+            }
+            else{
+                colorthis(belong[scc_id[u]^1]);
+            }
+        }
+    }
+}
+
+bool solve()
+{
+    bool ok = true;
+    res(headline,-1);
+    build_graph();
+    res(dfn,-1);
+    tot = 0,cnt = 0,top = 0;
+    REP(i,2*n)if(dfn[i] == -1)
+    tarjan(i);
+    //printf("tot is %d\n",tot);
+    REP(i,n){
+        if(belong[t(i)] == belong[f(i)]){
+            ok = false;
+            break;
+        }
+    }
+    if(ok){
+        res(reheadline,-1);    //判断联通图的关系..
+        REP(i,2*n){
+            int u = belong[i];
+            for(int j = headline[i];j != -1;j = edge[j].nxt){
+                int v = belong[edge[j].t];
+                if(u != v){
+                    add(reheadline,u,v);
+                }
+            }
+        }
+        drawcolor();
+        REP(i,2*n){
+            if(color[belong[i]] == USE){
+                printf("%d",num[i]);
+            }
+        }
+        printf("\n");
+    }
+    return ok;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&n,&m);
+        char op[10];
+        int x,y;
+        res(cannot,false);
+        res(must,-1);
+        //cannot[0][0] = true;
+        note = 0;
+        bool ok = true;
+        REP(i,m){
+            scanf("%s%d%d",op,&x,&y);
+            x = n-1-x;             //顺序太烦人...
+            if(op[0] == 'N')
+            {
+                cannot[x][y] = true;
+                if(must[x] == y) ok = false;
+            }
+            else if(op[0] == 'I')
+            {
+                if(must[x] == -1)
+                    must[x] = y;
+                else if(must[x] != y)
+                    ok = false;
+                if(cannot[x][y]) ok = false;
+            }
+            else if(op[0] == 'D')
+            {
+                relationship[note][0] = 0;
+                relationship[note][1] = x;
+                relationship[note][2] = n-1-y;
+                note++;
+            }
+            else
+            {
+                relationship[note][0] = 1;
+                relationship[note][1] = x;
+                relationship[note][2] = n-1-y;
+                note++;
+            }
+        }
+        if(!ok){
+            puts("-1");
+            continue;
+        }
+        REP(i,n){
+            if(must[i] != -1){
+                num[t(i)] = must[i];
+                num[f(i)] = must[i];
+            }
+            else if(cannot[i][0] && cannot[i][1] && cannot[i][2]){
+                ok = false;
+            }
+            else if(cannot[i][0] && cannot[i][1]){
+                num[t(i)] = 2;
+                num[f(i)] = 2;
+            }
+            else if(cannot[i][0] && cannot[i][2]){
+                num[t(i)] = 1;
+                num[f(i)] = 1;
+            }
+            else if(cannot[i][1] && cannot[i][2]){
+                num[t(i)] = 0;
+                num[f(i)] = 0;
+            }
+            else if(cannot[i][0]){
+                num[t(i)] = 1;
+                num[f(i)] = 2;
+            }
+            else if(cannot[i][1]){
+                num[t(i)] = 0;
+                num[f(i)] = 2;
+            }
+            else if(cannot[i][2]){
+                num[t(i)] = 0;
+                num[f(i)] = 1;
+            }
+            else{
+                puts("SHITTTTTTTTTTTTTTTTTTT");
+            }
+        }
+        if(!ok){
+            puts("-1");
+            continue;
+        }
+        int first=0;
+        int tmp=num[first^1];
+        if(num[first] || n==1)
+        {
+            num[first^1]=num[first];
+            if(solve()) continue;
+        }
+        if(tmp)
+        {
+            num[first]=num[first^1]=tmp;
+            if(solve()) continue;
+        }
+        puts("-1");
+    }
+}

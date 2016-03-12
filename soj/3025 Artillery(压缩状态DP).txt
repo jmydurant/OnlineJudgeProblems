@@ -1,0 +1,170 @@
+#include<cstdio>       //标准的压缩状态DP。。。解析见下。。一气呵成。。爽。。
+#include<climits>       //当然我的代码和他的解析有点出入。。思路反正是这样的。。。
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) (a)^(-(a))
+#define mod 100000000LL;
+using namespace std;
+int tot,row,col;
+int puzzle[110];
+int way[70];
+int paibu[70];
+int dp[110][70][70];
+void INIT(void)
+{
+    memset(dp,0,sizeof(dp));
+    tot=0;
+    for(int kkk=0;kkk<(1<<col);kkk++)
+    {
+        bool ok=true;
+        int people=0;
+        int i=kkk;
+        while(i>0)
+        {
+            if(i&1)
+            {
+                people++;
+                i>>=1;
+                if(i&1)
+                {
+                    ok=false;
+                    break;
+                }
+                i>>=1;
+                if(i&1)
+                {
+                    ok=false;
+                    break;
+                }
+                i>>=1;
+            }
+            else
+            {
+                i>>=1;
+            }
+        }
+        if(ok)
+        {
+            way[++tot]=people;
+            paibu[tot]=kkk;
+            //printf("%d %d\n",i,people);
+        }
+    }
+    //printf("%d pass\n",tot);
+    //printf("%d puzzle",puzzle[1]);
+    for(int i=1;i<=tot;i++)
+    {
+        if(puzzle[1]&paibu[i])
+        {
+            dp[1][1][i]=0;
+        }
+        else
+        {
+            dp[1][1][i]=way[i];
+        }
+       // printf("%d %d pass\n",paibu[i],dp[1][1][i]);
+    }
+    if(row>=2)
+    {
+        for(int i=1;i<=tot;i++)
+        {
+            if(!(puzzle[1]&paibu[i]))
+            {
+                for(int j=1;j<=tot;j++)
+                {
+                    if((!(puzzle[2]&paibu[j])) && (!(paibu[i]&paibu[j])))
+                    {
+                        dp[2][i][j]=MAX(dp[1][1][i]+way[j],dp[2][i][j]);
+                    }
+                }
+            }
+        }
+    }
+}
+int main(void)
+{
+    while(EOF!=scanf("%d%d",&row,&col))
+    {
+        if(0==row || 0==col)
+        {
+            printf("0\n");
+            continue;
+        }
+        char abc[12];
+        for(int i=1;i<=row;i++)
+        {
+            scanf("%s",abc);
+            int sum=0;
+            for(int j=0;j<col;j++)
+            {
+                sum<<=1;
+                if('H'==abc[j])
+                {
+                    sum|=1;
+                }
+            }
+            puzzle[i]=sum;
+            //printf("%d\n",sum);
+        }
+        INIT();
+        //printf("pass");
+        for(int i=3;i<=row;i++)
+        {
+            for(int j=1;j<=tot;j++)
+            {
+                if(!(puzzle[i-2]&paibu[j]))
+                {
+                    for(int k=1;k<=tot;k++)
+                    {
+                        if((!(puzzle[i-1]&paibu[k])) && (!(paibu[k]&paibu[j])))
+                        {
+                            for(int now=1;now<=tot;now++)
+                            {
+                                if((!(puzzle[i]&paibu[now])) && (!(paibu[now]&paibu[j])) && (!(paibu[now]&paibu[k])))
+                                {
+                                    dp[i][k][now]=MAX(dp[i][k][now],dp[i-1][j][k]+way[now]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        int ans=0;
+        for(int i=1;i<=tot;i++)
+            for(int j=1;j<=tot;j++)
+            ans=MAX(ans,dp[row][i][j]);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+因为行N <= 100 列M <= 10
+我们就在10上面做文章。
+
+在任意一行上，最多10列，假设这10个位置都是平原，那么在这10个位置上放置炮兵并互不攻击，一共有60种方法（可以算一下）。具体是哪60种方法，这个需要枚举一下。我们用num[i]表示第i种方案放置的炮兵数量。
+比如：
+PPPPHHPPPP
+我们可以在第1个位置和第7个位置各放一个炮兵，这是一种可行的方案。此时num[i] = 2
+
+假设一共有N行，
+对于第s-2行，它有60种方案
+对于第s-1行，它也有60种方案
+对于第s行，它也有60种方案
+对于第s+1行，它也有60种方案
+.......
+
+我们用dp[s][i][j]表示第s行使用第i种方案，第s-1行使用第j种方案时部队可以部署的最大值.那么max{dp[N][i][j], 其中i,j=1...60}的就是最后的答案
+这里需要检验状态i和j是否互相兼容，这个可以通过连个状态的十进制表示的两个数间的&运算来判断（如果兼容，那么运算后的值必为0）
+如果兼容，可以推出：
+dp[s][i][j] = num[i] + max{dp[s-1][j][k], 其中k=1...60，并且i和k状态也时兼容的}
+这表示：第s行使用第i种方案，第s-1行使用第j种方案时，我们枚举第s-2行的方案k。如果i,j,k这三种方案之间是相容的，那么dp[s][i][j] = num[i] + dp[s-1][j][k]

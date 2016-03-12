@@ -1,0 +1,30 @@
+#include<stdio.h>
+#include<string.h>
+
+int main(void)
+{
+    int n;
+    int i=1;
+    int a,b;
+    scanf("%d",&n);
+    while(i<=n)
+    {
+        int x,y;
+        scanf("%d%d",&a,&b);     //好水。。。算了。。就这样吧。。。
+        x=a;y=b;
+        int zuidagongyue;
+        int zuixiaogongbei;
+        int exchange=1;
+        while(exchange)
+        {
+            exchange=x%y;
+            x=y;
+            y=exchange;
+        }
+        zuidagongyue=x;
+        zuixiaogongbei=a*b/zuidagongyue;
+        printf("%d %d %d\n",i,zuixiaogongbei,zuidagongyue);
+        i++;
+    }
+    return 0;
+}

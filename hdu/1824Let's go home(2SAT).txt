@@ -1,0 +1,96 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //题意有点不清楚。。就按纸面上面的来。。基础的2SAT入门题。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 50000000
+#define maxn 6010
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[1010100];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int dfn[maxn] , low[maxn] , st[maxn] , top , tot , scc , belong[maxn];
+bool instack[maxn];
+int n,m;
+void tarjan(int u){
+    dfn[u] = low[u] = ++tot;
+    st[top] = u; top++;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(low[u] == dfn[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    FOR(i,1,n){
+        int a,b,c; scanf("%d%d%d",&a,&b,&c);
+        add(a + 3*n , b);
+        add(a + 3*n , c);
+        add(b + 3*n , a);
+        add(c + 3*n , a);
+    }
+    REP(i,m){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a , b + 3*n);
+        add(b , a + 3*n);
+    }
+    rst(dfn,0); rst(instack , false);
+    tot = top = scc = 0;
+    FOR(i,0,6*n-1)if(!dfn[i]) tarjan(i);
+    bool ok = true;
+    FOR(i,0,3*n-1)if(belong[i] == belong[i+3*n]){
+        ok = false; break;
+    }
+    if(ok)printf("yes\n");
+    else printf("no\n");
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

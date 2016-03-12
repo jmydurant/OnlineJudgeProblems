@@ -1,0 +1,107 @@
+#include <iostream>    //我是sb。。。居然是建图时候加边函数写错了。。很简单的一个匈牙利。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define p(i,j) ((i*col)+j)
+#define MAXN 11010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+#define link fasdfasdf
+using namespace std;
+typedef long long LL;
+int headline[MAXN];
+int puzzle[110][110];
+int link[MAXN];
+int tot;
+int row,col;
+int dx[] = {0,0,1,-1};
+int dy[] = {1,-1,0,0};
+bool visit[MAXN];
+struct node
+{
+    int f,t,nxt;
+}edge[MAXN*5];
+void add(int u,int v)
+{
+    tot++;
+    edge[tot].f = u;
+    edge[tot].t = v;
+    edge[tot].nxt = headline[u];
+    headline[u] = tot;
+}
+int in = 0;
+bool dfs(int u)
+{
+    for(int i = headline[u]; i != -1;i = edge[i].nxt)
+    {
+        int b = edge[i].t;
+        if(!visit[b])
+        {
+            visit[b] = true;
+            if(link[b] == -1 || dfs(link[b]))
+            {
+                link[b] = u;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+int Hungary(void)
+{
+    memset(link,-1,sizeof(link));
+    int ans = 0;
+    for(int i = 0;i<row;i++)
+    {
+        for(int j = 0;j<col;j++)
+        {
+            if(-1 == link[p(i,j)] && ((i+j)%2))
+            {
+                memset(visit,false,sizeof(visit));
+                if(dfs(p(i,j)))
+                    ans++,in++;
+            }
+        }
+    }
+    return ans*2;
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&row,&col);
+        for(int i = 0;i<row;i++)
+            for(int j = 0;j<col;j++)
+                scanf("%d",&puzzle[i][j]);
+        tot = 0;
+        memset(headline,-1,sizeof(headline));
+        for(int i = 0;i<row;i++)
+        {
+            for(int j = 0;j<col;j++)
+            {
+                if(puzzle[i][j])
+                {
+                    for(int k = 0;k<4;k++)
+                    {
+                        int x = i+dx[k], y = j+dy[k];
+                        if(x>=0 && x<row && y>=0 && y<col && puzzle[x][y])
+                        {
+                            add(p(i,j),p(x,y));
+                        }
+                    }
+                }
+            }
+        }
+        int ans = Hungary();
+        printf("%d\n",ans);
+    }
+    return 0;
+}

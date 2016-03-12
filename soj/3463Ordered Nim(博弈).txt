@@ -1,0 +1,36 @@
+#include <cstdio>   //当遇到大于一的堆的时候。。就可以决胜了。。因为此时玩家可以根据下面一堆是先手必胜还是先手必败来拿这一堆。。
+#include <cstring>
+#define h(x) (1<<(x))
+#define MAXN 1010
+int main(void)
+{
+    int n;
+    while(EOF != scanf("%d",&n))
+    {
+        bool win = true; int k;
+        bool finish = false;
+        for(int i = 1;i<n;i++)
+        {
+            scanf("%d",&k);
+            if(finish) continue;
+            if(k>1)
+            {
+                if(i%2)
+                    win = true;
+                else
+                    win = false;
+                finish = true;
+            }
+            else
+            {
+                win = 1 - win;
+            }
+        }
+        scanf("%d",&k);
+        if(win)
+            printf("Alice\n");
+        else
+            printf("Bob\n");
+    }
+    return 0;
+}

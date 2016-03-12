@@ -1,0 +1,184 @@
+#include <iostream>     //这个算法很强大。。。可以自行百度  U,D,L,R代表方向指针C,H代表列和行的头指针S代表列中非零元素个数
+#include <cstdio>
+#include <cstring>
+#include <climits>
+#include <algorithm>
+#define gride(a,b)  (((a)/3)*3+(b)/3)
+#define MAXr 750
+#define MAXc 350
+using namespace std;
+
+int U[MAXc*MAXr],D[MAXc*MAXr],L[MAXc*MAXr],R[MAXc*MAXr],C[MAXc*MAXr];
+int H[MAXr],S[MAXc],mark[MAXc*MAXr],visit[MAXc*MAXr];
+int N,M;
+char s[100];
+int puzzle[MAXr][MAXc];
+bool flag;
+int size;
+
+void link(int r,int c)
+{
+    C[size] = c;
+    S[c]++;
+    U[size] = U[c];  D[size] = c;
+    D[U[c]] = size;  U[c] = size;
+    if(H[r] == -1)
+    {
+        H[r] = L[size] = R[size] = size;
+    }
+    else
+    {
+        L[size] = L[H[r]]; R[size] = H[r];
+        R[L[H[r]]] = size; L[H[r]] = size;
+    }
+    mark[size] = r;
+    size++;
+}
+
+void REMOVE(int c)
+{
+    L[R[c]] = L[c];
+    R[L[c]] = R[c];
+    for (int i=D[c]; i!=c; i=D[i])
+    {
+        for (int j=R[i]; j!=i; j=R[j])
+        {
+            U[D[j]] = U[j];
+            D[U[j]] = D[j];
+            S[C[j]]--;
+        }
+    }
+}
+
+void RESUME(int c)
+{
+    for (int i=U[c]; i!=c; i=U[i])
+    {
+        for (int j=L[i]; j!=i; j=L[j])
+        {
+            U[D[j]] = j;
+            D[U[j]] = j;
+            S[C[j]]++;
+        }
+    }
+    L[R[c]] = c;
+    R[L[c]] = c;
+}
+
+void dance(int k)
+{
+    if(R[0] == 0)
+    {
+        flag = true;
+        sort(visit,visit+k);
+        for(int i=0;i<k;i++)
+        {
+            int t = mark[visit[i]]-1;
+            t%=81;
+            t%=9;
+            t++;
+            printf("%d",t);
+        }
+        printf("\n");
+        return ;
+    }
+   // printf("innnnnnnnnnnnnnnnn\n");
+    int minc = INT_MAX;
+    int c;
+    for(int i=R[0]; i;i=R[i])
+    {
+        //printf("innnnnnnnnnnnnnnnn\n");
+        if(minc>S[i])
+        {
+            minc = S[i];
+            c = i;
+        }
+    }
+    //printf("%d fsadfasdf\n",c);
+    REMOVE(c);
+    for (int i=D[c]; i!=c; i=D[i])
+    {
+        //printf("innnnnnnnnnnnnnnnn\n");
+        visit[k] = i;
+        for (int j=R[i]; j!=i; j=R[j])
+        {
+            REMOVE(C[j]);
+        }
+        dance(k+1);
+        if(flag)
+            return;
+        for(int j=L[i]; j!=i; j=L[j])
+        {
+            RESUME(C[j]);
+        }
+    }
+    RESUME(c);
+}
+
+int main(void)
+{
+    while(~scanf("%s",s))
+    {
+        if(0 == strcmp(s,"end"))
+            break;
+        memset(puzzle,0,sizeof(puzzle));
+        //printf("testtest\n");
+        for (int i=0; i<9; i++)
+        {
+            for (int j=0; j<9; j++)
+            {
+                if(s[i*9+j] == '.')
+                {
+                    for(int k=1;k<=9;k++)
+                    {
+                        puzzle[i*81+j*9+k][i*9+j+1] = 1;
+                        puzzle[i*81+j*9+k][81+i*9+k] = 1;
+                        puzzle[i*81+j*9+k][162+j*9+k] = 1;
+                        puzzle[i*81+j*9+k][243+9*gride(i,j)+k] = 1;
+                    }
+                }
+                else
+                {
+                    int num = s[i*9+j]-'0';
+                    puzzle[i*81+j*9+num][i*9+j+1] = 1;
+                    puzzle[i*81+j*9+num][81+i*9+num] = 1;
+                    puzzle[i*81+j*9+num][162+j*9+num] = 1;
+                    puzzle[i*81+j*9+num][243+9*gride(i,j)+num] = 1;
+                }
+            }
+        }
+        //printf("testtest\n");
+        //for(int i=1;i<=19;i++)
+        //{
+        //    for(int j=1;j<=10;j++)
+       //     {
+      //          printf("%d",puzzle[i][j]);
+      //      }
+      //      printf("\n");
+      //  }
+        for(int i=0;i<=324;i++)
+        {
+            C[i] = i; S[i] = 0;
+            U[i] = i; D[i] = i;
+            L[i+1] = i; R[i] = i+1;
+        }
+        R[324] = 0;
+        size = 325;
+        memset(H,-1,sizeof(H));
+        memset(mark,0,sizeof(mark));
+        for(int i=1;i<=729;i++)
+        {
+            for(int j=1; j<=324; j++)
+            {
+                if(puzzle[i][j])
+                    link(i,j);
+            }
+        }
+        flag = false;
+        //printf("%d    \n",D[1]);
+        dance(0);
+    }
+    return 0;
+}
+
+

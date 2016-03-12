@@ -1,0 +1,151 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //看了下zkw的博客。。学习了一下这种费用流。。不过感觉真的似懂非懂。。。
+#include <cstring>    //建模方法见bzoj2597的结题报告吧。。在另一个文件夹里面我懒得弄过来了。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000
+#define maxn 2010000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,m,op,ed,mincost,pis;
+int puzzle[210][210] , res[210][210];
+struct node{
+    int f,t,nxt,r,cost;
+}edge[maxn];
+int headline[20100] , E;
+int fuck[110] , in[110];
+void INIT(void){
+    FOR(i,1,109) fuck[i] = 2*i - 1;
+}
+inline void add(int f,int t,int w,int c){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].r = w;
+    edge[E].cost = c;
+    headline[f] = E++;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].r = 0;
+    edge[E].cost = -c;
+    headline[t] = E++;
+}
+int visit[21000],label;
+int dfs(int u,int c){
+    if(u == ed){
+        mincost += pis * c;
+        return c;
+    }
+    visit[u] = label;
+    int temp = c;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(edge[i].r && (!edge[i].cost) && visit[v] != label){
+            int tt = dfs(v , MIN(temp , edge[i].r));
+            edge[i].r -= tt;
+            edge[i ^ 1].r += tt;
+            temp -= tt;
+            if(!temp)return c;
+        }
+    }return c - temp;
+}
+bool modlabel(void){
+    int dd = INF;
+    FOR(i,op,ed)if(visit[i] == label){
+        for(int j = headline[i];~j;j = edge[j].nxt){
+            int v = edge[j].t;
+            if(edge[j].r && visit[v] != label && edge[j].cost < dd) dd = edge[j].cost;
+        }
+    }
+    if(dd == INF)return false;
+    FOR(i,op,ed)if(visit[i] == label){
+        for(int j = headline[i];~j;j = edge[j].nxt){
+            edge[j].cost -= dd; edge[j ^ 1].cost += dd;
+        }
+    }
+    pis += dd;
+    return true;
+}
+int zkw(void){
+    mincost = pis = 0;
+    rst(visit,0);label = 1;
+    do do label++;
+    while(dfs(op,INF));
+    while(modlabel());
+    return mincost;
+}
+int findwin(int u){
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        if(!edge[i].r)return edge[i].t;
+    }
+    return -1;
+}
+void solve(void){
+    INIT();
+    E = 0; rst(headline,-1);
+    rst(in,0);
+    m = n * (n - 1) / 2;
+    op = 0 , ed = m + n + 1;
+    int tot = 0;
+    FOR(i,1,n){
+        FOR(j,1,n){
+            scanf("%d",puzzle[i] + j);
+            if(j <= i)continue;
+            tot++;
+            if(puzzle[i][j] == 2){
+                in[i]++; in[j]++;
+                add(tot,i+m,1,0); add(tot,j+m,1,0);
+            }else if(puzzle[i][j] == 1){
+                in[i]++; add(tot,i+m,1,0);
+            }else{
+                in[j]++; add(tot,j+m,1,0);
+            }
+        }
+    }
+    FOR(i,1,m) add(op,i,1,0);
+    FOR(i,1,n){
+        FOR(j,1,in[i]){
+            add(i+m,ed,1,fuck[j]);
+        }
+    }
+    int ans = zkw();
+    printf("%d\n",n*(n-1)*(n-2)/6 + m / 2 - ans / 2);
+    //rst(res,0);                     //bzoj要输出结果。。。
+    //tot = 0;
+    //FOR(i,1,n){
+    //    FOR(j,i+1,n){
+    //        tot++;
+    //        int misaka = findwin(tot);
+    //        res[misaka - m][i+j-misaka+m] = 1;
+    //    }
+    //}
+    //FOR(i,1,n){
+    //    FOR(j,1,n)printf("%d ",res[i][j]);printf("\n");
+    //}
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

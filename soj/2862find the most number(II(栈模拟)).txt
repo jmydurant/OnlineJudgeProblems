@@ -1,0 +1,49 @@
+#include<cstdio>   //猥琐的没用stl的stack。。其实。。就是说。。如果N为偶数。。有可能出现全部消掉的情况。。这时候答案肯定是栈顶或者是最后一个要进栈的数
+#include<cmath>    //然后只要查找他们的出现次数就可以了。。
+#include<cstring>
+#include<deque>
+#include<algorithm>
+#include<climits>
+using namespace std;
+int num[1000010];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int result;
+        int top=0;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",num+i);
+            if(0==top)
+            {
+                result=num[i];
+                top++;
+            }
+            else if(result==num[i])
+            {
+                top++;
+            }
+            else
+            {
+                top--;
+            }
+        }
+        if(top>0)printf("%d\n",result);
+        else
+        {
+            int tmpt=num[N];
+            int a=0,b=0;
+            for(int i=1;i<=N;i++)
+            {
+                if(num[i]==result)a++;
+                else if(num[i]==tmpt)b++;
+            }
+            if(a>b)printf("%d\n",result);
+            else printf("%d\n",tmpt);
+        }
+    }
+    return 0;
+}
+

@@ -1,0 +1,54 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <cstdlib>
+#define FOR(i,a,b) for(int i = (int)a ;i<=(int)b;i++)
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 22000
+using namespace std;
+int r25,r50;
+int main(void)
+{
+    int n;
+    while(EOF!= scanf("%d",&n))
+    {
+        r25 = 0; r50 = 0;
+        bool ok = true;
+        for(int i = 1;i<=n;i++)
+        {
+            int k; scanf("%d",&k);
+            if(!ok)continue;
+            if(k == 25)
+            {
+                r25++;
+            }
+            else if(k == 50)
+            {
+                r50++;
+                r25--;
+            }
+            else
+            {
+                if(r50>0)
+                {
+                    r50--;
+                    r25--;
+                }
+                else
+                {
+                    r25 -= 3;
+                }
+            }
+            if(r25<0 || r50<0)
+                ok = false;
+        }
+        if(ok)
+            printf("YES\n");
+        else
+            printf("NO\n");
+    }
+    return 0;
+}
+

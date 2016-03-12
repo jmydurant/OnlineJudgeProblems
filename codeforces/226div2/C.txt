@@ -1,0 +1,73 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 711080
+#define mod 1000000007LL
+#define fr first
+#define se second
+using namespace std;
+typedef long long LL;
+int sum[maxn];
+bool visit[10000100];
+int prime[maxn],tot , n , maxr;
+int nn[10000100];
+void INIT(void){
+    tot = 0;
+    rst(visit,false);
+    for(int i = 2;i<=maxr;i++){
+        if(!visit[i]){
+            prime[++tot] = i;
+            for(int j = i;j <= maxr;j += i){
+                visit[j] = true;
+                sum[tot] += nn[j];
+            }
+        }
+    }
+    sum[0] = 0;
+    FOR(i,1,tot){
+        sum[i] += sum[i-1];
+    }
+    //cout << prime[3] << endl;
+}
+int main(void){
+    while(EOF != scanf("%d",&n)){
+        maxr = 0;
+        FOR(i,1,n){
+            int tt; scanf("%d",&tt);
+            nn[tt]++;
+            maxr = MAX(maxr , tt);
+        }
+        INIT();
+        int Q; scanf("%d",&Q);
+        while(Q--){
+            int l,r; scanf("%d%d",&l,&r);
+            r = MIN(maxr,r);
+            int rr = upper_bound(prime+1,prime+tot+1,r) - prime - 1;
+            int ll = lower_bound(prime+1,prime+tot+1,l) - prime;
+            printf("%d\n",sum[rr] - sum[ll - 1]);
+        }
+    }
+    return 0;
+}

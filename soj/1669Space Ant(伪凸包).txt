@@ -1,0 +1,122 @@
+#include <vector>   //这两天光搞TopCoder了。。赶紧睡觉之前刷一下题。。这个思想其实很简单。。叉积用好就行了。。
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <cstring>
+#define INF 10000;
+using namespace std;
+struct point
+{
+    int x, y;
+}p[200];
+bool visit[200];
+int conbag[200];
+int tot,N;
+int cross(point a,point b,point c)
+{
+    return (a.x-c.x)*(b.y-c.y)-(b.x-c.x)*(a.y-c.y);
+}
+int dis(point a,point b)
+{
+    return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y);
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d",&N);
+        int miny=INF;
+        int minx,biaohao;
+        tot=0;
+        for(int i=1;i<=N;i++)
+        {
+            int FFF;
+            scanf("%d%d%d",&FFF,&p[i].x,&p[i].y);
+            if(p[i].y<miny)
+            {
+                miny=p[i].y;
+                biaohao=i;
+            }
+            else if(p[i].y==miny)
+            {
+                if(p[i].x<minx)
+                {
+                    minx=p[i].x;
+                    biaohao=i;
+                }
+            }
+        }
+        memset(visit,0,sizeof(visit));
+        visit[biaohao]=true;
+        conbag[1]=biaohao;
+        tot++;
+        int now=biaohao,next;
+        while(1)
+        {
+            for(int i=1;i<=N;i++)
+            {
+                if(!visit[i])
+                {
+                    next=i;
+                }
+            }
+            for(int j=1;j<=N;j++)
+            {
+                if((!visit[j]) && j!=next)
+                {
+                    if(cross(p[j],p[next],p[now])>0)
+                    {
+                        next=j;
+                    }
+                    else if(0==cross(p[j],p[next],p[now]))
+                    {
+                        if(dis(p[now],p[j])>dis(p[now],p[next]))
+                        {
+                            next=j;
+                        }
+                    }
+                }
+            }
+            conbag[++tot]=next;
+            now=next;
+            visit[now]=true;
+            if(N-tot==1)
+                break;
+        }
+        printf("%d ",N);
+        bool f=false;
+        for(int i=1;i<N;i++)
+        {
+            printf("%d ",conbag[i]);
+            if(!visit[i])
+            {
+                f=true;
+                conbag[N]=i;
+            }
+        }
+        if(f)
+        {
+            printf("%d\n",conbag[N]);
+        }
+        else
+        {
+            printf("%d\n",N);
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,114 @@
+#include <iostream>   //后缀数组啊。。。烦人啊。。作死啊。。不玩了啊。。。。
+#include <cstdio>     //且不说那个国家队论文有多难懂。。且不说他的标程有多难懂。。。为什么大家都要写成那个样子呢。。。
+#include <cstring>    //简洁的要死啊。。这是什么鸟玩意节奏。。。原理我就不说了。。自己百度2009年的论文。。
+#include <string>
+#include <cstdlib>
+#include <vector>
+#define FOR(i,a,b) for(int i = (int)a ;i<=(int)b;i++)
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 22000
+#define rank fadsasf
+using namespace std;
+typedef long long LL;
+char a[MAXN],b[MAXN];
+int r[MAXN];
+int wsf[MAXN],sa[MAXN],rank[MAXN],height[MAXN];
+int wa[MAXN],wb[MAXN];
+bool cmp(int *temp,int a,int b,int l)
+{
+    return temp[a] == temp[b] && temp[a+l] == temp[b+l];
+}
+
+void da(int *r,int *sa,int n,int m)
+{
+    int *x = wa, *y = wb, *t;
+    for(int i = 0;i<m;i++) wsf[i] = 0;
+    for(int i = 0;i<n;i++) wsf[x[i] = r[i]]++;
+    for(int i = 1;i<m;i++) wsf[i] += wsf[i-1];
+    for(int i = n-1;i>=0;i--) sa[--wsf[x[i]]] = i;
+
+    for(int j = 1,p = 0;p<n && j<n; j *= 2,m = p)
+    {
+        p = 0;
+        for(int i = n-j;i<n;i++)
+            y[p++] = i;
+        for(int i = 0;i<n;i++)
+            if(sa[i]>=j)
+            y[p++] = sa[i] - j;
+
+        for(int i = 0;i<=m;i++) wsf[i] = 0;
+        for(int i = 0;i<n;i++) wsf[x[y[i]]]++;
+        for(int i = 1;i<=m;i++) wsf[i] += wsf[i-1];
+        for(int i = n-1;i>=0;i--) sa[--wsf[x[y[i]]]] = y[i];
+
+        t = x; x = y; y = t; x[sa[0]] = 0; p = 1;
+        for(int i = 1;i<n;i++)
+        {
+            x[sa[i]]=cmp(y,sa[i-1],sa[i],j)?p-1:p++;
+        }
+    }
+}
+
+void calh(int *sa,int *rank,int n)
+{
+    for(int i = 1;i<=n;i++) rank[sa[i]] = i; //???????
+    int j,k = 0;
+    for(int i=0;i<n;height[rank[i++]]=k)
+        for(k?k--:0,j=sa[rank[i]-1];r[j+k]==r[i+k];k++);
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    getchar();
+    while(casenum--)
+    {
+        gets(a); gets(b);
+        int len1 = strlen(a), len2 = strlen(b);
+        int maxr = -1, minr = MAXN;
+        for(int i = 0;i<len1;i++)
+        {
+            maxr = MAX(maxr,a[i]);
+            minr = MIN(minr,a[i]);
+        }
+        for(int i = 0;i<len2;i++)
+        {
+            maxr = MAX(maxr,b[i]);
+            minr = MIN(minr,b[i]);
+        }
+        a[len1] = maxr +1;
+        a[len1+1] = '\0';
+        strcat(a,b);
+        int len = strlen(a);
+        for(int i = 0;i<len;i++)
+        {
+            r[i] = a[i] - minr +1;
+        }
+        r[len] = 0;
+        //printf("get in da\n");
+        da(r,sa,len+1,maxr - minr +5);
+        //printf("finish da\n");
+        calh(sa,rank,len);
+        int ans = 0;
+        for(int i = 1;i<=len;i++)
+        {
+            if(height[i]>ans)
+            {
+                if(sa[i]>=0 && sa[i]<len1 && sa[i-1]>len1)
+                    ans = height[i];
+                if(sa[i-1]>=0 && sa[i-1]<len1 && sa[i]>len1)
+                    ans = height[i];
+            }
+        }
+        printf("Nejdelsi spolecny retezec ma delku %d.\n",ans);
+    }
+    return 0;
+}
+
+
+
+
+
+
+

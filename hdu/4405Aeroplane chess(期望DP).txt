@@ -1,0 +1,103 @@
+#include<cstdio>   //很简单的期望DP。。我从网上找个解析吧。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+double dp[101000];
+int line[101000];
+int main(void)
+{
+    int N,M;
+    while(2==scanf("%d%d",&N,&M) && (M || N))
+    {
+        memset(dp,0,sizeof(dp));
+        memset(line,0,sizeof(line));
+        for(int i=1;i<=M;i++)
+        {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            line[a]=b;
+        }
+        for(int i=N-1;i>=0;i--)
+        {
+            if(line[i])
+            {
+                dp[i]=dp[line[i]];
+            }
+            else
+            {
+                double tmpt=0.0;
+                for(int j=1;j<=6;j++)
+                    tmpt+=dp[i+j];
+                dp[i]=1.0+tmpt/6.0;
+            }
+        }
+        printf("%.4lf\n",dp[0]);
+    }
+    return 0;
+}
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+double dp[101000];
+int line[101000];
+int main(void)
+{
+    int N,M;
+    while(2==scanf("%d%d",&N,&M) && (M || N))
+    {
+        memset(dp,0,sizeof(dp));
+        memset(line,0,sizeof(line));
+        for(int i=1;i<=M;i++)
+        {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            line[a]=b;
+        }
+        for(int i=N-1;i>=0;i--)
+        {
+            if(line[i])
+            {
+                dp[i]=dp[line[i]];
+            }
+            else
+            {
+                double tmpt=0.0;
+                for(int j=1;j<=6;j++)
+                    tmpt+=dp[i+j];
+                dp[i]=1.0+tmpt/6.0;
+            }
+        }
+        printf("%.4lf\n",dp[0]);
+    }
+    return 0;
+}
+状态转移方程：
+首先dp【N】=0；
+其次分两种情况：
+（1）i点不可以过渡，dp【i】=sum(（dp【i+j】+1）/6)
+（2）i点可以过渡到j点，dp【i】=dp[j]

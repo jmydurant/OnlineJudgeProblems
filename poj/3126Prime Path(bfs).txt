@@ -1,0 +1,81 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个数字变化的题目。。要求变化之后数字还是质数。。最短几次。。bfs一下就ok了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+bool visit[10010];
+int tot = 0;
+int used[10010] , q[10010] , dis[10010] , head , tail;
+int s,e;
+void INIT(void){
+    rst(visit,false);
+    FOR(i,2,9999){
+        if(!visit[i]){
+            for(int j = i*i; j < 10000; j += i) visit[j] = true;
+        }
+    }
+    FOR(i,1,1000)visit[i] = true;
+}
+int bfs(void){
+    if(s == e)return 0;
+    q[head] = s , dis[head] = 0;
+    while(head < tail){
+        int u = q[head] , dd = dis[head] ; head++;
+        int power = 10;
+        REP(k,4){
+            int mm = u % power - u % (power / 10);
+            mm = u - mm;
+            REP(i,10){
+                int temp = mm + i * power / 10;
+                if((!visit[temp]) && (!used[temp])){
+                    used[temp] = true;
+                    if(temp == e)return dd + 1;
+                    q[tail] = temp , dis[tail] = dd + 1; tail++;
+                }
+            }
+            power *= 10;
+        }
+    }return -1;
+}
+void solve(void){
+    scanf("%d%d",&s,&e);
+    rst(used,false); head = 0 , tail = 1;
+    int ans = bfs();
+    if(ans != -1)printf("%d\n",ans);
+    else printf("Impossible\n");
+}
+int main(void){
+    INIT();
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+}

@@ -1,0 +1,53 @@
+#include<cstring>   //重新练习一下异或运算。。。题目倒是很简单。。这两天都没怎么刷难题。。。有点空虚。。。
+#include<cstdio>
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int A[200];
+int B[200];
+inline int dif(int n)
+{
+    int ans=0;
+    while(n)
+    {
+        if(n&1)ans++;
+        n>>=1;
+    }
+    return ans;
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int m,n; scanf("%d%d",&m,&n);
+        for(int i=1;i<=m;i++)scanf("%d",A+i);
+        for(int i=1;i<=n;i++)scanf("%d",B+i);
+        for(int i=1;i<=n;i++)
+        {
+            int mindif=INF,tmpt;
+            for(int j=1;j<=m;j++)
+            {
+                int k=dif(A[j]^B[i]);
+                if(k<mindif)
+                {
+                    mindif=k;
+                    tmpt=A[j];
+                }
+                else if(k==mindif && A[j]<tmpt)tmpt=A[j];
+            }
+            printf("%d\n",tmpt);
+        }
+    }
+    return 0;
+}

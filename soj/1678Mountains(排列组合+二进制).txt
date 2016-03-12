@@ -1,0 +1,54 @@
+#include<cstring>
+#include<cstdio>    //我觉得这题把二进制真的是用活了。。。佩服佩服。。比如说对于9.。可以化成1001.。开始的时候最左边只有一个连续的一。。
+#include<climits>   //所以先输出一个小山。。然后再把1001中的第一个0变成1.。成为101还是只有一个连续的一。。所以再输出一个小山。。。
+#include<algorithm>  //最后以此类推。。得到了11有两个连续的一。。所以输出一个高度为2的山。。然后任务就完成了。。。好奇葩的解题方法。。
+#include<queue>     //组合数学还是得好好玩。。。真是能搞出大名堂的。。。爽！！！！
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int erjinzhi[50];
+int len;
+inline void print(int x)
+{
+    for(int i=1;i<=x;i++)printf("%c",'/');
+    for(int i=1;i<=x;i++)printf("\\");
+}
+inline void get2(int x)
+{
+    len=0;
+    while(x)
+    {
+        erjinzhi[++len]=(x%2);
+        x/=2;
+    }
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N) && N)
+    {
+        get2(N);
+        int tmpt=1;
+        for(int i=len-1;i>=1;i--)
+        {
+            if(1==erjinzhi[i])tmpt++;
+            else
+            {
+                print(tmpt);
+                tmpt=1;
+            }
+        }
+        print(tmpt);
+        printf("\n");
+    }
+    return 0;
+}

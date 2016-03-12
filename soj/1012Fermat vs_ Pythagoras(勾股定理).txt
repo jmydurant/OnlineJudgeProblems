@@ -1,0 +1,50 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int gcd(int x,int y)
+{
+    if(0!=y)return gcd(y,x%y);           //原理。。对于互质的奇数i,j  令x=i*j;y=abs(x*x-y*y)/2;z=(x*x+y*y)/2;就可以得到所有互质的勾股数。。
+    return x;
+}
+int visit[1000010];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int a,b,x,y,z;
+        int result=0,used=0;
+        memset(visit,0,sizeof(visit));
+        for(a=1;a*a<2*N;a+=2)
+        {
+            for(b=1;b<a;b+=2)
+            {
+                if(a*a+b*b>2*N)break;
+                if(gcd(a,b)==1)
+                {
+                    result++;
+                    x=a*b;
+                    y=(a*a-b*b)/2;
+                    z=(a*a+b*b)/2;
+                   // printf("%d %d %d\n",x,y,z);
+                    for(int i=1;z*i<=N;i++)
+                    {
+                        visit[i*x]=1;
+                        visit[i*y]=1;
+                        visit[i*z]=1;
+                    }
+                }
+            }
+        }
+        //printf("%d %d\n",a,b);
+        for(int i=0;i<=N;i++)
+        {
+            if(visit[i])
+            {
+                used++;
+            }
+        }
+        printf("%d %d\n",result,N-used);
+    }
+    return 0;
+}

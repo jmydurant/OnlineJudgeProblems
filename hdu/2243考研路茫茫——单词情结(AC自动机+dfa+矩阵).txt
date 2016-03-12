@@ -1,0 +1,141 @@
+#include <cstdio>             //用vs2012写的感觉好爽。。。
+#include <cstring>            //一道很好的题。。只是我写的搓。。开始用dfa匹配。。然后矩阵乘法。。然后用合法数减去dfa算出来的不合法数就可以了。
+#include <algorithm>          //数列求和我用逆元了。。
+#include <queue>
+#include <iostream>
+#include <climits>
+#include <cmath>
+#define  REP(i,n) for(int i = 0;i<(n);i++)
+#define  FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define  rst(x,k) memset(x,k,sizeof(x))
+#define  maxn 26
+#define  mod 18446744073709551616LL
+#define  ni 10330176681277348905LL
+#define  INF 1000000000
+#define  base 26
+using namespace  std;
+typedef unsigned long long LL;
+int _size;
+struct mat{
+	LL a[maxn][maxn];
+	mat(void){rst(a,0);}
+	void clr(void){rst(a,0);}
+	void INIT(void){
+		FOR(i,0,_size)a[i][i] = 1;
+	}
+	
+	void show(void){
+		FOR(i,0,_size){
+			FOR(j,0,_size){
+				printf("%I64u ",a[i][j]);
+			}printf("\n");
+		}
+	}
+};
+mat operator + (const mat & a,const mat & b){
+	mat ans;
+	FOR(i,0,_size)FOR(j,0,_size) ans.a[i][j] = a.a[i][j] + b.a[i][j];
+	return ans;
+}
+mat operator * (const mat & a,const mat & b){
+	mat ans;
+	FOR(i,0,_size)FOR(k,0,_size)if(a.a[i][k])FOR(j,0,_size) ans.a[i][j] += a.a[i][k] * b.a[k][j];
+	return ans;
+}
+mat operator ^ (mat  a,int n){
+	mat ans; ans.INIT();
+	while (n){
+		if(n & 1) ans = ans * a;
+		a = a * a;
+		n >>= 1;
+	}return ans;
+}
+struct node{
+	int fail,nxt[26];
+	bool end;
+	void INIT(void){
+		fail = end = 0;
+		rst(nxt,0);
+	}
+}tree[maxn];
+int n,m,tot;
+void Insert(char *s){
+	int now = 0;
+	for(;*s;s++){
+		int c = *s - 'a';
+		if(!tree[now].nxt[c]){
+			tot++; tree[tot].INIT();
+			tree[now].nxt[c] = tot;
+		}
+		now = tree[now].nxt[c];
+	}
+	tree[now].end = true;
+}
+void bfs(void){
+	int now = 0;
+	queue<int> q;
+	q.push(0);
+	while (!q.empty()){
+		now = q.front(); q.pop();
+		REP(i,26){
+			if(tree[now].nxt[i]){
+				int temp = tree[now].nxt[i];
+				if(now){
+					tree[temp].fail = tree[tree[now].fail].nxt[i];
+				}
+				tree[temp].end |= tree[tree[temp].fail].end;
+				q.push(temp);
+			}else tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+		}
+	}
+}
+char s[20];
+mat misaka;
+mat dfs(int len){
+	if(len == 1)return misaka;
+	if(len & 1)return (misaka ^ len) + dfs(len-1);
+	mat mikoto = dfs(len >> 1);
+	return mikoto + (mikoto * (misaka ^ (len>>1)));
+}
+LL cal(int len){
+	LL ans = 1;
+	LL tt = 26;
+	while (len){
+		if(len & 1) ans *= tt;
+		tt *= tt;
+		len >>= 1;
+	}
+	ans = (ans - 1) * 26 * ni;
+	//printf("tot is %I64u\n",ans);
+	mat kill_la_kill = dfs(m);
+	tt = 0;
+	FOR(i,0,_size) tt += kill_la_kill.a[0][i];
+	return ans - tt;
+}
+void solve(void){
+	tree[0].INIT(); tot = 0;
+	REP(i,n){
+		scanf("%s",s);
+		Insert(s);
+	}
+	bfs();
+	_size = tot;
+	misaka.clr();
+	FOR(i,0,_size){
+		REP(j,base){
+			if(!tree[i].end){
+				int temp = tree[i].nxt[j];
+				if(temp){
+					if(!tree[temp].end) misaka.a[i][temp]++;
+				}else misaka.a[i][0]++;
+			}
+		}
+	}
+	//misaka.show();
+	LL ans = cal(m);
+	printf("%I64u\n",ans);
+}
+int main(void){
+	while (2 == scanf("%d%d",&n,&m))solve();
+	return 0;
+}

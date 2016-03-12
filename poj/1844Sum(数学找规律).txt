@@ -1,0 +1,39 @@
+#include <cstdio>   //稍微在纸上面好好写几行就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 420100
+using namespace std;
+
+int sum[maxn];
+
+int main(void)
+{
+    rst(sum,0);
+    FOR(i,1,1000)
+    {
+        sum[i] = sum[i-1] + i;
+    }
+    //printf("%d\n",sum[1000]);
+    int n;
+    while(EOF != scanf("%d",&n))
+    {
+        FOR(i,1,1000)
+        {
+            if(sum[i]>=n && (sum[i]%2 == n%2))
+            {
+                printf("%d\n",i);
+                break;
+            }
+        }
+    }
+    return 0;
+}

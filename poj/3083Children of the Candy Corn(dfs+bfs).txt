@@ -1,0 +1,94 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //优先向左转和优先向右转和最短路之间。。有什么说不清的关系呢(大雾。。)。。左右转有dfs。最短路用bfs。。我的代码很简洁。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int dx[] = {1,0,-1,0};
+int dy[] = {0,-1,0,1};
+char puzzle[50][50];
+bool visit[50][50];
+int row,col,ans;
+int xx1,xx2,yy1,yy2;
+int qx[2100] , qy[2100] , dis[2100]; // bfs专用...
+inline bool judge(int x,int y){
+    if(x >= 0&& x < row && y > 0 && y <= col)return true;
+    return false;
+}
+void dfs(int sx,int sy,int v,int step,int dir){
+    if(sx == xx2 && sy == yy2){
+        ans = step; return;
+    }
+    int vv = (v+dir+4)%4 , tx,ty;
+    REP(sss,4){
+        tx = sx + dx[vv] , ty = sy + dy[vv];
+        if(judge(tx , ty) && puzzle[tx][ty] != '#'){
+            dfs(tx,ty,vv,step+1,dir);
+            break;
+        }
+        vv -= dir;
+        vv = (vv+4 )%4;
+    }
+}
+int bfs(int sx,int sy,int ex,int ey){
+    rst(visit,false);
+    int head = 0 , tail = 1;
+    qx[head] = sx , qy[head] = sy , dis[head] = 1 , visit[sx][sy] = true;
+    while(head < tail){
+        sx = qx[head] , sy = qy[head] ;int dd = dis[head]; head++;
+        REP(k,4){
+            int tx = sx + dx[k] , ty = sy + dy[k];
+            if(judge(tx,ty) && (!visit[tx][ty]) && puzzle[tx][ty] !='#'){
+                if(tx == ex && ty == ey)return dd + 1;
+                visit[tx][ty] = true;
+                qx[tail] = tx , qy[tail] = ty , dis[tail] = dd + 1; tail++;
+            }
+        }
+    }return -1;
+}
+void solve(void){
+    scanf("%d%d",&col,&row);
+    REP(i,row) scanf("%s",puzzle[i]);
+    REP(i,row)REP(j,col){
+        if(puzzle[i][j] == 'S')xx1 = i , yy1 = j;
+        if(puzzle[i][j] == 'E')xx2 = i , yy2 = j;
+    }
+    ans = 0;
+    dfs(xx1,yy1,1,1,-1); printf("%d ",ans);
+    ans = 0;
+    dfs(xx1,yy1,1,1,1); printf("%d ",ans);
+    printf("%d\n",bfs(xx1,yy1,xx2,yy2));
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+}

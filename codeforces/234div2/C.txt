@@ -1,0 +1,88 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //矩阵旋转。。就是这个行列和xy坐标转换太蛋疼了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000
+#define maxn 2010000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int x,y;
+};
+int row,col;
+node clwise(node tt){
+    int x = tt.x , y = row - tt.y + 1;
+    x--; y--;
+    int temp = x;
+    x = y;
+    y = -temp;
+    tt.x = x + 1;
+    tt.y = y + col;
+    tt.y = col - tt.y + 1;
+    return tt;
+}
+node conwise(node tt){
+    int x = tt.x , y = row - tt.y + 1;
+    x--; y--;
+    int temp = x;
+    x = -y;
+    y = temp;
+    tt.x = x + row;
+    tt.y = y + 1;
+    tt.y = col - tt.y + 1;
+    return tt;
+}
+node horizontal(node tt){
+    tt.x = col - tt.x + 1;
+    return tt;
+}
+int xt,yt,zt,Q;
+void solve(void){
+    node pp;
+    xt %= 4; yt %= 2; zt %= 4;
+    int oldrow = row , oldcol = col;
+    while(Q--){
+        scanf("%d%d",&pp.y , &pp.x);
+        row = oldrow , col = oldcol;
+        REP(i,xt){
+            pp = clwise(pp);
+            swap(row,col);
+        }
+        REP(i,yt){
+            pp = horizontal(pp);
+        }
+        REP(i,zt){
+            pp = conwise(pp);
+            swap(row,col);
+        }
+        printf("%d %d\n",pp.y , pp.x);
+    }
+}
+int main(void){
+    while(6 == scanf("%d%d%d%d%d%d",&row,&col,&xt,&yt,&zt,&Q)) solve();
+    return 0;
+}

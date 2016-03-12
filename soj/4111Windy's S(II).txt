@@ -1,0 +1,52 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+char a[1010];
+int check(int n,int lenth); //挺水的。。一个小循环就解决了。。。
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    getchar();
+    while(casenum--)
+    {
+        int alenth;
+        int i;
+        int result=0;
+        gets(a);
+        alenth=strlen(a);
+        for(i=0;i<=alenth-1;i++)
+        {
+            result+=check(i,alenth-1);
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}
+int check(int n,int lenth)
+{
+    int i,j;
+    int fail=0;
+    j=n;
+    for(i=0;i<=lenth;i++)
+    {
+        if(a[i]!=a[j])
+        {
+            fail=1;
+            break;
+        }
+        j++;
+        if(j>lenth)
+        {
+            j=0;
+        }
+    }
+    if(fail)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}

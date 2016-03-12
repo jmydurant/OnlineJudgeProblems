@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <string.h>
+int mountain[52][52];  
+int roadlen[2500];                        //记录那个长度没滑过了。。最大的非零数即是最大距离
+int m,n;                                  //这个叫什么记忆化搜索。。。好专业的术语。。会用就行。。今天这种搜索方法掌握了一点
+void findway(int length,int x,int y);     //DFS和BFS得认真的学。。。
+int main(void)
+{
+    int i,j;
+
+
+
+    while(scanf("%d%d",&m,&n)&&(0!=m||0!=n))
+    {
+        memset(roadlen,0,sizeof(roadlen));
+        for(i=0;i<=51;i++)
+      {
+        memset(mountain[i],0,sizeof(mountain[i]));
+      }
+        for(i=1;i<=m;i++)
+      {
+          for(j=1;j<=n;j++)
+          {
+             scanf("%d",&mountain[i][j]);
+          }
+      }
+        for(i=1;i<=m;i++)
+      {
+          for(j=1;j<=n;j++)
+          {
+            findway(0,i,j);
+          }
+      }
+      for(i=2490;0==roadlen[i]&&0<i;i--)
+      {
+          ;
+      }
+
+      printf("%d\n",roadlen[i]);
+    }
+}
+void findway(int length,int x,int y)
+{
+    if(x>m||x<=0||y>n||y<=0)
+    {
+        return ;
+    }
+    roadlen[length]=length;
+    if(mountain[x+1][y]<mountain[x][y])
+    {
+        findway(length+1,x+1,y);
+    }
+    if(mountain[x-1][y]<mountain[x][y])
+    {
+        findway(length+1,x-1,y);
+    }
+    if(mountain[x][y+1]<mountain[x][y])
+    {
+        findway(length+1,x,y+1);
+    }
+    if(mountain[x][y-1]<mountain[x][y])
+    {
+        findway(length+1,x,y-1);
+    }
+}

@@ -1,0 +1,19 @@
+#include<stdio.h>
+
+int main(void)
+{
+    char str[85];
+    while(scanf("%s",str)==1)
+    {
+        int i;
+        for(i=0;str[i]!='\0';i++)
+        {
+            if(str[i]<='z'&&str[i]>='a')            //好水的一道题
+            {
+                str[i]=(str[i]-'a'+'A');
+            }
+        }
+        printf("%s\n",str);
+    }
+    return 0;
+}

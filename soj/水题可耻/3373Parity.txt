@@ -1,0 +1,40 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int main(void)
+{
+    char a[100];
+    while(~scanf("%s",a))
+    {
+        if(a[0] == '#')
+            break;
+        int len = strlen(a);
+        int ans = 0;
+        for(int i = 0;i<len-1;i++)
+        {
+            ans += (a[i]-'0');
+        }
+        ans %= 2;
+        int temp;
+        if(a[len-1] == 'o')
+            temp = 1;
+        else
+            temp = 0;
+        ans ^= temp;
+        a[len-1] = ans+'0';
+        printf("%s\n",a);
+    }
+    return 0;
+}

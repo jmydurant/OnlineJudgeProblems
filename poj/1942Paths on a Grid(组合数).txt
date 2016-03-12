@@ -1,0 +1,36 @@
+#include<cstring>  //就是求C（N,M）的。。。好水。。。
+#include<iostream>
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+typedef long long LL;
+long long M,N;
+int main(void)
+{
+    while(cin >> M >> N)
+    {
+        if(0==M && 0==N)break;
+        long long sum=M+N;
+        long long k=MIN(M,N);
+        long long ans=1;
+        for(long long i=0;i<k;i++)
+        {
+            ans*=(sum-i);
+            ans/=(i+1);
+        }
+        cout << ans <<endl;
+    }
+    return 0;
+}

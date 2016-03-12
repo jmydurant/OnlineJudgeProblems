@@ -1,0 +1,19 @@
+#include<cstring>    //好像很无聊的样子。。。
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define INF 0x7f7f7f7f
+using namespace std;
+int ans[15]={0,2,7,5,30,169,441,1872,7632,1740,93313,459901,1358657,2504881,13482720};
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        printf("%d\n",ans[N]);
+    }
+    return 0;
+}

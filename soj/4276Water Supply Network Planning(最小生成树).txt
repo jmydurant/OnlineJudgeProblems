@@ -1,0 +1,89 @@
+#include<cstring>   //先自抽一下。。太挫了。。比赛的时候WA了14次！！！
+#include<cstdio>   //这道题比MST多了一个先前处理的过程。。先把高度高于LIM的给弄出来。。先以他们为顶点。。对其他的点进行松弛操作。。
+#include<climits>   //处理完这些点。。剩下的就是纯的裸MST了。。。
+#include<queue>
+#include<cstdlib>
+#include<stack>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+using namespace std;
+struct item
+{
+    int x,y,h;
+}btower[510],ltower[510],A[510];
+int dis[510];
+bool visit[510];
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N,LIM; scanf("%d",&N);
+        int tot=0,sum=0;
+        memset(visit,false,sizeof(visit));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d%d%d",&A[i].x,&A[i].y,&A[i].h);
+        }
+        scanf("%d%d%d%d",&LIM,&ltower[0].x,&ltower[0].y,&ltower[0].h);
+        for(int i=1;i<=N;i++)
+        {
+            if(A[i].h>LIM)
+            {
+                btower[++tot]=A[i];
+            }
+            else
+            {
+                ltower[++sum]=A[i];
+            }
+        }
+        for(int i=1;i<=sum;i++)
+        {
+            dis[i]=abs(ltower[i].x-ltower[0].x)+abs(ltower[i].y-ltower[0].y)+abs(ltower[i].h-ltower[0].h);
+        }
+        for(int i=1;i<=tot;i++)
+        {
+            for(int j=1;j<=sum;j++)
+            {
+                dis[j]=MIN(dis[j],abs(btower[i].x-ltower[j].x)+abs(btower[i].y-ltower[j].y)+abs(btower[i].h-ltower[j].h));
+            }
+        }
+        int res=0;
+        for(int i=1;i<=tot;i++)res+=(abs(btower[i].x-ltower[0].x)+abs(btower[i].y-ltower[0].y)+abs(btower[i].h-ltower[0].h));
+        int start=0;visit[start]=true;
+        for(int kkk=1;kkk<=sum;kkk++)
+        {
+            int minroad=INF,tmpt;
+            for(int i=1;i<=sum;i++)
+            {
+                if(!visit[i])
+                {
+                    dis[i]=MIN(dis[i],abs(ltower[start].x-ltower[i].x)+abs(ltower[start].y-ltower[i].y)+abs(ltower[start].h-ltower[i].h));
+                    if(dis[i]<minroad)
+                    {
+                        minroad=dis[i];
+                        tmpt=i;
+                    }
+                }
+            }
+            res+=minroad;
+            start=tmpt;
+            visit[start]=true;
+        }
+        printf("%d\n",res);
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+

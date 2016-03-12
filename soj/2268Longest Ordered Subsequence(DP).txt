@@ -1,0 +1,43 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;                 //基础题目。。。但是小的地方不能犯错。。。
+int a[1010];
+int dp[1010];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int i,j;
+        int result=1;
+        memset(dp,0,sizeof(dp));
+        for(i=1;i<=N;i++)
+        {
+            scanf("%d",&a[i]);
+        }
+        dp[1]=1;
+        for(i=1;i<=N;i++)
+        {
+            for(j=1;j<=i-1;j++)
+            {
+                if(a[i]>a[j])
+                {
+                    if(dp[i]<dp[j]+1)
+                    {
+                        dp[i]=dp[j]+1;
+                    }
+                }
+            }
+            if(dp[i]<1)
+            {
+                dp[i]=1;
+            }
+            if(dp[i]>result)
+            {
+                result=dp[i];
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

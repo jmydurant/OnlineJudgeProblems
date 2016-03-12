@@ -1,0 +1,28 @@
+#include<stdio.h>
+
+int main(void)
+{
+    int m;
+    int n;
+
+    scanf("%d",&n);
+    for(;n>0;n--)
+    {
+        int fivetimes=0;
+        int i;
+        scanf("%d",&m);
+        if(m==0)
+        {
+            printf("%d\n",0);
+            continue;
+        }
+        for(i=5;i<=m;i*=5)                 //Z = [N/5] +[N/5^2] +[N/5^3] + …（不用担心这会是一个无穷的运算，因为总存在一个K，使得5K > N，[N/5K]=0。）
+        {
+            fivetimes+=m/i;                //很好的一个技巧
+        }
+
+
+        printf("%d\n",fivetimes);
+    }
+    return 0;
+}

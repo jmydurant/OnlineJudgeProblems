@@ -1,0 +1,80 @@
+#include<stdio.h>
+#include<string.h>
+
+
+void meetmatch(int num);
+void printtype(int num);     //具体实现并不是多么的难。。。但是规律得找一会。。。居然这种投机取巧的方法也能过。。果然数学学好就行了。。
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n;
+        scanf("%d",&n);
+        if(n<=13)
+        {
+            meetmatch(n);
+            printf("\n");
+        }
+        else
+        {
+            int j=n/7;
+            printtype(n%7);
+            for(;(j-2)>0;j--)
+            {
+                printf("%d",8);
+            }
+            printf("\n");
+        }
+    }
+    return 0;
+
+}
+void meetmatch(int num)
+{
+    switch(num)
+    {
+        case 1:
+        printf("%d",1);break;
+        case 2: case 3:case 4:
+        printf("%d",2);break;
+        case 5:
+        printf("%d",6);break;
+        case 6:
+        printf("%d",8);break;
+        case 7:
+        printf("%d",10);break;
+        case 8:
+        printf("%d",18);break;
+        case 9: case 10:
+        printf("%d",20);break;
+        case 11:
+        printf("%d",28);break;
+        case 12:
+        printf("%d",68);break;
+        case 13:
+        printf("%d",88);break;
+
+    }
+}
+void printtype(int num)
+{
+    switch(num)
+    {
+        case 0:
+        printf("%d",108);break;
+        case 1:
+        printf("%d",188);break;
+        case 2:
+        printf("%d",200);break;
+        case 3:
+        printf("%d",208);break;
+        case 4:
+        printf("%d",288);break;
+        case 5:
+        printf("%d",688);break;
+        case 6:
+        printf("%d",888);break;
+    }
+}

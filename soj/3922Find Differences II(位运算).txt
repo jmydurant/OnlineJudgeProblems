@@ -1,0 +1,37 @@
+#include<cstdio>
+#include<cstring>    //因为这次要找两个不同的数字。。所以先把所以数字异或。。然后得到a^b。。然后找到这个数左边第一个1的位置。
+#include<algorithm> //然后把数组分成这位是1和不是1的。。这样就把这两个数分到了两个数组之中。。然后分别异或。。。就可以找到两个数了。。
+#include<climits>
+using namespace std;
+int num[200100];
+int main(void)
+{
+    int result;
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        result=0;
+        int a_list=0,b_list=0;
+        N=(2*N+2);
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",num+i);
+            result^=num[i];
+        }
+        int jinwei=1;
+        int zhanwei=1;
+        while(0!=(result>>jinwei))jinwei++;
+        zhanwei<<=(jinwei-1);
+        for(int i=1;i<=N;i++)
+        {
+            if((zhanwei&num[i]))
+            {
+                a_list^=num[i];
+            }
+            else b_list^=num[i];
+        }
+        if(a_list>b_list)printf("%d %d\n",b_list,a_list);
+        else printf("%d %d\n",a_list,b_list);
+    }
+    return 0;
+}

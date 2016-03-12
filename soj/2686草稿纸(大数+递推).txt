@@ -1,0 +1,73 @@
+#include <cstdio>   //就是大数写的比较麻烦。。其他还可以。。。递推关系就是程序里面写的关系。。。
+#include <cstring>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+using namespace std;
+
+struct bign
+{
+    int a[1000];
+    int len;
+    bign(){memset(a,0,sizeof(a)); len = 1;}
+    void INIT(int n)
+    {
+        memset(a,0,sizeof(a));
+        if(n == 0)
+        {
+            len = 1;
+            return;
+        }
+        len = 0;
+        while(n)
+        {
+            a[len] = n%10;
+            len++;
+            n/=10;
+        }
+    }
+    bign operator + (const bign & temp) const
+    {
+        bign ans;
+        int cap = MAX(len,temp.len);
+        for(int i = 0;i<=cap;i++)
+        {
+            ans.a[i] += (a[i]+temp.a[i]);
+            ans.a[i+1] += ans.a[i]/10;
+            ans.a[i] %= 10;
+        }
+        cap = cap+1;
+        while(ans.a[cap] == 0)
+            cap--;
+        cap++;
+        ans.len = cap;
+        return ans;
+    }
+    void print(void)
+    {
+        for(int i = len-1;i>=0;i--)
+            printf("%d",a[i]);
+        printf("\n");
+    }
+}f[3010],g[3010],ans[3010];
+
+int main(void)
+{
+    f[1].INIT(1);
+    g[2].INIT(1);
+    f[3].INIT(1);
+    f[4].INIT(2);
+    g[4].INIT(1);
+    for(int i = 5;i<=3000;i++)
+    {
+        f[i] = f[i-2]+f[i-3]+g[i-2]+g[i-3];
+        g[i] = f[i-3]+f[i-4]+g[i-3]+g[i-4];
+    }
+    for(int i = 1;i<=3000;i++)
+        ans[i] = f[i]+g[i];
+    int n;
+    while(EOF!=scanf("%d",&n))
+    {
+        ans[n].print();
+    }
+    return 0;
+}
+

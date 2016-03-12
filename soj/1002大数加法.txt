@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <string.h>
+char s1[510];
+char s2[510];
+int a[510];
+int b[510];
+int sum[510];
+int main()
+{   int i,j,x,y;
+    while(scanf("%s %s",&s1,&s2)==2)
+    {
+        int jin=0;  int n;
+        for(n=0;n<=509;n++)
+        {
+            a[n]=0;
+            b[n]=0;
+            sum[n]=0;
+        }
+        for(i=0;s1[i]!='\0';i++)
+      {
+         a[i]=(s1[i]-'0');
+
+      }
+        for(j=0;s2[j]!='\0';j++)
+      {
+         b[j]=(s2[j]-'0');
+
+      }
+         i--;x=i;
+         j--;y=j;
+
+        for(i=0;i<=(x-i);i++)
+        {   int middle;
+            middle=a[i];
+            a[i]=a[x-i];
+            a[x-i]=middle;
+
+        }
+        for(j=0;j<=(y-j);j++)
+        {
+            int middle;
+            middle=b[j];
+            b[j]=b[y-j];
+            b[y-j]=middle;
+
+        }
+
+        for(n=0;n<=509;n++)
+        {
+            sum[n]=(a[n]+b[n]);
+
+        }
+        for(n=0;n<=508;n++)
+        {
+            if(sum[n]>=10)
+            {
+                sum[n+1]++;      //给我的警示：高精度相加的时候，相加和进位分开做可以防止999+1=9100的问题
+                sum[n]-=10;
+            }
+        }
+        for(n=509;(sum[n]==0&&n>0);n--)
+        {
+            ;
+        }
+
+        for(;n>=0;n--)
+        {
+            printf("%d",sum[n]);
+        }
+        printf("\n");
+    }
+    return 0;
+}

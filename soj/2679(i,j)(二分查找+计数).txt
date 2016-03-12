@@ -1,0 +1,111 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+using namespace std;   //这次算是对二分查找有了一个更深刻的认识。。。
+int num[2][10010];       //统计原来的两个数列
+int revnum[2][10010];   //从小到大之后将重复的排除过后的数列
+int times[2][100010];   //统计重新得到的数列重复元素的个数。。方便以后计算。。
+int left,right;        //记录二分的左右边界  
+int total[2];          //记录原始数列元素的个数
+int s;               //目标。。。
+int main(void)
+{
+    while(scanf("%d",&s)&&s)
+    {
+        int result=0;
+        int a,b;
+        int ttotal[2];                  //记录新得到的数列元素个数。。
+        scanf("%d%d",&total[0],&total[1]);
+        for(int i=0;i<2;i++)
+        {
+            for(int j=0;j<total[i];j++)
+            {
+                scanf("%d",&num[i][j]);
+            }
+            ttotal[i]=0;
+            memset(times[i],0,sizeof(times[i]));
+            sort(num[i],num[i]+total[i]);
+        }
+       // printf("%d\n",num[1][2]);
+        for(int i=0;i<total[0];i++)
+        {
+            if(i>0)
+            {
+                if(num[0][i]==num[0][i-1])
+                {
+                    times[0][ttotal[0]]++;
+                }
+                else
+                {
+                    ttotal[0]++;
+                    revnum[0][ttotal[0]]=num[0][i];
+                    times[0][ttotal[0]]++;
+                }
+            }
+            else
+            {
+                revnum[0][ttotal[0]]=num[0][i];
+                times[0][ttotal[0]]++;
+            }
+        }
+        for(int i=0;i<total[1];i++)
+        {
+            if(i>0)
+            {
+                if(num[1][i]==num[1][i-1])
+                {
+                    times[1][ttotal[1]]++;
+                }
+                else
+                {
+                    ttotal[1]++;
+                    revnum[1][ttotal[1]]=num[1][i];
+                    times[1][ttotal[1]]++;
+                }
+            }
+            else
+            {
+                revnum[1][ttotal[1]]=num[1][i];
+                times[1][ttotal[1]]++;
+            }
+        }
+       // printf("%d\n%d\n",revnum[1][1],times[1][1]);
+       if(ttotal[0]>ttotal[1])
+       {
+           a=1;b=0;
+       }
+       else
+       {
+           a=0;b=1;
+       }
+       left=0;right=ttotal[b];
+       //printf("%d\n",b);
+       for(int i=0;i<=ttotal[a];i++)
+       {
+           int middle=(left+right)/2;
+           left=0;right=ttotal[b];
+           //printf("%d %d\n",left,right);
+           while(left<=right)
+           {
+               //printf("ok\n");
+               if(revnum[a][i]+revnum[b][middle]>s)
+               {
+                   right=middle-1;
+                   middle=(left+right)/2;
+               }
+               else if(revnum[a][i]+revnum[b][middle]<s)
+               {
+                   left=middle+1;
+                   middle=(left+right)/2;
+               }
+               else
+               {
+                   result+=(times[a][i]*times[b][middle]);
+                   break;
+               }
+           }
+       }
+       printf("%d\n",result);
+    }
+    return 0;
+}

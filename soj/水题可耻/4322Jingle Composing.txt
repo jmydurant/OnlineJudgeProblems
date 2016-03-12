@@ -1,0 +1,59 @@
+#include <cstdio>   //´ÕÒô·ûÂï¡£¡£Ã»É¶¡£¡£
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define maxn 100100
+#define rst(x,k) memset(x,k,sizeof(x))
+using namespace std;
+char s[maxn];
+int cal(char ex)
+{
+    if(ex == 'W')
+        return 64;
+    else if(ex == 'H')
+        return 32;
+    else if(ex == 'Q')
+        return 16;
+    else if(ex == 'E')
+        return 8;
+    else if(ex == 'S')
+        return 4;
+    else if(ex == 'T')
+        return 2;
+    else
+        return 1;
+}
+int main(void)
+{
+    while(gets(s))
+    {
+        if(s[0] == '*') break;
+        int len = strlen(s);
+        int ans = 0;
+        int temp = 0;
+        bool finish = true;
+        for(int i = 0;i<len;i++)
+        {
+            if(s[i] == '/')
+            {
+                if(!finish)
+                {
+                    if(temp == 64)
+                        ans++;
+                    temp = 0;
+                    finish = true;
+                }
+            }
+            else
+            {
+                temp += cal(s[i]);
+                finish = false;
+            }
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

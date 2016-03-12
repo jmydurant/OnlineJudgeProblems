@@ -1,0 +1,75 @@
+#include <iostream>   //我是沙茶..... 注意考虑一个串包含另一个串的情况就可以了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 2000100
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+char s1[maxn],s2[maxn];
+char *a,*b;
+char xa[maxn],xb[maxn];
+int nxt[maxn];
+int getnxt(int len,char *temp){
+    int k = -1; nxt[0] = -1;
+    FOR(i,1,len-1){
+        while(k>-1 && temp[i] != temp[k+1]) k = nxt[k];
+        if(temp[i] == temp[k+1])k++;
+        nxt[i] = k;
+    }return nxt[len-1];
+}
+bool KMP(char *tt,char *temp){
+    int len = strlen(temp);
+    getnxt(len,temp);
+    int k = -1;
+    for(int i = 0;tt[i];i++){
+        while(k>-1 && tt[i] != temp[k+1])k = nxt[k];
+        if(tt[i] == temp[k+1])k++;
+        if(k == len-1)return true;
+    }return false;
+}
+void INIT(void){
+    scanf("%s%s",s1,s2);
+    int la = strlen(s1), lb = strlen(s2);
+    if(la<lb){
+        a = s2; b = s1;
+        swap(la,lb);
+    }else{
+        a = s1; b = s2;
+    }
+    if(KMP(a,b))printf("%d\n",la);
+    else{
+        strcpy(xa,a); strcpy(xb,b);
+        strcat(xa,b); strcat(xb,a);
+        int tt = MIN(la,lb);
+        int sa = getnxt(la+lb,xa)+1;
+        int sb = getnxt(la+lb,xb)+1;
+        sa = MIN(sa,tt); sb = MIN(sb,tt);
+        tt = MAX(sa,sb);
+        printf("%d\n",la+lb-tt);
+    }
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)INIT();
+    return 0;
+}

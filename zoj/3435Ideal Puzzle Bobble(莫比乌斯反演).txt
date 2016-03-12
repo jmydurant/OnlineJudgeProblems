@@ -1,0 +1,65 @@
+#include <iostream>   // 这题注意分块求和。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define INF 1000000001
+#define maxn 1010000
+#define h(x) (1<<(x))
+using namespace std;
+typedef long long LL;
+int u[maxn];   //神奇的莫比乌斯函数..
+int sum[maxn]; //神奇的u之和...
+bool visit[maxn];
+void INIT(void)
+{
+    rst(visit,false);
+    FOR(i,1,1000000)u[i] = 1;
+    FOR(i,2,1000000)
+    {
+        if(!visit[i])
+        {
+            for(int j = 1;j*i<=1000000;j++)
+            {
+                visit[i*j] = true;
+                if(j%i == 0)u[i*j] = 0;
+                else u[i*j] *= -1;
+            }
+        }
+    }
+    sum[0] = 0;
+    FOR(i,1,1000000) sum[i] = sum[i-1] + u[i];
+    //cout << sum[3] << endl;
+}
+
+int main(void)
+{
+    INIT();
+    int w,l,h;
+    while(3 == scanf("%d%d%d",&w,&l,&h))
+    {
+        w--; l--; h--;
+        LL ans = 0;
+        int deta;
+        for(int i = 1;i<=w || i<=l || i<=h;i = deta+1)
+        {
+            deta = INF;
+            if(w>=i) deta = MIN(deta,w/(w/i));
+            if(l>=i) deta = MIN(deta,l/(l/i));
+            if(h>=i) deta = MIN(deta,h/(h/i));
+            LL a = w/deta+1, b = l/deta+1, c = h/deta+1;
+            ans += (sum[deta]-sum[i-1])*(a*b*c-1);
+        }
+        cout << ans << endl;
+    }
+    return 0;
+}

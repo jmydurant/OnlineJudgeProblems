@@ -1,0 +1,57 @@
+#include<iostream>
+#include<cstring>    //第二次用。。稍微能熟练一点么。。。别拖后腿就行了。。。其实比线段树要高效多了。。。
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#define lowbit(x)  ((x)&(-x))
+using namespace std;
+struct abc
+{
+    long long x,v;
+    bool operator < (const abc & a) const
+    {
+        return v<a.v;
+    }
+}cow[20010];
+long long num[2][20010];
+long long sum(int loc,int d)
+{
+    long long result=0;
+    while(loc>0)
+    {
+        result+=num[d][loc];
+        loc-=lowbit(loc);
+    }
+    return result;
+}
+void change(int loc,long long value,int d)
+{
+    while(loc<=20000)
+    {
+        num[d][loc]+=value;
+        loc+=lowbit(loc);
+    }
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        memset(num,0,sizeof(num));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%lld%lld",&cow[i].v,&cow[i].x);
+        }
+        long long result=0;
+        sort(cow+1,cow+N+1);
+        for(int i=1;i<=N;i++)
+        {
+            long long a=sum(cow[i].x,0),b=sum(cow[i].x,1);
+            result+=(a*cow[i].x-b+sum(20000,1)-b-(i-1-a)*cow[i].x)*cow[i].v;
+            change(cow[i].x,1,0);
+            change(cow[i].x,cow[i].x,1);
+        }
+        printf("%lld\n",result);
+    }
+    return 0;
+}

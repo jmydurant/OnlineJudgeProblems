@@ -1,0 +1,58 @@
+#include<stdio.h>
+#include<string.h>
+ struct Things
+{
+    int begintime;
+    int endtime;
+} ;
+struct Things jobs[1100];                  //我可以说这是第一道正统贪心么。。。而且第一次用了struct结构。。感觉棒极了。。
+int main(void)
+{
+    int n;
+    while(EOF!=scanf("%d",&n))
+    {
+        int i,j;
+        int count=0;
+        struct Things exchange;
+        for(i=1;i<=n;i++)
+        {
+            scanf("%d%d",&jobs[i].begintime,&jobs[i].endtime);
+        }
+        for(i=1;i<=n-1;i++)
+        {
+            for(j=1;j<=n-i;j++)
+            {
+                if(jobs[j].endtime>jobs[j+1].endtime)
+                {
+                    exchange=jobs[j];
+                    jobs[j]=jobs[j+1];
+                    jobs[j+1]=exchange;
+                }
+            }
+        }
+
+        if(n==0)
+        {
+            printf("%d\n",0);
+            continue;
+        }
+        else
+        {
+            count++;
+            for(i=2;i<=n;i++)
+            {
+                if(jobs[i].begintime<jobs[i-1].endtime)
+                {
+                    jobs[i].endtime=jobs[i-1].endtime;
+                }
+                else
+                {
+                    count++;
+                }
+            }
+            printf("%d\n",count);
+        }
+
+    }
+    return 0;
+}

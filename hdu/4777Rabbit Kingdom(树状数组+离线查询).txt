@@ -1,0 +1,139 @@
+#include <iostream>   //这道题目当时没写出来。。感到自己好弱。。记录左右不互质点的位置。。然后把r给弄成邻接表。。离线查询就好。。代码比较好懂。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 210000
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct qqq{
+    int l,r;
+    int ind;
+    bool operator < (const qqq & temp)const{
+        return r < temp.r;
+    }
+}ques[maxn+10];
+int visit[maxn+10],prime[maxn+10],tot;
+int l[maxn+10],r[maxn+10];
+int ans[maxn+10],n,Q;
+int a[maxn+10],c[maxn+10];
+struct node{
+    int t,nxt;
+}edge[maxn*2];
+int headline[maxn+10],E;
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+void INIT(void){
+    tot = 0;
+    rst(visit,0);
+    for(int i = 2;i<=maxn;i++){
+        if(!visit[i]){
+            prime[++tot] = i;
+            for(LL j = (LL)i*i;j<=maxn;j += i) visit[j] = true;
+        }
+    }
+}
+void update(int pos,int v){
+    if(pos<=0) return;
+    while(pos <= n){
+        c[pos] += v;
+        pos += lowbit(pos);
+    }
+}
+int req(int pos){
+    int ans = 0;
+    while(pos > 0){
+        ans += c[pos];
+        pos -= lowbit(pos);
+    }return ans;
+}
+
+void solve(void){
+    rst(headline,-1); E = 0;
+    rst(visit,0);
+    rst(c,0);
+    FOR(i,1,n) scanf("%d",a+i);
+    FOR(i,1,n){
+        l[i] = 0;
+        int temp = a[i];
+        for(int j = 1;j<=tot && (LL)prime[j]*prime[j]<=temp;j++){
+            if(temp % prime[j] == 0){
+                l[i] = MAX(l[i],visit[prime[j]]);
+                visit[prime[j]] = i;
+                while(temp % prime[j] == 0)temp /= prime[j];
+            }
+        }
+        if(temp > 1){
+            l[i] = MAX(l[i],visit[temp]);
+            visit[temp] = i;
+        }
+    }
+    FOR(i,1,maxn) visit[i] = INF;
+    FORD(i,n,1){
+        r[i] = n+1;
+        int temp = a[i];
+        for(int j = 1;j<=tot && (LL)prime[j]*prime[j]<=temp;j++){
+            if(temp % prime[j] == 0){
+                r[i] = MIN(r[i],visit[prime[j]]);
+                visit[prime[j]] = i;
+                while(temp % prime[j] == 0) temp /= prime[j];
+            }
+        }
+        if(temp > 1){
+            r[i] = MIN(r[i],visit[temp]);
+            visit[temp] = i;
+        }
+        add(r[i],i);
+    }
+    //FOR(i,1,n) printf("l is %d   r is %d\n",l[i],r[i]);
+    FOR(i,0,Q-1){
+        scanf("%d%d",&ques[i].l,&ques[i].r);
+        ques[i].ind = i;
+    }
+    sort(ques,ques+Q);
+    int tail = 0;
+    FOR(i,0,Q-1){
+        while(tail < ques[i].r){
+            tail++;
+            for(int tt = headline[tail];tt != -1;tt = edge[tt].nxt){
+                int v = edge[tt].t;
+                update(v,-1);
+                update(l[v],1);
+            }
+            update(tail,1);
+            update(l[tail],-1);
+        }
+        ans[ques[i].ind] = req(ques[i].r) - req(ques[i].l - 1);
+    }
+    FOR(i,0,Q-1)printf("%d\n",ans[i]);
+}
+
+
+int main(void){
+    INIT();
+    while(2 == scanf("%d%d",&n,&Q)){
+        if(n == 0 && Q == 0)break;
+        solve();
+    }return 0;
+}

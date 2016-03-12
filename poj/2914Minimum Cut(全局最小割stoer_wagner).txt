@@ -1,0 +1,84 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>   //算法和用prime算最大生成树差不多。。好搞笑。。原理慢慢看。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 201000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int puzzle[510][510];
+int n,m,S,T;
+bool del[510] , visit[510];
+int dis[510];
+int dfs(int nt){
+    rst(visit,false);
+    rst(dis,0);
+    int ans = INF;
+    int maxr = -1 , temp = -1;
+    FOR(i,0,n-nt){
+        maxr = -1;
+        FOR(j,0,n-1){
+            if(!visit[j] && !del[j] && dis[j] > maxr){
+                maxr = dis[j]; temp = j;
+            }
+        }
+        S = T ; T = temp;
+        ans = dis[T];
+        visit[T] = true;
+        FOR(j,0,n-1){
+            if(!visit[j] && (!del[j])){
+                dis[j] += puzzle[T][j];
+            }
+        }
+    }return ans;
+}
+int stoer_wagner(void){
+    rst(del,0);
+    int mincut = INF;
+    FOR(i,1,n-1){
+        int tt = dfs(i);
+        mincut = MIN(mincut , tt);
+        if(mincut == 0)break;
+        del[T] = true;
+        FOR(j,0,n-1){
+            puzzle[j][S] = (puzzle[S][j] += puzzle[T][j]);
+        }
+    }return mincut;
+}
+void solve(void){
+    rst(puzzle,0);
+    REP(i,m){
+        int a,b,w; scanf("%d%d%d",&a,&b,&w);
+        puzzle[a][b] += w;
+        puzzle[b][a] += w;
+    }
+    printf("%d\n",stoer_wagner());
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

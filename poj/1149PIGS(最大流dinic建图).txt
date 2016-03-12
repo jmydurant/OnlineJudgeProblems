@@ -1,0 +1,99 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>    //最大流看出来了。。但是建图简直能把人抓狂到死啊。。居然那么神奇。。那些神奇的缩点。。详见网络流建模汇总
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 400
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int r[maxn][maxn];
+int pigs[maxn];
+int head[maxn] , dis[maxn];
+int n,m,op,ed;
+bool bfs(void){
+    queue<int> q;
+    q.push(op);
+    rst(dis,0);
+    dis[op] = 1;
+    while(!q.empty()){
+        int u = q.front(); q.pop();
+        for(int i = 0;i<=n;i++){
+            if(!dis[i] && r[u][i] > 0){
+                q.push(i);
+                dis[i] = dis[u] + 1;
+                if(i == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed)return c;
+    int temp = c;
+    for(int i = 0;i<=n;i++){
+        if(dis[i] == dis[u] + 1 && c && r[u][i] > 0){
+            int tt = dfs(i , MIN(temp , r[u][i]));
+            r[u][i] -= tt;
+            r[i][u] += tt;
+            temp -= tt;
+        }
+    }
+    if(c == temp)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op , INF);
+    return maxflow;
+}
+void solve(void){
+    rst(r,0);
+    rst(head,0);
+    FOR(i,1,m) scanf("%d",pigs+i);
+    op = 0 , ed = n+1;
+    FOR(i,1,n){
+        int ni; scanf("%d",&ni);
+        int tt;
+        REP(kk,ni){
+            scanf("%d",&tt);
+            if(head[tt]){
+                r[head[tt]][i] = INF;
+            }else{
+                r[op][i] += pigs[tt];
+            }
+            head[tt] = i;
+        }
+        scanf("%d",&r[i][ed]);
+    }
+    n++;
+    printf("%d\n",dinic());
+}
+int main(void){
+    while(EOF != scanf("%d%d",&m,&n)) solve();
+    return 0;
+}

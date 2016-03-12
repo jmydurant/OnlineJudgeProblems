@@ -1,0 +1,100 @@
+#include <iostream>   //据说只要10个颜色就可以了。。优化的方法就是记录下每个节点的最小的两个方案。。就可以对付冲突的问题了。。
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <deque>
+#include <climits>
+#include <cmath>
+#include <vector>
+#include <set>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 201000
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 20100403LL
+#define h(i,j) (i*col+j)
+#define eps 1e-10
+using namespace std;
+typedef long long LL;
+
+struct node
+{
+    int t,nxt;
+}edge[maxn];
+int headline[maxn];
+int tot;
+
+void add(int f,int t)
+{
+    tot++;
+    edge[tot].t = t;
+    edge[tot].nxt = headline[f];
+    headline[f] = tot;
+}
+
+int n;
+int dp[12][maxn];
+int fr[maxn],se[maxn];
+int mifr[maxn],mise[maxn];
+void dfs(int u,int fa)
+{
+    REP(i,11)dp[i][u] = i;
+    for(int i = headline[u];~i;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        if(v != fa)
+        {
+            dfs(v,u);
+            FOR(j,1,10)
+            {
+                if(j == fr[v])
+                    dp[j][u] += mise[v];
+                else
+                    dp[j][u] += mifr[v];
+            }
+        }
+    }
+    fr[u] = -1,se[u] = -1;
+    mifr[u] = mise[u] = INF;
+    FOR(i,1,10)
+    {
+        if(dp[i][u]<mifr[u])
+        {
+            se[u] = fr[u];
+            mise[u] = mifr[u];
+            fr[u] = i;
+            mifr[u] = dp[i][u];
+        }
+        else if(dp[i][u]<mise[u])
+        {
+            se[u] = i;
+            mise[u] = dp[i][u];
+        }
+    }
+}
+
+int main(void)
+{
+    while(EOF != scanf("%d",&n))
+    {
+        tot = 0;
+        rst(headline,-1);
+        REP(i,n-1)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            add(a,b);
+            add(b,a);
+        }
+        dfs(1,-1);
+        int ans = INF;
+        FOR(i,1,10) ans = MIN(dp[i][1],ans);
+        printf("%d\n",ans);
+    }
+    return 0;
+}

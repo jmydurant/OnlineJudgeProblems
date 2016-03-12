@@ -1,0 +1,78 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    int N;
+    while(scanf("%d",&N)&&N)   //这题属于大数加法。。但是不能开数组。。一开就超空间。。而且数字给的方向是从高位到低位。。比较奇葩
+    {                           //EOF不能作为结束标志。。已经OLE一次了。。第一次出这种错误提示。。。挺好玩的。。
+        int cunfang=0;              //总之。。模拟的时候要考虑很多种情况。。要小心。。
+        int a=0,b=0;
+        int zhanwei=0;
+        N--;
+        scanf("%d%d",&a,&b);
+        if(a+b<9)cunfang=a+b;
+        else if(9==a+b)zhanwei++;
+        else
+        {
+            cunfang=(a+b)%10;
+            printf("%d",1);
+        }
+        while(N--)
+        {
+            scanf("%d%d",&a,&b);
+            if(N>0)
+            {
+                if(a+b<9)
+                {
+                    printf("%d",cunfang);
+                    while(zhanwei>0)
+                    {
+                        printf("%d",9);
+                        zhanwei--;
+                    }
+                    cunfang=a+b;
+                }
+                else if(9==a+b)
+                {
+                    zhanwei++;
+                }
+                else
+                {
+                    printf("%d",cunfang+1);
+                    while(zhanwei>0)
+                    {
+                        printf("%d",0);
+                        zhanwei--;
+                    }
+                    cunfang=(a+b)%10;
+                }
+            }
+            else
+            {
+                if(a+b<=9)
+                {
+                    printf("%d",cunfang);
+                    while(zhanwei>0)
+                    {
+                        printf("%d",9);
+                        zhanwei--;
+                    }
+                    printf("%d",a+b);
+                }
+                else
+                {
+                    printf("%d",cunfang+1);
+                    while(zhanwei>0)
+                    {
+                        printf("%d",0);
+                        zhanwei--;
+                    }
+                    printf("%d",(a+b)%10);
+                }
+            }
+        }
+        printf("\n");
+    }
+    return 0;
+}

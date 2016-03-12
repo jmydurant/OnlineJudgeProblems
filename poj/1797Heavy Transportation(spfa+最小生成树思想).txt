@@ -1,0 +1,72 @@
+#include <stdio.h>    //用spfa做的。。其实dij算法也可以。。不过这里的dis不是距离。。而是到这个点的最大载重量。。
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <map>
+#define INF 0xffffffff
+#define MAXN 51000
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+int puzzle[1010][1010];
+int dis[1010];
+bool visit[1010];
+int N,M;
+int spfa(void)
+{
+    queue<int>q;
+    int start=1;
+    visit[1]=true;
+    q.push(1);
+    for(int i=1;i<=N;i++)
+    {
+        if(puzzle[1][i]>0)
+        {
+            q.push(i);
+            visit[i]=true;
+            dis[i]=puzzle[1][i];
+        }
+    }
+    while(!q.empty())
+    {
+        start=q.front();
+        q.pop();
+        visit[start]=false;
+        for(int i=1;i<=N;i++)
+        {
+            if(dis[i]<MIN(dis[start],puzzle[start][i]))
+            {
+                dis[i]=MIN(dis[start],puzzle[start][i]);
+                if(!visit[i])
+                {
+                    visit[i]=true;
+                    q.push(i);
+                }
+            }
+        }
+    }
+    return dis[N];
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    for(int iCase=1;iCase<=casenum;iCase++)
+    {
+        scanf("%d%d",&N,&M);
+        memset(puzzle,0,sizeof(puzzle));
+        memset(dis,0,sizeof(dis));
+        memset(visit,false,sizeof(visit));
+        for(int i=1;i<=M;i++)
+        {
+            int a,b,c;
+            scanf("%d%d%d",&a,&b,&c);
+            puzzle[a][b]=MAX(puzzle[a][b],c);
+            puzzle[b][a]=MAX(puzzle[b][a],c);
+        }
+        int ans=spfa();
+        printf("Scenario #%d:\n%d\n\n",iCase,ans);
+    }
+    return 0;
+}

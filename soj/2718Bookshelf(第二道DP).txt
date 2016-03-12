@@ -1,0 +1,95 @@
+#include<stdio.h>
+#include<string.h>
+int Minway[110][110];
+int Findway(int total,int divide);
+int Findmax(int begin,int end);
+int realmax[110][110];
+int books[110];
+int main(void)
+{
+    int N,K;
+    while(EOF!=scanf("%d%d",&N,&K)&&(N!=0||K!=0))
+    {
+        int i,j;
+        int min;
+        for(i=0;i<=109;i++)
+        {
+            memset(Minway[i],0,sizeof(Minway[i]));
+            memset(realmax[i],0,sizeof(realmax[i]));   //老子的第二道动态规划。。现学现卖。。中间的一个小错误让我找了一个小时。。囧
+        }
+        for(i=1;i<=N;i++)
+        {
+            scanf("%d",&books[i]);
+            for(j=i;j<=K;j++)
+            {
+                Minway[j][j]+=books[i];
+            }
+        }
+        for(i=1;i<=N;i++)
+        {
+            for(j=i;j<=N;j++)
+            {
+                Findmax(i,j);
+            }
+        }
+        min=Findway(N,K);
+        printf("%d\n",min);
+
+
+
+    }
+    return 0;
+}
+int Findway(int total,int divide)
+{
+    int cmpway=99999;
+    int i;
+    int exchange;
+    if(0==Minway[total][divide])
+    {
+        if(1==divide)
+       {
+           Minway[total][divide]=Findmax(1,total);
+       }
+       else
+       {
+             for(i=divide-1;i<=total-1;i++)
+          {
+              exchange=(Findway(i,divide-1)+realmax[i+1][total]);
+             if(cmpway>exchange)
+             {
+               cmpway=exchange;
+             }
+          }
+
+          Minway[total][divide]=cmpway;
+       }
+    }
+    else
+    {
+       ;
+    }
+    return Minway[total][divide];
+}
+int Findmax(int begin,int end)
+{
+    int cmpmax;
+    int i;
+    cmpmax=0;
+    if(0==realmax[begin][end])
+    {
+        for(i=begin;i<=end;i++)
+        {
+            if(books[i]>cmpmax)
+            {
+                cmpmax=books[i];
+            }
+        }
+        realmax[begin][end]=cmpmax;
+    }
+    else
+    {
+        ;
+    }
+    return realmax[begin][end];
+}

@@ -1,0 +1,29 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);       //不说什么。。今天心情不爽。。。老是RE。。。
+    while(casenum--)
+    {
+        int sum=0,student;
+        int i,j;
+        scanf("%d",&student);
+        for(i=1;i<=student;i++)
+        {
+            scanf("%d",&j);
+            sum+=j;
+        }
+        i=sum/student;
+        if(i*student==sum)
+        {
+            printf("YES\n");
+        }
+        else
+        {
+            printf("NO\n");
+        }
+    }
+    return 0;
+}

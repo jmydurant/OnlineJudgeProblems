@@ -1,0 +1,107 @@
+#include <cstdio>             //用vs2012写的感觉好爽。。。
+#include <cstring>            //果然粘到这里的缩进好难看。。。
+#include <algorithm>          //一道自动机的好题。。首先记录pos。。如果一个字符串的pos已经被加过了。。就可以不用加了。。
+#include <queue>              //然后就是分别记录0，1两种状态。。如果1的状态之间的距离大于len说明不重合。。可以使用。。
+#define  REP(i,n) for(int i = 0;i<(n);i++)
+#define  FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define  rst(x,k) memset(x,k,sizeof(x))
+#define  maxn 200101
+#define  INF 1000000000
+using namespace  std;
+struct node{
+	int cnt[2], pos[2];
+	int nxt[26],len;
+	int fail;
+	void INIT(void){
+		rst(nxt,0);
+		fail = cnt[0] = cnt[1] = pos[0] = pos[1] = len = 0;
+	}
+}tree[maxn<<2];
+int n,tot,iCase;
+int pos[maxn],ans[maxn],visit[maxn];
+void Insert(char *s,int _pos,int kind){
+	int now = 0;
+	int _len = strlen(s);
+	for(;*s ;s++){
+		int c = *s - 'a';
+		if(tree[now].nxt[c] == 0){
+			tot++; tree[tot].INIT();
+			tree[now].nxt[c] = tot;
+		}
+		now = tree[now].nxt[c];
+	}
+	tree[now].cnt[kind]++;
+	tree[now].pos[kind] = _pos;
+	tree[now].len = _len;
+}
+
+int getpos(char *s,int kind){
+	int now = 0;
+	for(; *s;s++){
+		int c = *s - 'a';
+		if(tree[now].nxt[c] == 0)return 0;
+		now = tree[now].nxt[c];
+	}
+	return tree[now].pos[kind];
+}
+void bfs(void){
+	int now = 0;
+	queue<int> q;
+	q.push(0);
+	while (!q.empty()){
+		now = q.front(); q.pop();
+		for(int i = 0;i<26;i++){
+			if(tree[now].nxt[i]){
+				int temp = tree[now].nxt[i];
+				if(now) tree[temp].fail = tree[tree[now].fail].nxt[i];
+				q.push(temp);
+			}else tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+		}
+	}
+}
+char str[maxn];
+char ss[100];
+void Match(void){
+	int now = 0;
+	for(int i = 0;str[i];i++){
+		int c = str[i] - 'a';
+		now = tree[now].nxt[c];
+		for(int pp = now; pp; pp = tree[pp].fail){
+			ans[tree[pp].pos[0]] += tree[pp].cnt[0];
+			if(tree[pp].cnt[1] && (i - visit[tree[pp].pos[1]]) >= tree[pp].len){
+				visit[tree[pp].pos[1]] = i;
+				ans[tree[pp].pos[1]] += tree[pp].cnt[1];
+			}
+		}
+	}
+}
+
+void solve(void){
+	tree[0].INIT();
+	rst(ans,0);
+	tot = 0;
+	scanf("%d",&n);
+	int _kind;
+	FOR(i,1,n){
+		scanf("%d%s",&_kind,ss);
+		visit[i] = -INF;
+		pos[i] = getpos(ss,_kind);
+		//printf(" pos %d is %d\n",i,pos[i]);
+		if(!pos[i]){
+			pos[i] = i;
+			Insert(ss,pos[i],_kind);
+		}
+	}
+	bfs();
+	Match();
+	printf("Case %d\n",++iCase);
+	for(int i = 1;i<=n;i++){
+		printf("%d\n",ans[pos[i]]);
+	}printf("\n");
+}
+int main(void){
+	iCase = 0;
+	while (~scanf("%s",str)){
+		solve();
+	}return 0;
+}

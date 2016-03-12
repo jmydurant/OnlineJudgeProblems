@@ -1,0 +1,90 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define INF 1400000000
+#define maxn 510
+#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int link[maxn],n,m;
+int headline[maxn],E;
+struct node{
+    int t,nxt;
+}edge[maxn<<1];
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int puzzle[maxn][maxn],visit[maxn];
+int center,flag;
+int Hungary(int u){
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(visit[v] == flag|| v == center)continue;
+        //printf("yes?  %d  and   %d\n",v,link[v]);
+        visit[v] = flag;
+        if(link[v] == -1 || Hungary(link[v])){
+            link[v] = u;
+            //printf("yes?\n");
+            return true;
+        }
+    }return false;
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)){
+        rst(visit,0);
+        rst(puzzle,0);
+        rst(headline,-1); E = 0;
+        REP(i,m){
+            int a,b; scanf("%d%d",&a,&b);
+            add(a,b);
+            puzzle[a][b] = 1;
+        }
+        int ans = INF;
+        flag = 1;
+        FOR(i,1,n){
+            center = i;
+            int tt = 0;
+            FOR(j,1,n){
+                if(!puzzle[i][j]) tt++;
+                if((i != j) && (!puzzle[j][i])) tt++;
+                link[j] = -1;
+            }
+            int tot = 0;
+            FOR(j,1,n){
+                if(center == j)continue;
+                tot += Hungary(j);
+                flag++;
+            }
+            //printf("tt is %d   tot is %d\n",tt,tot);
+            ans = MIN(ans,2*(tt - tot) + m - n);
+        }
+        printf("%d\n",ans);
+    }return 0;
+}

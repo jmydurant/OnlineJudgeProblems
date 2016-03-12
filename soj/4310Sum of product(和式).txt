@@ -1,0 +1,55 @@
+#include <cstdio>   //自从看了具体数学之后。。数学功底大幅提升。。复杂合式已经可以自己推理公式了。。
+#include <cstring>  //对于ak开头的  和为ak*sn(sn-sk)-ak(k(n-1)-kk);
+#include <queue>
+#include <algorithm>
+#include <stack>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 1001000
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+LL a[maxn],s[maxn],k[maxn];
+int n;
+int main(void)
+{
+    while(EOF != scanf("%d",&n))
+    {
+        FOR(i,1,n)scanf("%I64d",a+i);
+        s[0] = 0;
+        FOR(i,1,n)
+        {
+            s[i] = s[i-1]+a[i];
+            s[i] %= mod;
+        }
+        k[0] = 0;
+        FOR(i,1,n)
+        {
+            k[i] = k[i-1]+s[i]*a[i];
+            k[i] %= mod;
+        }
+        LL ans = 0;
+        FOR(i,1,n-2)
+        {
+            LL temp = s[n]*(s[n-1]-s[i])%mod;
+            ans += temp*a[i]%mod;
+            ans %= mod;
+            temp = a[i]*(k[n-1]-k[i]);
+            temp %= mod;
+            ans -= temp;
+            ans = (ans%mod+mod)%mod;
+        }
+        ans *= 6;
+        ans = (ans%mod+mod)%mod;
+        printf("%I64d\n",ans);
+    }
+    return 0;
+}
+
+
+

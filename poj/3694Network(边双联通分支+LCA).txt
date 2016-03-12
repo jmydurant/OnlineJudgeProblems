@@ -1,0 +1,122 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>     //先求割边。。然后在LCA向上走的时候。。把割边全部去掉
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 50000000
+#define maxn 101000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn << 3];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int bri[maxn] , fa[maxn];
+int dfn[maxn] , low[maxn];
+int visit[maxn];
+int n,m , iCase , tot , ans;
+void tarjan(int u){
+    visit[u] = 1;
+    low[u] = dfn[u] = ++tot;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!visit[v]){
+            fa[v] = u;
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+            if(dfn[u] < low[v]){
+                ans++;
+                bri[v] = 1;
+            }
+        }else if(visit[v] == 1 && v != fa[u]){
+            low[u] = MIN(low[u] , dfn[v]);
+        }
+    }
+    visit[u] = 2;
+}
+void lca(int u,int v){
+    //printf("dfn is %d  %d\n",dfn[u] , dfn[v]);
+    while(dfn[u] > dfn[v]){
+        if(bri[u]){
+            ans--;
+            bri[u] = 0;
+        }
+        u = fa[u];
+    }
+    while(dfn[u] < dfn[v]){
+        if(bri[v]){
+            ans--;
+            bri[v] = 0;
+        }
+        v = fa[v];
+        //printf("v is %d   %d\n",v , dfn[v]);
+    }
+    while(u != v){
+        if(bri[u]){
+            ans--;
+            bri[u] = 0;
+        }
+        if(bri[v]){
+            ans--;
+            bri[v] = 0;
+        }
+        u = fa[u];
+        v = fa[v];
+    }
+}
+void solve(void){
+    rst(headline,-1); E = 0; tot = 0; ans = 0;
+    REP(i,m){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a,b); add(b,a);
+    }
+    rst(visit,0); rst(dfn,0); rst(fa,0); rst(bri,0);
+    FOR(i,1,n)if(!visit[i])tarjan(i);
+    //FOR(i,1,n)printf("dfn%d is %d \n",i,dfn[i]);
+    int Q; scanf("%d",&Q);
+    printf("Case %d:\n",++iCase);
+    while(Q--){
+        int a,b; scanf("%d%d",&a,&b);
+        lca(a,b);
+        printf("%d\n",ans);
+    }
+    printf("\n");
+}
+int main(void){
+    iCase = 0;
+    while(2 == scanf("%d%d",&n,&m)){
+        if(n == 0 && m == 0)return 0;
+        solve();
+    }
+    return 0;
+}

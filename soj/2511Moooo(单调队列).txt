@@ -1,0 +1,59 @@
+#include<cstdio>
+#include<cstring>      //单调队列。。我是偷懒用现成的deque实现的。。。要不然自己写得累死。。。
+#include<queue>        //这个算法实在是太好了。。。只要能用。。就只要ON的时间复杂度。。爆省时间。。
+#include<vector>      //这个队列从左到右和从右到左扫两遍就行。。。维护递减。。如果出现大的数。。就弹出来。。
+#include<map>
+#include<climits>
+#include<stack>
+#include<cmath>
+#include<deque>
+#define INF 100000000
+using namespace std;
+typedef pair<int,int> point;
+deque<point>q;
+int grade[50010],v[50010],h[50010];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int result=INT_MIN;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d%d",h+i,v+i);
+        }
+        h[0]=INT_MAX;h[N+1]=INT_MAX;
+        memset(grade,0,sizeof(grade));
+        for(int i=1;i<=N+1;i++)
+        {
+            while(!q.empty())
+            {
+                point j=q.back();
+                //printf("%d\n",j.second);
+                if(j.first<h[i]){grade[i]+=v[j.second];q.pop_back();continue;}
+                break;
+            }
+            q.push_back(point(h[i],i));
+        }
+        q.clear();
+        for(int i=N;i>=0;i--)
+        {
+            while(!q.empty())
+            {
+                point j=q.back();
+               // printf("%d\n",j.second);
+                if(j.first<h[i]){grade[i]+=v[j.second];q.pop_back();continue;}
+                break;
+            }
+            q.push_back(point(h[i],i));
+        }
+        q.clear();
+        for(int i=1;i<=N;i++)
+        {
+           // printf("%d %d\n",i,grade[i]);
+            if(result<grade[i])result=grade[i];
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

@@ -1,0 +1,21 @@
+#include<cstdio>
+#include<cstring>  //递推。。分别枚举3元从0次到最多次。。剩下的钱/2之后加1就是用二和一组成的方法数。。。注意long long保存
+#include<algorithm>
+#define INF 1<<15
+using namespace std;
+int main(void)
+{
+    long long N;
+    while(EOF!=scanf("%lld",&N)&&N)
+    {
+        long long a,b;
+        long long answer=0;
+        for(a=N/3;a>=0;a--)
+        {
+            b=(N-3*a)/2+1;
+            answer+=b;
+        }
+        printf("%lld\n",answer);
+    }
+    return 0;
+}

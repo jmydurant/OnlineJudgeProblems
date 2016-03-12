@@ -1,0 +1,42 @@
+#include<cstdio>     //尼玛。。第一道单调队列的题目。。。害得我好苦。。。
+#include<cstring>   //原理如下。。如果要是单调递增队列。。新进的元素不断与队尾比较。。如果小于队尾就把队尾删掉。。最后进入队尾。。
+#include<queue>    //在设一个数组记录标号。。如果移动的过程中数字过期。，。则删掉队首。。。
+#include<vector>
+#include<map>
+#include<climits>
+#include<stack>
+#include<cmath>
+using namespace std;
+int num[1000010],que[1000010],zuobiao[1000010];
+int head,tail;
+int main(void)
+{
+    int N,m;
+    while(EOF!=scanf("%d%d",&N,&m))
+    {
+        for(int i=1;i<=N;i++)scanf("%d",num+i);
+        head=1;tail=1;que[1]=num[1];zuobiao[1]=1;
+        if(1>=m)printf("%d%c",que[head],(1%N)?' ':'\n');
+        for(int i=2;i<=N;i++)
+        {
+            while(num[i]<que[tail]&&head<=tail)tail--;
+            tail++;
+            que[tail]=num[i];zuobiao[tail]=i;
+            while(zuobiao[tail]-zuobiao[head]>=m)head++;
+            if(i>=m)printf("%d%c",que[head],(i%N)?' ':'\n');
+            //printf("%d %d\n",head,tail);
+        }
+        head=1;tail=1;que[1]=num[1];zuobiao[1]=1;
+        if(1>=m)printf("%d%c",que[head],(1%N)?' ':'\n');
+        for(int i=2;i<=N;i++)
+        {
+            while(num[i]>que[tail]&&head<=tail)tail--;
+            tail++;
+            que[tail]=num[i];zuobiao[tail]=i;
+            while(zuobiao[tail]-zuobiao[head]>=m)head++;
+            if(i>=m)printf("%d%c",que[head],(i%N)?' ':'\n');
+            //printf("%d %d\n",head,tail);
+        }
+    }
+    return 0;
+}

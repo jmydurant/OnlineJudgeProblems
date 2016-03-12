@@ -1,0 +1,78 @@
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+int roadlength[450];                   //用来记录可以跑的长短
+int bestway[51000];                    //一个伪背包问题。。DP解决。。啦啦啦。。越用越顺手了。。 bestway用来记录最优方法
+int visitway[51000];                   //用来记录这种方法有没有被求过
+int makesqr(int begin,int sqr,int max);//做N次方的数字
+int Findway(int remain,int roalmax);   //用来求解最优路径。。
+int main(void)
+{
+    int total,k;
+    while(EOF!=scanf("%d%d",&total,&k)&&(total!=0||k!=0))
+    {
+        int i,j;
+        j=1;
+        for(i=0;i<=449;i++)
+        {
+            roadlength[i]=1;
+        }
+        for(i=2;i<=k;i++)
+        {
+            j=makesqr(j,i,total);
+        }
+        sort(roadlength,roadlength+j);
+        memset(bestway,0,sizeof(bestway));
+        memset(visitway,0,sizeof(visitway));
+        bestway[0]=0;visitway[0]=1;
+        bestway[1]=1;visitway[1]=1;
+        i=Findway(total,j-1);
+        printf("%d\n",i-1);
+    }
+    return 0;
+}
+int makesqr(int begin,int sqr,int max)
+{
+    int i=2;
+    int j;
+    int k;
+    for(k=begin;;i++,k++)
+    {
+        for(j=1;j<=sqr;j++)
+        {
+            roadlength[k]*=i;
+        }
+        if(roadlength[k]>max)
+        {
+            return k+1;
+        }
+    }
+}
+int Findway(int remain,int roalmax)
+{
+    int i;
+    int maxroad=100000;
+    if(1==visitway[remain])
+    {
+        return bestway[remain];
+    }
+    else
+    {
+        for(i=roalmax;i>=0;i--)
+        {
+            if(remain>=roadlength[i])
+            {
+                if(maxroad>Findway(remain-roadlength[i],roalmax))
+                {
+                    maxroad=Findway(remain-roadlength[i],roalmax);
+                }
+            }
+
+        }
+        bestway[remain]=maxroad+1;
+
+        visitway[remain]=1;
+        return bestway[remain];
+    }
+}

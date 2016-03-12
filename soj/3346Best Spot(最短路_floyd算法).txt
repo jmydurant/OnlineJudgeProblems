@@ -1,0 +1,62 @@
+#include<cstdio>    //我都觉得效率极其之低啊。。但是过的很轻松。。。因为边比较稀疏。。其实可以稍微优化一下的吧。。但是我还是不能熟练应用。。哎。。
+#include<cstring>
+#include<algorithm>
+#include<deque>
+#include<climits>
+#include<queue>
+#define INF 200000000
+using namespace std;
+int ditu[510][510];
+int favourite[510];
+int main(void)
+{
+    int N,F,R;
+    while(EOF!=scanf("%d%d%d",&N,&F,&R))
+    {
+        for(int i=1;i<=F;i++)scanf("%d",favourite+i);
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                if(i==j)ditu[i][j]=0;
+                else ditu[i][j]=INF;
+            }
+        }
+        for(int i=1;i<=R;i++)
+        {
+            int x,y,z;
+            scanf("%d%d%d",&x,&y,&z);
+            ditu[x][y]=z;
+            ditu[y][x]=z;
+        }
+        for(int k=1;k<=N;k++)
+        {
+            for(int i=1;i<=N;i++)
+            {
+                if(i!=k)
+                {
+                    for(int j=1;j<=N;j++)
+                    {
+                        if(j!=i&&j!=k&&ditu[i][j]>ditu[i][k]+ditu[k][j])
+                            ditu[i][j]=ditu[i][k]+ditu[k][j];
+                    }
+                }
+            }
+        }
+        int result=INF,biaohao;
+        for(int i=1;i<=N;i++)
+        {
+            int tmpt=0;
+            for(int j=1;j<=F;j++)
+            {
+                tmpt+=ditu[i][favourite[j]];
+            }
+            if(result>tmpt)
+            {
+                result=tmpt;
+                biaohao=i;
+            }
+        }
+        printf("%d\n",biaohao);
+    }
+}

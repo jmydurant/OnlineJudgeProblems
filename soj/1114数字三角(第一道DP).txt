@@ -1,0 +1,58 @@
+#include<stdio.h>
+#include<string.h>
+int digit[110][110];
+int bestway[110][110];
+
+int main(void)
+{
+    int n;
+    while(EOF!=scanf("%d",&n))                        //第一道动态规划啊。。激动啊。。居然自学成功！！
+    {
+        int i,j;
+
+        for(i=0;i<n;i++)
+        {
+            for(j=0;j<=i;j++)
+            {
+                scanf("%d",&digit[i][j]);
+            }
+        }
+        for(i=0;i<n;i++)
+        {
+            bestway[n-1][i]=digit[n-1][i];
+        }
+        bestway[0][1]=-100;
+        for(i=n-2;i>=0;i--)
+        {
+            for(j=0;j<=i;j++)
+            {
+                if(bestway[i+1][j]>=bestway[i+1][j+1])
+                {
+                    bestway[i][j]=bestway[i+1][j]+digit[i][j];
+                }
+                else
+                {
+                    bestway[i][j]=bestway[i+1][j+1]+digit[i][j];
+                }
+            }
+        }
+        printf("%d\n",bestway[0][0]);
+
+        for(i=0,j=0;i<=n-1;i++)
+        {
+            if(bestway[i][j]>=bestway[i][j+1])
+            {
+                printf("%d ",digit[i][j]);
+            }
+            else
+            {
+                printf("%d ",digit[i][j+1]);
+                j++;
+            }
+
+        }
+        printf("\n");
+
+    }
+    return 0;
+}

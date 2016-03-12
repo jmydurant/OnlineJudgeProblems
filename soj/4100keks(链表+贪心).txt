@@ -1,0 +1,64 @@
+#include<iostream>
+#include<string>    //虽然使用数组来代替链表。。效率下降率不少。。但是时间还算可以。。
+#include<cstdio>
+#include<cstring>    //贪心思想是。。从左往右扫。。删除第一个左边小于右边的数。。。
+#include<queue>
+#include<algorithm>
+#include<climits>
+using namespace std;
+char digit[500010];
+int head,now;
+int main(void)
+{
+    int N,K;
+    while(EOF!=scanf("%d%d",&N,&K))
+    {
+        int jishu=0;
+        int remain=0;
+        head=1;now=2;
+        getchar();
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%c",&digit[i]);
+        }
+        for(;now<=N;)
+        {
+            if(digit[now]>digit[head])
+            {
+                digit[head]=0;jishu++;
+                if(K==jishu)break;
+                if(remain>0)
+                {
+                    for(head=head-1;head>=1&&0==digit[head];head--);
+                    remain--;
+                    continue;
+                }
+                else
+                {
+                    head=now;
+                    now++;
+                    continue;
+                }
+            }
+            else
+            {
+                for(head=head+1;head<now&&0==digit[head];head++);
+                now++;
+                remain++;
+            }
+        }
+        head=1;
+        for(int i=1;i<=N-K;i++)
+        {
+            if(digit[head]);
+            else
+            {
+                for(;head<=N&&0==digit[head];head++);
+            }
+            printf("%c",digit[head]);
+            head++;
+        }
+        printf("\n");
+    }
+    return 0;
+}

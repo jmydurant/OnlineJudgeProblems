@@ -1,0 +1,38 @@
+#include<cstdio>
+#include<cstring>   //妨碍咱刷水题的都是渣渣。。。
+#include<queue>
+#include<vector>
+#include<map>
+#include<climits>
+#include<stack>
+#include<cmath>
+#include<deque>
+#define INF 100000000.0
+//#define Pi 3.14159265358979323846
+using namespace std;
+int main(void)
+{
+    int casenum=0;
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        casenum++;
+        double bestcost=INF;
+        int num;
+        for(int i=1;i<=N;i++)
+        {
+            int a,b;
+            double c,d,e;
+            scanf("%d%d",&a,&b);
+            c=(double)a;d=(double)b;
+            e=d/(c*c);
+            if(bestcost>e)
+            {
+                bestcost=e;
+                num=a;
+            }
+        }
+        printf("Menu %d: %d\n",casenum,num);
+    }
+    return 0;
+}

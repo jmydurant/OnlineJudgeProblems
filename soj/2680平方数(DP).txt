@@ -1,0 +1,28 @@
+#include<cstdio>
+#include<cstring>   //又是算某个数有多少个组成方法。。。我都快烦了。。。这种dp已经很简单了。。。
+#define INF 10000000
+using namespace std;
+long long dp[1005];
+int pingfang[40];
+int main(void)
+{
+    int N;
+    for(int i=0;i<=39;i++)
+    {
+        pingfang[i]=i*i;
+    }
+    memset(dp,0,sizeof(dp));
+    dp[0]=1;
+    for(int i=1;pingfang[i]<=1000;i++)
+    {
+        for(int j=pingfang[i];j<=1000;j++)
+        {
+            dp[j]+=dp[j-pingfang[i]];
+        }
+    }
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        printf("%lld\n",dp[N]);
+    }
+    return 0;
+}

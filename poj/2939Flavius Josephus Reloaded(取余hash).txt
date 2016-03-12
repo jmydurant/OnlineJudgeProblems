@@ -1,0 +1,90 @@
+#include <cstdio>    //就是把数的余数进行分类再查找的方法。。可耻的卡stl的map。。擦。。
+#include <cstring>
+#include <map>
+#include <set>
+#include <algorithm>
+#define mod 1000007
+using namespace std;
+typedef long long LL;
+int tot;
+struct node
+{
+    int num;
+    int used;
+    node* nxt;
+}hash[mod+2];
+
+bool find(int x)
+{
+    int aim = x%mod;
+    if(hash[aim].used == -1)
+    {
+        hash[aim].used = 1;
+        hash[aim].num = x;
+        hash[aim].nxt = NULL;
+        return false;
+    }
+    node *p;
+    bool last = true;
+    for(p = hash+aim;p->nxt != NULL;p = p->nxt)
+    {
+        if(p->num == x)
+        {
+            p->used++;
+            last = false;
+            break;
+        }
+    }
+    if(last)
+    {
+        if(p->num == x)
+        {
+            p->used++;
+        }
+        else
+        {
+            p->nxt = new node;
+            p = p->nxt;
+            p->num = x;
+            p->used = 1;
+            p->nxt = NULL;
+            return false;
+        }
+    }
+    if(p->used == 2)
+    {
+        tot ++;
+        return false;
+    }
+    else if(p->used == 1)
+    {
+        return false;
+    }
+    return true;
+}
+int main(void)
+{
+    int n,a,b;
+    while(EOF!=scanf("%d",&n) && n)
+    {
+        scanf("%d%d",&a,&b);
+        for(int d = n<mod?n:mod;d>=0;d--)
+            hash[d].used = -1;
+        int x = 0;
+        tot = 0;
+        while(true)
+        {
+            if(find(x))
+            {
+                printf("%d\n",n-tot);
+                break;
+            }
+            else
+            {
+                LL temp = (LL)((LL)a*x%n*x%n+b)%(LL)n;
+                x = (int)temp;
+            }
+        }
+    }
+    return 0;
+}

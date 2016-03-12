@@ -1,0 +1,194 @@
+#include <iostream>     //调了半天错误。。发现是pushdown的时候没有把数组key的值更改。。。不过真的好慢。。4641ms。。线段树去写的话
+#include <cstdio>       // 估计连一半的时间都不会到。。果然常数很大啊。。
+#include <cstring>      // 不过证明一点。。基本上线段树可以写的题目splay都可以上。。但是时间嘛。。不敢恭维啊。。。
+#include <algorithm>    //建树的方式还是值得思考的。。趁今天还没有熄灯。。先记下来。。
+#include <queue>        //建树的时候用0节点是可以的。。可以防止各种意外。。0节点的父亲和儿子是谁并不重要(不会影响结果)但是他保存的值有可能会影响结果
+#include <climits>      //所以必须清0.。。。然后就是在数组两端加两个节点。。可以忽略很多讨论情况。。反正也不影响结果。。
+#include <ctime>        //还有就是lazy标记的使用。。一定要在旋转之前把可能影响的节点的lazy标记全部pushdwon。。旋转之后马上update。。
+#include <cmath>        //最后。。。不得不佩服伸展树的能力。。lazy标记在询问的时候也要像线段树的时候一样pushdown。。。
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 310000
+#define INF 1000000000
+using namespace std;
+typedef long long LL;
+LL a[maxn];
+struct spl
+{
+    int fa[maxn],son[maxn][2];
+    LL key[maxn];
+    LL ans[maxn];
+    LL s[maxn],lazy[maxn];
+    int root,tot;
+    void pushdown(int x)
+    {
+        if(lazy[x] == 0)return;
+        if(son[x][0])ans[son[x][0]] += s[son[x][0]]*lazy[x];
+        if(son[x][1])ans[son[x][1]] += s[son[x][1]]*lazy[x];
+        if(son[x][0])lazy[son[x][0]] += lazy[x];
+        if(son[x][1])lazy[son[x][1]] += lazy[x];
+        key[x] += lazy[x];
+        lazy[x] = 0;
+    }
+    void update(int x)
+    {
+        s[x] = 1;
+        if(son[x][0]) s[x] += s[son[x][0]];
+        if(son[x][1]) s[x] += s[son[x][1]];
+        ans[x] = key[x] + s[x]*lazy[x];
+        if(son[x][0]) ans[x] += ans[son[x][0]];
+        if(son[x][1]) ans[x] += ans[son[x][1]];
+    }
+    void getnewone(int &x,int _key,int _fa)
+    {
+        x = ++tot;
+        fa[x] = _fa;
+        key[x] = _key;
+        s[x] = 1;
+        lazy[x] = 0;
+        son[x][0] = son[x][1] = 0;
+        ans[x] = 0;
+    }
+    void build(int &x,int l,int r,int fa)
+    {
+        if(l<=r)
+        {
+            int mid = (l+r)>>1;
+            getnewone(x,a[mid],fa);
+            build(son[x][0],l,mid-1,x);
+            build(son[x][1],mid+1,r,x);
+            update(x);
+        }
+    }
+    void INIT(int n)
+    {
+        root = tot = 0;
+        son[0][0] = son[0][1] = key[0] = fa[0] = lazy[0] = s[0] = ans[0] = 0;
+        getnewone(root,0,0);
+        getnewone(son[root][1],0,root);
+        s[root]++;
+        build(son[son[root][1]][0],1,n,son[root][1]);
+        update(son[root][1]);
+        update(root);
+    }
+    void rolate(int x,int kind)       //旋转 0为左旋 1为右旋
+    {
+        int y = fa[x];
+        int z = fa[y];
+        pushdown(y);
+        pushdown(x);
+        son[y][!kind] = son[x][kind];
+        fa[son[x][kind]] = y;
+        son[x][kind] = y;
+        son[z][son[z][1] == y] = x;
+        fa[x] = z;
+        fa[y] = x;
+        update(y);
+        update(x);
+    }
+    void splay(int x,int aim)
+    {
+        if(x != aim)
+        {
+            pushdown(x);
+            while(fa[x] != aim)
+            {
+                if(son[fa[x]][0] == x)
+                    rolate(x,1);
+                else
+                    rolate(x,0);
+            }
+            update(x);
+            if(aim == 0)
+                root = x;
+        }
+    }
+    int FINDK(int k)
+    {
+        int x = root;
+        pushdown(root);
+        while(s[son[x][0]]+1 != k)
+        {
+            //printf("that false x is %d\n",x);
+            //system("pause");
+            if(s[son[x][0]]+1 > k)
+                x = son[x][0];
+            else
+            {
+                k -= (s[son[x][0]]+1);
+                x = son[x][1];
+            }
+            pushdown(x);
+        }
+        //printf("x is %d\n",x);
+        return x;
+    }
+    void change(int a,int b,LL val)
+    {
+        a = FINDK(a);
+        b = FINDK(b+2);
+        splay(a,0);
+        splay(b,a);
+        int c = son[b][0];
+        ans[c] += val*s[c];
+        lazy[c] += val;
+    }
+    void req(int a,int b)
+    {
+        a = FINDK(a);
+        b = FINDK(b+2);
+        splay(a,0);
+        splay(b,a);
+        int c = son[b][0];
+        printf("%I64d\n",ans[c]);
+    }
+    void test(int x,int kind)
+    {
+        if(x)
+        {
+            pushdown(x);
+            printf("(");
+            test(son[x][0],kind);
+            if(kind == 1)
+                printf("%I64d",ans[x]);
+            else
+                printf("%I64d",key[x]);
+            test(son[x][1],kind);
+            printf(")");
+        }
+    }
+}splaytree;
+int n,Q;
+
+int main(void)
+{
+    while(2 == scanf("%d%d",&n,&Q))
+    {
+        FOR(i,1,n) scanf("%I64d",a+i);
+        splaytree.INIT(n);
+        while(Q--)
+        {
+            char op[10];
+            int x,y; scanf("%s%d%d",op,&x,&y);
+            if(op[0] == 'C')
+            {
+                LL z; scanf("%I64d",&z);
+                splaytree.change(x,y,z);
+                //splaytree.test(splaytree.root,2),printf("\n");
+                //splaytree.test(splaytree.root,1),printf("\n");
+            }
+            else
+            {
+                splaytree.req(x,y);
+            }
+        }
+    }
+    return 0;
+}

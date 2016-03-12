@@ -1,0 +1,21 @@
+#include<stdio.h>
+
+int main(void)
+{
+    int x,y;
+    int casenum;
+    scanf("%d",&casenum);   //水题。。。稍微思考一下就能过。。。
+    while(casenum--)
+    {
+        scanf("%d%d",&x,&y);
+        if((y/2)>=x)
+        {
+            printf("%d\n",y);
+        }
+        else
+        {
+            printf("%d\n",y+x-y/2);
+        }
+    }
+    return 0;
+}

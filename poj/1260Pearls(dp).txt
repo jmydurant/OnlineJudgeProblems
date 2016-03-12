@@ -1,0 +1,55 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个比较好想的dp 。。dpi , j 代表用第i个物品时最低阶级是j的最小花费。。然后反过来dp就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int dp[110][110];
+int f[110];
+int n , a[110] , p[110];
+void solve(void){
+    scanf("%d",&n);
+    FOR(i,1,n) scanf("%d%d",a+i , p+i);
+    f[n] = dp[n][n] = (a[n]+10) * p[n];
+    FORD(i,n-1,1){
+        f[i] = dp[i][i] = f[i+1] + (a[i] + 10) * p[i];
+        FOR(j,i+1,n){
+            dp[i][j] = dp[i+1][j] + a[i] * p[j];
+            f[i] = MIN(f[i] , dp[i][j]);
+        }
+    }
+    printf("%d\n",f[1]);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

@@ -1,0 +1,83 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define mod 1000000LL
+using namespace std;
+typedef long long LL;
+LL c[2001];
+bool visit[2001];
+int tot;
+LL prime[400];
+
+LL ppow(LL a,LL n)
+{
+    LL ans = 1;
+    while(n)
+    {
+        if(n%2)
+        {
+            ans *= a;
+            ans %= mod;
+        }
+        a *= a;
+        a %= mod;
+        n /= 2;
+    }
+    return ans;
+}
+
+void INIT(void)
+{
+    rst(visit,false);
+    tot = 0;
+    for(int i = 2;i<=2000;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot] = i;
+            for(int j = i*i;j<=2000;j += i)
+            {
+                visit[j] = true;
+            }
+        }
+    }
+    //cout << prime[1] << endl;
+    for(int i = 1;i<=2000;i++)c[i] = 1;
+    for(int i = 1;i<=1000;i++)
+    {
+        for(int j = 1;(j<=tot) && (prime[j]<=2*i);j++)
+        {
+            LL digit = 0;
+            LL temp1 = 2*i; LL temp2 = i+1; LL temp3 = i;
+            LL kk = prime[j];
+            while(kk<=temp1)
+            {
+                digit += temp1/kk;
+                digit -= temp2/kk;
+                digit -= temp3/kk;
+                kk *= prime[j];
+            }
+            c[i] *= ppow(prime[j],digit);
+            c[i] %= mod;
+            //if(i == 2)cout << c[i] << "fdsf" << endl;
+        }
+    }
+
+}
+
+int main(void)
+{
+    INIT();
+    int n;
+    while(cin >> n)
+    {
+        if(n == 0) break;
+        cout << c[n] << endl;
+    }
+    return 0;
+}
+
+//1124877466@qq.com

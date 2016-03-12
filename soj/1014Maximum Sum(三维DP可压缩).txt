@@ -1,0 +1,55 @@
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>      //O（N ^3）的算法。。。枚举所有行的组合方法。。然后对列进行dp。。即一维最大字段。。。
+#include<queue>
+#include<algorithm>
+#include<climits>
+using namespace std;
+int matrix[101][101];
+int dp[101][101][101];
+int sum[101][101][101];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int result=INT_MIN;
+        int i,j,k;
+        for(i=1;i<=N;i++)
+        {
+            for(j=1;j<=N;j++)
+            {
+                scanf("%d",&matrix[i][j]);
+            }
+        }
+        //printf("ok\n");
+        for(k=1;k<=N;k++)
+        {
+            for(i=1;i<=N;i++)
+            {
+                for(j=i;j<=N;j++)
+                {
+                    if(i==j)sum[k][i][j]=matrix[j][k];
+                    else sum[k][i][j]=sum[k][i][j-1]+matrix[j][k];
+                }
+            }
+        }
+        for(i=1;i<=N;i++)
+        {
+            for(j=i;j<=N;j++)
+            {
+                dp[1][i][j]=sum[1][i][j];
+                if(dp[1][i][j]>result)result=dp[1][i][j];
+                for(k=2;k<=N;k++)
+                {
+                    if(dp[k-1][i][j]<0)dp[k][i][j]=sum[k][i][j];
+                    else dp[k][i][j]=dp[k-1][i][j]+sum[k][i][j];
+                    if(dp[k][i][j]>result)result=dp[k][i][j];
+                }
+            }
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

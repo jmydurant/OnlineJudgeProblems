@@ -1,0 +1,101 @@
+#include<cstring>    //线性代数里的经典题目。。计算从A到B有多少种走法正好要K步。。。
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 1991
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+struct abc
+{
+    int digit[110][110];
+    abc(){memset(digit,0,sizeof(digit));}
+}A,B;
+int N;
+void IINT(void)
+{
+    for(int i=0;i<=109;i++)
+    {
+        for(int j=0;j<=109;j++)
+        {
+            A.digit[i][j]=0;
+        }
+    }
+}
+void matrix_power(int x)
+{
+    while(x)
+    {
+        if(x%2)
+        {
+            abc tmpt;
+            for(int i=1;i<=N;i++)
+            {
+                for(int j=1;j<=N;j++)
+                {
+                    for(int k=1;k<=N;k++)
+                    {
+                        tmpt.digit[i][j]+=A.digit[i][k]*B.digit[k][j];
+                        tmpt.digit[i][j]%=MOD;
+                    }
+                }
+            }
+            for(int i=1;i<=N;i++)
+            {
+                for(int j=1;j<=N;j++)A.digit[i][j]=tmpt.digit[i][j];
+            }
+        }
+        abc tmpt;
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                for(int k=1;k<=N;k++)
+                {
+                    tmpt.digit[i][j]+=B.digit[i][k]*B.digit[k][j];
+                    tmpt.digit[i][j]%=MOD;
+                }
+            }
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                B.digit[i][j]=tmpt.digit[i][j];
+            }
+        }
+        x/=2;
+    }
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int M,K,Q;
+        IINT();
+        scanf("%d%d%d%d",&N,&M,&K,&Q);
+        for(int i=1;i<=M;i++)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            A.digit[a][b]++;
+        }
+        B=A;
+        matrix_power(K-1);
+        for(int i=1;i<=Q;i++)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            printf("%d\n",A.digit[a][b]);
+        }
+    }
+    return 0;
+}

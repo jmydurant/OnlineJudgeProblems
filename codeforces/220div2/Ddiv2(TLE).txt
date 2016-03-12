@@ -1,0 +1,157 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //aplay果然太慢了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 1010000
+using namespace std;
+typedef long long LL;
+int remain;
+struct node{
+    int fa[maxn],son[maxn][2];
+    int s[maxn],key[maxn];
+    int root , tot;
+    #define ls son[x][0]
+    #define rs son[x][1]
+    inline int getnew(int _fa,int _key){
+        tot++;
+        fa[tot] = _fa;
+        s[tot] = 1;
+        key[tot] = _key;
+        son[tot][0] = son[tot][1] = 0;
+        return tot;
+    }
+    inline void update(int x){
+        if(!x)return;
+        s[x] = s[ls] + s[rs] + 1;
+    }
+    void INIT(void){
+        root = 1 , tot = 1;
+        fa[0] = son[0][0] = son[0][1] = s[0] = key[0] = 0;
+        fa[1] = son[1][0] = son[1][1] = 0;
+        s[1] = 1; key[1] = 4;
+        son[1][1] = getnew(1,5);
+    }
+    inline void rolate(int x,int kind){
+        int y = fa[x], z = fa[y];
+        son[y][!kind] = son[x][kind];
+        if(son[x][kind]) fa[son[x][kind]] = y;
+        son[x][kind] = y;
+        if(z) son[z][son[z][1] == y] = x;
+        fa[x] = z; fa[y] = x;
+        update(y);
+    }
+    void splay(int x,int aim){
+        update(x);
+        if(x != root){
+            while(fa[x] != aim){
+                if(son[fa[x]][0] == x)rolate(x,1);
+                else rolate(x,0);
+            }
+            update(x);
+        }
+        if(!aim)root = x;
+    }
+    int FINDK(int x,int k){
+        if(s[x] < k)return -1;
+        while(s[ls] + 1 != k){
+            if(s[ls] + 1 < k){
+                k -= (s[ls] + 1);
+                x = rs;
+            }else{
+                x = ls;
+            }
+        }
+        return x;
+    }
+    int findmax(int x){
+        while(rs) x = rs;
+        return x;
+    }
+    int findmin(int x){
+        while(ls) x = ls;
+        return x;
+    }
+    //int buildlen(int )
+    void Insert(int _key){
+        splay(2,0);
+        int x = findmax(son[2][0]);
+        splay(x,2);
+        son[x][1] = getnew(x,_key);
+        update(x); update(root);
+        //x = FINDK(root,remain / 2 + 1);
+        //splay(x,0);
+    }
+    void Delete(int _pos){
+        _pos++;
+        int x = FINDK(root,_pos);
+        if(x == -1)return;
+        splay(x,0);
+        int ll = son[x][0], rr = son[x][1];
+        root = ll; fa[ll] = fa[rr] = 0;
+        int y = findmax(ll);
+        splay(y,ll);
+        son[y][1] = rr; fa[rr] = y;
+        update(y); update(ll);
+    }
+    void pri(int x){
+        if(x == 0)return;
+        pri(son[x][0]);
+        if(x != 1 && x != 2)printf("%d",key[x]);
+        //printf("%d",key[x]);
+        pri(son[x][1]);
+    }
+}SPL;
+
+int n,m;
+int a[maxn];
+void solve(void){
+    SPL.INIT();
+    FOR(i,1,m){
+        scanf("%d",a+i);
+        a[i] -= (i - 1);
+    }
+    remain = 0;
+    while(n--){
+        int op; scanf("%d",&op);
+        if(op != -1){
+            SPL.Insert(op);
+            remain++;
+        }else{
+            FOR(i,1,m){
+                if(remain < a[i])break;
+                SPL.Delete(a[i]);
+                remain--;
+            }
+            //SPL.pri(SPL.root);printf("\n");
+        }
+    }
+    if(remain > 0){
+        SPL.pri(SPL.root);
+        printf("\n");
+    }
+    else printf("Poor stack!\n");
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m))solve();
+    return 0;
+}

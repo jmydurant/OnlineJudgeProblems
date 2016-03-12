@@ -1,0 +1,143 @@
+#include <cstdio>    //调试到吐血。。。具体思想见下
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 1000
+#define rst(x) memset(x,0,sizeof(x))
+//#define MAXV 101000
+#define INF 500000000
+using namespace std;
+struct node
+{
+    int f,t;
+    int w;
+}edge[MAXN];
+int tot;
+void ADD(int f,int t,int w)
+{
+    edge[tot].f = f;
+    edge[tot].t = t;
+    edge[tot].w = w;
+    tot++;
+}
+int d[MAXN];
+int req[MAXN],have[MAXN];
+int ans;
+bool bellman_ford(void)
+{
+    d[0] = 0;
+    for(int i = 1;i<=24;i++)
+        d[i] = INF;
+    for(int step = 0;step<=24;step++)
+    {
+        for(int i = 0;i<tot;i++)
+        {
+            int a = edge[i].f;
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(d[b] > d[a] + w)
+                d[b] = d[a] + w;
+        }
+    }
+    for(int i = 0;i<tot;i++)
+    {
+        int a = edge[i].f;
+        int b = edge[i].t;
+        int w = edge[i].w;
+        if(d[b] > d[a] + w)
+            return false;
+    }
+    return true;
+}
+
+void buildgraph(int sum)
+{
+    tot = 48;
+    for(int i = 1;i<=16;i++)
+        ADD(i+8,i,-req[i+8]);
+    for(int i = 17;i<=24;i++)
+        ADD(i-16,i,sum-req[i-16]);
+    ADD(24,0,-sum);
+}
+
+void b_search(int l,int r)
+{
+    if(l>r)
+        return;
+    int mid = (l+r)/2;
+    buildgraph(mid);
+    if(bellman_ford())
+    {
+        ans = mid;
+        b_search(l,mid-1);
+    }
+    else
+        b_search(mid+1,r);
+}
+
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        rst(have);
+        for(int i = 1;i<=24;i++)
+            scanf("%d",req+i);
+        int n; scanf("%d",&n);
+        for(int i = 1;i<=n;i++)
+        {
+            int k;
+            scanf("%d",&k);
+            have[k+1]++;
+        }
+        tot = 0;
+        for(int i = 1;i<=24;i++)
+        {
+            ADD(i-1,i,have[i]);
+            ADD(i,i-1,0);
+        }
+        ans = -1;
+        b_search(0,n);
+        if(ans == -1)
+        {
+            printf("No Solution\n");
+        }
+        else
+        {
+            printf("%d\n",ans);
+        }
+    }
+    return 0;
+}
+摘自冯威论文——《数与图的完美结合》
+ 
+ 
+ 设num[ i ]为i时刻能够开始工作的人数，x[ i ]为 第 i 时刻实际雇佣的人数，那么x[ I ]<=num[ I ]。 
+ 设r[ i ]（输入的每一时刻所需的人数）为i时刻至少需要工作的人数，于是有如下关系： 
+     x[ I-7 ]+x[ I-6 ]+x[ I-5 ]+x[ I-4 ]+x[ I-3 ]+x[ I-2 ]+x[ I-1 ]+x[ I ]>=r[ I ]
+ 设s[ I ]=x[ 1 ]+x[ 2 ]…+x[ I ]，得到 
+     0<=s[ I ]-s[ I-1 ]<=num[ I ]， 0<=I<=23 
+     s[ I ]-s[ I-8 ]>=r[ I ]， 8<=I<=23    建立关系
+     s[ 23 ]+s[ I ]-s[ I+16 ]>=r[ I ]， 0<=I<=7 建立可以循环的关系 
+ 
+     对于以上的几组不等式，我们采用一种非常笨拙的办法处理这一系列的不等式(其实也是让零乱的式子变得更加整齐，易于处理)。首先我们要明白差分约束系统的应用对象（它通常针对多个二项相减的不等式的）于是我们将上面的所有式子都转化成两项未知项在左边，另外的常数项在右边，且中间用>=连接的式子，即:
+     s[ I ]-s[ I-1 ]>=0            (0<=I<=23) 
+     s[ I-1 ]-s[ I ]>=-num[ I ]       (0<=I<=23) 
+     s[ I ]-s[ I-8 ]>=r[ I ]         (8<=I<=23) 
+     s[ I ]-s[ I+16 ]>=r[ I ]-s[ 23 ]  (0<=I<= 7)
+ 
+  
+ 
+ 论文有点小小的漏洞，也导致了它论文附带的程序是错误的，有BUG
+ 
+ 可行方案中还差一个约束条件
+ 
+ S[23] - S[-1] >= sum;sum为雇佣的出纳员总数
+ 
+  
+ 
+ 将所有形如 A-B>=C 的式子 我们从节点B 引出一条有向边指向A边的权值为C  （这里注意由于左右确定，式子又是统一的>=的不等式，所以A和B是相对确定的，边是一定是指向A的） ，图就建成了 。
+ 
+ 在程序中，我用0作为上面说的-1来构图

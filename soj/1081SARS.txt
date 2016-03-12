@@ -1,0 +1,208 @@
+#include<stdio.h>
+#include<string.h>
+int picture[110][110];
+int reversion[110][110];
+int x,y,k;
+void burdenpic(int a,int b);         //给picture这个数组弄上边界。。
+void burdenrev(int a,int b);         //一个简单的模拟。。我居然写了200行。。有一些小细节还是得注意一下
+void swich(int times);               //不过效率居然好高。。
+int main(void)
+{
+
+    while(EOF!=scanf("%d%d%d",&x,&y,&k))
+    {
+        int i,j;
+        if(0==x&&0==y&&0==k)
+        {
+            break;
+        }
+        for(i=1;i<=x;i++)
+        {
+            for(j=1;j<=y;j++)
+            {
+                scanf("%d",&picture[i][j]);
+            }
+        }
+        swich(1);
+        if(k%2)
+        {
+            for(i=1;i<=x;i++)
+            {
+                for(j=1;j<=y;j++)
+                {
+                    printf("%d",reversion[i][j]);
+                }
+                printf("\n");
+            }
+        }
+        else
+        {
+           for(i=1;i<=x;i++)
+            {
+                for(j=1;j<=y;j++)
+                {
+                    printf("%d",picture[i][j]);
+                }
+                printf("\n");
+            }
+        }
+    }
+    return 0;
+}
+void swich(int times)
+{
+    if(times>k)
+    {
+        return;
+    }
+    if(times%2)
+    {
+        int i,j;
+        burdenpic(x,y);
+        for(i=1;i<=x;i++)
+        {
+            for(j=1;j<=y;j++)
+            {
+                int count=0;
+                if(1==picture[i-1][j])
+                {
+                    count++;
+                }
+                if(1==picture[i+1][j])
+                {
+                    count++;
+                }
+                if(1==picture[i][j-1])
+                {
+                    count++;
+                }
+                if(1==picture[i][j+1])
+                {
+                    count++;
+                }
+                if(1==picture[i-1][j-1])
+                {
+                    count++;
+                }
+                if(1==picture[i-1][j+1])
+                {
+                    count++;
+                }
+                if(1==picture[i+1][j-1])
+                {
+                    count++;
+                }
+                if(1==picture[i+1][j+1])
+                {
+                    count++;
+                }
+                if(3==count)
+                {
+                    reversion[i][j]=1;
+                }
+                else if(2==count)
+                {
+                    reversion[i][j]=picture[i][j];
+                }
+                else
+                {
+                    reversion[i][j]=0;
+                }
+            }
+        }
+    }
+    else
+    {
+
+        int i,j;
+        burdenrev(x,y);
+        for(i=1;i<=x;i++)
+        {
+            for(j=1;j<=y;j++)
+            {
+                int count=0;
+                if(1==reversion[i-1][j])
+                {
+                    count++;
+                }
+                if(1==reversion[i+1][j])
+                {
+                    count++;
+                }
+                if(1==reversion[i][j-1])
+                {
+                    count++;
+                }
+                if(1==reversion[i][j+1])
+                {
+                    count++;
+                }
+                if(1==reversion[i-1][j-1])
+                {
+                    count++;
+                }
+                if(1==reversion[i-1][j+1])
+                {
+                    count++;
+                }
+                if(1==reversion[i+1][j-1])
+                {
+                    count++;
+                }
+                if(1==reversion[i+1][j+1])
+                {
+                    count++;
+                }
+                if(3==count)
+                {
+                    picture[i][j]=1;
+                }
+                else if(2==count)
+                {
+                    picture[i][j]=reversion[i][j];
+                }
+                else
+                {
+                    picture[i][j]=0;
+                }
+            }
+        }
+    }
+    swich(times+1);
+}
+void burdenpic(int a,int b)
+{
+    int i;
+    for(i=1;i<=a;i++)
+    {
+        picture[i][0]=picture[i][b];
+        picture[i][b+1]=picture[i][1];
+    }
+    for(i=1;i<=b;i++)
+    {
+        picture[0][i]=picture[a][i];
+        picture[a+1][i]=picture[1][i];
+    }
+    picture[0][0]=picture[a][b];
+    picture[a+1][b+1]=picture[1][1];
+    picture[0][b+1]=picture[a][1];
+    picture[a+1][0]=picture[1][b];
+}
+void burdenrev(int a,int b)
+{
+    int i;
+    for(i=1;i<=a;i++)
+    {
+        reversion[i][0]=reversion[i][b];
+        reversion[i][b+1]=reversion[i][1];
+    }
+    for(i=1;i<=b;i++)
+    {
+        reversion[0][i]=reversion[a][i];
+        reversion[a+1][i]=reversion[1][i];
+    }
+    reversion[0][0]=reversion[a][b];
+    reversion[a+1][b+1]=reversion[1][1];
+    reversion[0][b+1]=reversion[a][1];
+    reversion[a+1][0]=reversion[1][b];
+}

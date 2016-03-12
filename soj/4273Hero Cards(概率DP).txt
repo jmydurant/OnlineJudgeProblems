@@ -1,0 +1,51 @@
+#include<cstring>    // 好激动。。终于做出来了。。以后这种类型的题目都得这么做。。
+#include<cstdio>    //我就稍微说一下我的方法。。。设dp(i,j,k)为当有i,j,k张不同的魏蜀吴的时候能到达N，M,Q的期望。。当然最后答案就是dp(0,0,0)
+#include<climits>    //因为i，j，k下面的状态一共有8种。。包括dp(i,j,k),dp(i,j,k+1),dp(i,j+1,k)......分别计算他们的概率为p1，p2....
+#include<algorithm>   //得到等式dp(i,j,k)=((dp(i,j,k)+1)*p1+(dp(i,j,k+1)+1)*p2.......)化简得dp(i,j,k)=(1+p2*dp(i,j,k+1)+p3*dp(i,j+1,k)..)/(1-p1);
+#include<queue>     //总之好爽！！！！！
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+double dp[110][110][110];
+double p[8];
+int main(void)
+{
+    int N,M,Q;
+    while(3==scanf("%d%d%d",&N,&M,&Q) && (N || M || Q))
+    {
+        double abc=1.0*N*M*Q;
+        memset(dp,0,sizeof(dp));
+        dp[N][M][Q]=0.0;
+        for(int i=N;i>=0;i--)
+        {
+            for(int j=M;j>=0;j--)
+            {
+                for(int k=Q;k>=0;k--)
+                {
+                    if(i==N && j==M && k==Q)continue;
+                    p[0]=(1.0*i*j*k)/abc;
+                    p[1]=(1.0*i*j*(Q-k))/abc;
+                    p[2]=(1.0*i*(M-j)*k)/abc;
+                    p[3]=(1.0*i*(M-j)*(Q-k))/abc;
+                    p[4]=(1.0*(N-i)*j*k)/abc;
+                    p[5]=(1.0*(N-i)*j*(Q-k))/abc;
+                    p[6]=(1.0*(N-i)*(M-j)*k)/abc;
+                    p[7]=(1.0*(N-i)*(M-j)*(Q-k))/abc;
+                    dp[i][j][k]=1.0+p[1]*dp[i][j][k+1]+p[2]*dp[i][j+1][k]+p[3]*dp[i][j+1][k+1]+p[4]*dp[i+1][j][k]+p[5]*dp[i+1][j][k+1]+p[6]*dp[i+1][j+1][k]+p[7]*dp[i+1][j+1][k+1];
+                    dp[i][j][k]/=(1.0-p[0]);
+                    //printf("%d %d %d %.4lf\n",i,j,k,dp[i][j][k]);
+                }
+            }
+        }
+        printf("%.2lf\n",dp[0][0][0]);
+    }
+    return 0;
+}

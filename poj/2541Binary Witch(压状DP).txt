@@ -1,0 +1,80 @@
+#include <iostream>   //我是沙茶.....话说KMP能做。。不会被慢死。。压状才是正解啊。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 110
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+int dp[14][100000],n,l;
+char s[1100000];
+int state[14];
+void INIT(void){
+    scanf("%s",s);
+    rst(dp,-1);
+    rst(state,0);
+    FOR(i,0,n-2){
+        int k = (s[i]-'0');
+        FOR(j,0,12){
+            if(i>j){
+                state[j] &= (h(j)-1);
+            }
+            state[j] <<= 1;
+            state[j] |= k;
+            //printf("state%d  is %d\n",j,state[j]);
+            //system("pause");
+            if(j<=i)dp[j][state[j]] = i;
+        }
+    }
+    FOR(i,n-1,n+l-2){
+        bool ok = false;
+        int id = -1;
+        FORD(j,12,0){
+            int k = (s[i]-'0');
+            if(i>j){
+                state[j] &= (h(j)-1);
+            }
+            state[j] <<= 1;
+            state[j] |= k;
+            if(dp[j][state[j]] > id){
+                id = dp[j][state[j]];
+                ok = true;
+                break;
+            }
+        }
+        if(ok)s[i+1] = s[id+1];
+        else s[i+1] = '0';
+        FOR(j,0,12){
+
+            if(j<=i)dp[j][state[j]] = i;
+        }
+    }
+    FOR(i,n,n+l-1)printf("%c",s[i]);printf("\n");
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&l))INIT();
+    return 0;
+}
+
+
+
+

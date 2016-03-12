@@ -1,0 +1,26 @@
+#include<cstdio>
+#include<cstring>//n堆石子。。。每次最多抓走一堆中的k个。。如果无限制抓的话直接异或就可以了。。。
+#include<queue>   //但是即使有了k这个限制。。也可以用modk+1来解除。。因为把异或的结果抓走之后。。就是一个k+1抓石子的问题了。。反过来想亦然。。
+#include<cmath>   //异或的原理就不解释了。。二进制真强大。。
+#include<algorithm>
+#include<climits>
+#define INF 400000000
+using namespace std;
+int main(void)
+{
+    int n,k;
+    while(EOF!=scanf("%d%d",&n,&k))
+    {
+        int flag=0;
+        for(int i=1;i<=n;i++)
+        {
+            int a;
+            scanf("%d",&a);
+            a%=(k+1);
+            flag^=a;
+        }
+        if(flag)printf("windy7926778\n");
+        else printf("fgjlwj\n");
+    }
+    return 0;
+}

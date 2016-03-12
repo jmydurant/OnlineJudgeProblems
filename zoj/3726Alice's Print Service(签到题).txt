@@ -1,0 +1,55 @@
+#include <iostream>   //Œ“ «…≥≤Ë.....
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 2000100
+#define INF 2100001000
+#define mod 10007
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+int p[maxn],s[maxn];
+int req[maxn];
+LL minr[maxn];
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--){
+        int n,Q; scanf("%d%d",&n,&Q);
+        REP(i,n) scanf("%d%d",s+i,p+i);
+        minr[n-1] = (LL)p[n-1]*s[n-1];
+        FORD(i,n-2,0){
+            LL tt = (LL)p[i]*s[i];
+            minr[i] = MIN(minr[i+1],tt);
+        }
+        s[n] = INF;
+        while(Q--){
+            LL ans = LONG_LONG_MAX;
+            int qq; scanf("%d",&qq);
+            int k = lower_bound(s,s+n+1,qq) - s;
+            if(k == n){
+                ans = (LL)p[k-1]*qq;
+            }else{
+                ans = (LL)p[k-1]*qq;
+                ans = MIN(ans,minr[k]);
+            }
+            printf("%lld\n",ans);
+        }
+    }return 0;
+}

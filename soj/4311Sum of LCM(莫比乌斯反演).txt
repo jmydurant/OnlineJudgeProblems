@@ -1,0 +1,76 @@
+#include <iostream>  //思路如下:设g(x)为最大公约数为x的倍数的数字乘积和..f(x)为最大公约数为x的数字乘积和
+#include <cstdio>    //易得g(x) = {f(x)+f(2x)+f(3x)......}
+#include <cstring>   //利用莫比乌斯反演得f(x) = {u(x)g(x)+u(2x)g(2x)........}因为g(x)容易得到。。所以这题就这样出来了。。
+#include <queue>     //第一次利用了具体数学的知识。。比较爽。。。
+#include <algorithm>
+#include <stack>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 50002
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+int miu[maxn];
+bool notprime[maxn];
+int tot[maxn];
+LL f[maxn],g[maxn];
+int n;
+void INIT(void)
+{
+    rst(notprime,false);
+    FOR(i,0,50000)miu[i] = 1;
+    FOR(i,2,50000)
+    {
+        if(!notprime[i])
+        {
+            for(int j = 1;j*i<=50000;j++)
+            {
+                notprime[j*i] = true;
+                if(j%i==0) miu[j*i] = 0;
+                else miu[j*i] *= -1;
+            }
+        }
+    }
+    //cout << miu[6] << "and" << miu[7] << endl;
+}
+int main(void)
+{
+    INIT();
+    while(EOF != scanf("%d",&n))
+    {
+        rst(tot,0);
+        rst(g,0);
+        REP(i,n)
+        {
+            int k;
+            scanf("%d",&k);
+            tot[k]++;
+        }
+        FOR(i,1,50000)
+        {
+            LL sum = 0;
+            for(int j = 1;i*j<=50000;j++)
+            {
+                sum += (i*j)*tot[i*j];
+            }
+            g[i] = sum*sum;
+        }
+        FOR(i,1,50000)
+        {
+            f[i] = 0;
+            for(int j = 1;i*j<=50000;j++)
+            {
+                f[i] += miu[j]*g[i*j];
+            }
+        }
+        LL ans = 0;
+        FOR(i,1,50000)ans += f[i]/i;
+        printf("%I64d\n",ans);
+    }
+    return 0;
+}

@@ -1,0 +1,53 @@
+#include<cstdio>     //你信吗。。我居然做出来了。。虽然效率低。。。sg函数我稍微理解了。。。
+#include<cstring>    //理论如下。。从枚举所有x可以到达的y记录y的所有sg（y）值。。然后寻找从0开始最小的不在这个集合里的数。。就是sg（x）的值。。
+#include<algorithm>
+using namespace std;
+int sg[70000];
+int judge(int x);
+int op[8]={61166,56797,48059,30583,65520,65295,61695,4095};
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    memset(sg,-1,sizeof(sg));
+    sg[0]=0;
+    sort(op,op+8);
+    while(casenum--)
+    {
+        int num=0;
+        for(int i=1;i<=16;i++)
+        {
+            num<<=1;
+            int k;
+            scanf("%d",&k);
+            num+=k;
+        }
+        //printf("%d\n",num);
+        if(judge(num)==0)printf("no\n");
+        else printf("yes\n");
+    }
+}
+int judge(int x)
+{
+    int visit[70000]={0};
+    int tmpt;
+    for(int i=0;i<8;i++)
+    {
+        tmpt=(x&op[i]);
+        //printf("%d\n",tmpt);
+        if(tmpt==x)continue;
+        if(-1==sg[tmpt])
+        {
+            //printf("%d pass\n",tmpt);
+            sg[tmpt]=judge(tmpt);
+        }
+        visit[sg[tmpt]]=1;
+    }
+    for(int i=0;i<=69990;i++)
+    {
+        if(0==visit[i])
+        {
+            return i;
+        }
+    }
+}

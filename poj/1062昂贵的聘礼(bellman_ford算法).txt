@@ -1,0 +1,85 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //建图题。。图建好了就ok了。。不难。。关键在于枚举阶级区间。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int lim,n,E;
+struct qq{
+    int level;
+    int nn;
+    int need[110],price[110];
+}pp[110];
+struct node{
+    int f,t,w;
+}edge[maxn];
+int dis[110];
+int ccc[110];
+void bellman(void){
+    FOR(i,1,n){
+        REP(j,E){
+            int u = edge[j].f , v = edge[j].t , ww = edge[j].w;
+            if(ccc[v] > ccc[u] + ww) ccc[v] = ccc[u] + ww;
+        }
+    }
+}
+void solve(void){
+    FOR(i,1,n){
+        scanf("%d%d%d",&dis[i],&pp[i].level,&pp[i].nn);
+        FOR(j,1,pp[i].nn){
+            scanf("%d%d",&pp[i].need[j],&pp[i].price[j]);
+        }
+    }
+    int ans = dis[1];
+    FOR(l,pp[1].level - lim,pp[1].level){
+        int r = l + lim;
+        E = 0;
+        memcpy(ccc,dis,sizeof(dis));
+        FOR(i,1,n){
+            if(pp[i].level < l || pp[i].level > r)continue;
+            FOR(j,1,pp[i].nn){
+                int vv = pp[i].need[j];
+                if(pp[vv].level < l || pp[vv].level > r)continue;
+                edge[E].f = vv;
+                edge[E].t = i;
+                edge[E].w = pp[i].price[j];
+                E++;
+            }
+        }
+        bellman();
+        ans = MIN(ans,ccc[1]);
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&lim,&n))solve();
+    return 0;
+}

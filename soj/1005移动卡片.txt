@@ -1,0 +1,39 @@
+#include<stdio.h>
+
+int pile[500];
+
+int main(void)
+{
+    int n;
+    int num;
+    scanf("%d",&n);
+    for(;n>0;n--)
+    {   int i;
+        int sum=0;
+        int avg;
+        int times=0;
+        scanf("%d",&num);
+
+        for(i=0;i<num;i++)
+        {
+            scanf("%d",&pile[i]);
+            sum+=pile[i];
+        }
+        avg=sum/num;
+        for(i=0;i<(num-1);i++)
+        {
+            if(pile[i]==avg)
+            {
+                ;
+            }
+            else
+            {
+                pile[i+1]+=(pile[i]-avg);
+                times++;
+            }
+        }
+        printf("%d\n",times);//这个地方原来粗心了。。没加\n。。。浪费一次提交。。。
+
+    }
+    return 0;
+}

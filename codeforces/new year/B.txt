@@ -1,0 +1,77 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+#define mod 1000000007LL
+#define fr first
+#define se second
+using namespace std;
+typedef long long LL;
+int n;
+int a[maxn];
+int b[maxn];
+int maxr;
+int main(void){
+    while(EOF != scanf("%d",&n)){
+        maxr = -1;
+        FOR(i,1,n){
+            scanf("%d",a+i);
+            maxr = MAX(a[i],maxr);
+            b[i] = 0;
+        }
+        bool right = true;
+        int now = 1;
+        maxr *= 2;
+        FOR(step,1,maxr){
+            while(true){
+                if(b[now] < a[now]){
+                    printf("P");
+                    b[now]++;
+                }
+                if(right){
+                    if(now == n){
+                        printf("L");
+                        right ^= true;
+                        now--;
+                        break;
+                    }else{
+                        printf("R");
+                        now++;
+                    }
+                }else{
+                    if(now == 1){
+                        printf("R");
+                        right ^= true;
+                        now++;
+                        break;
+                    }else{
+                        printf("L");
+                        now--;
+                    }
+                }
+            }
+        }printf("\n");
+    }return 0;
+}

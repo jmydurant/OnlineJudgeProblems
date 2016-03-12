@@ -1,0 +1,41 @@
+#include<stdio.h>
+
+int jisuan(int n,int m);
+int main(void)
+{
+    int n,m;
+    int num;
+    scanf("%d",&num);
+    for(;num>0;num--)
+    {
+      int ways;
+      scanf("%d%d",&n,&m);
+      if(m>n)
+      {
+          printf("%d\n",0);
+          continue;
+      }
+      ways=jisuan(n,m);
+      printf("%d\n",ways);
+    }
+    return 0;
+}
+int jisuan(int n,int m)
+{
+
+    if(m>n)
+    {
+        int digit;
+        digit=1;
+        for(;n>0;n--)
+        {
+            digit*=2;
+        }
+
+        return digit;
+    }
+    else
+    {
+        return (2*jisuan(n-1,m)-jisuan(n-m-1,m));
+    }
+}

@@ -1,0 +1,84 @@
+#include <iostream>   //我是沙茶....先随便找个点搜。。找到最深的那个点就是树链的起点。。然后再搜一遍就ok了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define maxn 110000
+#define INF 1000000000
+#define mod 1000000007LL
+#define mod1 222222224LL
+#define mod2 183120LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn<<1];
+int headline[maxn],E;
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int n,Q;
+int dp[maxn];
+void dfs(int u,int fa){
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(v != fa){
+            dp[v] = dp[u] + 1;
+            dfs(v,u);
+        }
+    }
+}
+void solve(){
+    rst(headline,-1); E = 0;
+    scanf("%d%d",&n,&Q);
+    REP(i,n-1){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a,b); add(b,a);
+    }
+    dp[1] = 0;
+    dfs(1,0);
+    int maxr = 0, id = 1;
+    FOR(i,2,n){
+        if(dp[i] > maxr){
+            maxr = dp[i];
+            id = i;
+        }
+    }
+    dp[id] = 0;
+    dfs(id,0);
+    maxr = 0;
+    FOR(i,1,n){
+        maxr = MAX(maxr,dp[i]);
+    }
+    maxr++;
+    while(Q--){
+        int tt; scanf("%d",&tt);
+        if(tt <= maxr)printf("%d\n",tt-1);
+        else printf("%d\n",maxr-1+2*(tt-maxr));
+    }
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)solve();
+    return 0;
+}

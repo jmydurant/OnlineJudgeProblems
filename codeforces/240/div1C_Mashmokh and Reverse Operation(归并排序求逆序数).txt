@@ -1,0 +1,120 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 1100000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n , Q;
+int a[maxn] , b[maxn];  //弱逼的逆序数。。不能多说。。
+LL sum[25] , rev[25];
+LL po[25];
+void tangningjiu(int l,int r,int ra){
+    if(l == r)return;
+    //printf("l is %d r is %d ra is %d\n",l,r,ra);
+    if(r - l == 1){
+        if(a[l] > a[r]){
+            sum[ra]++;
+            swap(a[l],a[r]);
+        }else if(a[l] == a[r]){
+            rev[ra]--;
+        }
+        return;
+    }
+    int mid = (l+r)>>1;
+    tangningjiu(l,mid,ra-1);
+    tangningjiu(mid+1,r,ra-1);
+    int ind = l;
+    int ll = l , rr = mid+1;
+    while(true){
+        if(ll > mid){
+            b[ind] = a[rr];
+            rr++; ind++;
+        }else if(rr > r){
+            b[ind] = a[ll];
+            ll++; ind++;
+        }else if(a[ll] < a[rr]){
+            b[ind] = a[ll];
+            ll++; ind++;
+        }else if(a[ll] == a[rr]){
+            int ls = 0 , rs = 0;
+            FOR(i,ll,mid)if(a[i] == a[ll])ls++;
+            FOR(i,rr,r)  if(a[i] == a[ll])rs++;
+            rev[ra] -= (LL)ls * rs;
+            FOR(i,1,ls+rs){
+                b[ind] = a[ll];
+                ind++;
+            }
+            ll += ls;
+            FOR(i,1,rs){
+                rr++;
+                sum[ra] += (mid + 1 - ll);
+            }
+        }else{
+            b[ind] = a[rr];
+            rr++; ind++;
+            sum[ra] += (mid + 1 - ll);
+        }
+        if(ll > mid && rr > r)break;
+    }
+    FOR(i,l,r)a[i] = b[i];
+}
+void INIT(void){
+    po[0] = 1;
+    FOR(i,1,21) po[i] = po[i-1] * 2;
+}
+void solve(void){
+    FOR(i,1,n){
+        rev[i] = po[n-1] * po[i-1];
+    }
+    int youhongyao = (1 << n);
+    FOR(i,1,youhongyao) scanf("%d" , a + i);
+    rst(sum,0);
+    tangningjiu(1,youhongyao,n);
+    scanf("%d",&Q);
+    LL ans = 0;
+    FOR(i,1,n) ans += sum[i];
+    //FOR(i,1,n)printf("sum%d is %I64d   rev%d is %I64d\n",i,sum[i],i,rev[i]);
+    while(Q--){
+        int kk; scanf("%d",&kk);
+        FOR(i,1,kk){
+            ans -= sum[i];
+            sum[i] = rev[i] - sum[i];
+            ans += sum[i];
+        }
+        printf("%I64d\n",ans);
+    }
+}
+int main(void){
+    INIT();
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

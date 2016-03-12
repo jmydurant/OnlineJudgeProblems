@@ -1,0 +1,50 @@
+#include <iostream>   //‘Ÿ’Ωsplay....
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 1000010
+#define INF 1000000000
+using namespace std;
+typedef long long LL;
+int a[100][100];
+int row,col;
+bool judge(int i,int j)
+{
+    if(i == 1 || i == row || j == 1 || j == col)
+        return true;
+    return false;
+}
+int main(void)
+{
+    while(2 == scanf("%d%d",&row,&col))
+    {
+        bool ok = false;
+        for(int i = 1;i<=row;i++)
+        {
+            for(int j = 1;j<=col;j++)
+            {
+                scanf("%d",&a[i][j]);
+                if(a[i][j] && judge(i,j))
+                    ok = true;
+            }
+        }
+        if(ok)
+            printf("2\n");
+        else
+            printf("4\n");
+    }
+    return 0;
+}

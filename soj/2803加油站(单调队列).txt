@@ -1,0 +1,59 @@
+#include<cstdio>      //其实这道题等价于第一次多校联合的A题。。
+#include<cmath>      //不过这道题更简单一些。。每次维护递增队列就可以了。。当长度够了之后直接输出队首。。不过标号是从0到N-1.。所以粗心WA一次。。
+#include<cstring>   //原型是和递增队列。。。要求所有和非负。。。
+#include<deque>
+using namespace std;
+typedef pair<int,int> point;
+deque<point>q;
+int sum[200010];
+int digit[200010];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;
+        scanf("%d",&N);
+        memset(sum,0,sizeof(sum));
+        for(int i=1;i<=N;i++)
+        {
+            int x,y;
+            scanf("%d%d",&x,&y);
+            digit[i]=x-y;
+            digit[i+N]=digit[i];
+        }
+        for(int i=1;i<=2*N;i++){sum[i]=sum[i-1]+digit[i];}
+        q.push_back(point(0,0));
+        for(int i=1;i<=2*N-1;i++)
+        {
+            while(!q.empty())
+            {
+                point abc=q.back();
+                if(abc.first>sum[i])
+                {
+                    q.pop_back();continue;
+                }
+                break;
+            }
+            q.push_back(point(sum[i],i));
+            point abc=q.front();
+            if(i-abc.second>=N)
+            {
+                printf("%d\n",abc.second);
+                break;
+            }
+            if(abc.second>N)
+            {
+                printf("%d\n",-1);
+                break;
+            }
+           // printf("%d %d\n",abc.second,i);
+        }
+        q.clear();
+    }
+    return 0;
+}
+
+
+

@@ -1,0 +1,79 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>
+#include <cstdio>    //两个法则。。如果s+1-x 如果没有被用。。则直接用
+#include <cstring>   //如果被用。。则找两个相加为s+1的数。。而且一定可以那么做。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 50000000
+#define maxn 1010000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+bool visit[maxn];
+bool used[maxn];
+int a[maxn];
+vector<int> b;
+int c[maxn];
+const int s = 1000000;
+int n;
+void solve(void){
+    rst(visit,false); rst(used,false);
+    int ans = 0;
+    b.clear();
+    FOR(i,1,n){
+        scanf("%d",a+i);
+        visit[a[i]] = true;
+    }
+    int tot = 0;
+    FOR(i,1,n){
+        if((!visit[i]) && (!visit[s + 1 -i])){
+            c[++tot] = i;
+        }
+    }
+    int now = 0;
+    FOR(i,1,n){
+        if(used[a[i]])continue;
+        used[a[i]] = true;
+        if(!visit[s + 1 - a[i]]){
+            visit[s + 1 - a[i]] = true;
+            used[s + 1 - a[i]] = true;
+            b.push_back(s + 1 - a[i]);
+            ans++;
+        }else{
+            used[s + 1 - a[i]] = true;
+            now++;
+        }
+    }
+    printf("%d\n",n);
+    REP(i,ans)printf("%d ",b[i]);
+    FOR(i,1,now){
+        printf("%d %d ",c[i] , s + 1 - c[i]);
+    }printf("\n");
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

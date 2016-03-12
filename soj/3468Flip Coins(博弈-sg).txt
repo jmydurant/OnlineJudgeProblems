@@ -1,0 +1,25 @@
+#include <cstdio>   //翻硬币问题的一般解法是。。将每一个正面的硬币看成一种情形算出sg。。然后异或就可以了。。sg可以找规律
+#include <cstring>
+#define h(x) (1<<(x))
+#define MAXN 1010
+int main(void)
+{
+    int n;
+    while(EOF != scanf("%d",&n))
+    {
+        int ans = 0;
+        for(int i = 1;i<=n;i++)
+        {
+            int k; scanf("%d",&k);
+            if(k == 1)
+            {
+                ans ^= i;
+            }
+        }
+        if(ans)
+            printf("yes\n");
+        else
+            printf("no\n");
+    }
+    return 0;
+}

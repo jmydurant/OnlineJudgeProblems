@@ -1,0 +1,160 @@
+#include <cstdio>
+#include <cstring>   //差分约束的思想：可以肯定的是s[bi]-s[ai-1]>=ci; 为什么要ai-1，是因为ai也要选进来在一个是s[i]-s[i-1]<=1;
+#include <algorithm>  //这个算法是不太正确的。。因为感觉用最短路算法得到的结果是最大值。。所以应该用最长路算法
+#include <queue>     // 下面是最长路算法。。
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+using namespace std;
+struct node
+{
+    int f,t;
+    int w;
+}edge[MAXN];
+int n;
+int minr,maxr;
+int dis[MAXN];
+void bellman_ford(void)
+{
+    memset(dis,0,sizeof(dis));
+    bool ok = true;
+    while(ok)
+    {
+        ok = false;
+        for(int i = 1;i<=n;i++)
+        {
+            if(dis[edge[i].t] > dis[edge[i].f] + edge[i].w)
+            {
+                dis[edge[i].t] = dis[edge[i].f] + edge[i].w;
+                ok = true;
+            }
+        }
+        for(int i = minr;i<=maxr;i++)
+        {
+            if(dis[i+1]>dis[i]+1)
+            {
+                dis[i+1] = dis[i]+1;
+                ok = true;
+            }
+        }
+        for(int i = minr;i<=maxr;i++)
+        {
+            if(dis[i] > dis[i+1])
+            {
+                dis[i] = dis[i+1];
+                ok = true;
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    while(EOF!=scanf("%d",&n))
+    {
+        minr = INF;
+        maxr = -1;
+        for(int i = 1;i<=n;i++)
+        {
+            int a,b,w;
+            scanf("%d%d%d",&a,&b,&w);
+            edge[i].f = b+1;
+            edge[i].t = a;
+            edge[i].w = -w;
+            minr = MIN(minr,a);
+            maxr = MAX(maxr,b+1);
+        }
+        bellman_ford();
+        printf("%d\n",dis[maxr]-dis[minr]);
+    }
+}
+
+
+// 最长路算法在下
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+using namespace std;
+struct node
+{
+    int t,nxt;
+    int w;
+}edge[MAXN*5];
+int n;
+int minr,maxr,tot;
+int dis[MAXN];
+int headline[MAXN];
+bool visit[MAXN];
+void add(int f,int t,int w)
+{
+    tot++;
+    edge[tot].t = t;
+    edge[tot].w = w;
+    edge[tot].nxt = headline[f];
+    headline[f] = tot;
+}
+void spfa(void)
+{
+    for(int i = minr;i<=maxr;i++)
+    {
+        dis[i] = -INF;
+        visit[i] = false;
+    }
+    dis[minr] = 0; visit[minr] = true;
+    stack<int> q;
+    q.push(minr);
+    while(!q.empty())
+    {
+        int now = q.top();
+        q.pop(); visit[now] = false;
+        for(int i = headline[now];i != -1;i = edge[i].nxt)
+        {
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(dis[b] < dis[now] + w)
+            {
+                dis[b] = dis[now] + w;
+                if(!visit[b])
+                {
+                    visit[b] = true;
+                    q.push(b);
+                }
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    while(EOF!=scanf("%d",&n))
+    {
+        minr = INF;
+        maxr = -1;
+        tot = 0;
+        memset(headline,-1,sizeof(headline));
+        for(int i = 1;i<=n;i++)
+        {
+            int a,b,w;
+            scanf("%d%d%d",&a,&b,&w);
+            add(a,b+1,w);
+            minr = MIN(minr,a);
+            maxr = MAX(maxr,b+1);
+        }
+        for(int i = minr;i<=maxr;i++)
+        {
+            add(i,i+1,0);
+            add(i+1,i,-1);
+        }
+        spfa();
+        printf("%d\n",dis[maxr]-dis[minr]);
+    }
+}

@@ -1,0 +1,90 @@
+#include<cstdio>   //从这道题目中学到了很多东西。。回头还得把公式好好再推导一遍。。。解析见下。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+long long ca[19];
+long long sumca[19];
+void INIT(void)
+{
+    ca[0]=1;
+    for(int i=1;i<=18;i++)
+    {
+        ca[i]=(4*i-2)*ca[i-1];
+        ca[i]/=(i+1);
+    }
+    sumca[0]=0;
+    for(int i=1;i<=18;i++)
+    sumca[i]=sumca[i-1]+ca[i];
+   // printf("%I64d\n",ca[10]);
+}
+void dfs(int n)
+{
+    if(0==n)return;
+    if(1==n)
+    {
+        printf("X");
+        return;
+    }
+    long long tmpt=(long long)n;
+    int loop;
+    for(loop=0;loop<=18;loop++)
+    {
+        if(tmpt<=sumca[loop])
+        {
+            tmpt-=sumca[loop-1];
+            break;
+        }
+    }
+    //printf("%d pass\n",loop);
+    long long d=0;
+    for(int i=0;i<loop;i++)
+    {
+        d+=ca[i]*ca[loop-i-1];
+        if(d>=tmpt)
+        {
+            long long t=tmpt-(d-ca[i]*ca[loop-i-1]);
+            long long l=((t%ca[loop-i-1])?t/ca[loop-i-1]+1:t/ca[loop-i-1])+sumca[i-1];
+            long long r=((t%ca[loop-i-1])?t%ca[loop-i-1]:ca[loop-i-1])+sumca[loop-i-2];
+            if(i)
+            {
+                printf("(");
+                dfs(l);
+                printf(")");
+            }
+            printf("X");
+            if(loop-1-i)
+            {
+                printf("(");
+                dfs(r);
+                printf(")");
+            }
+            break;
+        }
+    }
+}
+int main(void)
+{
+    INIT();
+    int N;
+    while(EOF!=scanf("%d",&N) && N)
+    {
+        dfs(N);
+        printf("\n");
+    }
+    return 0;
+}
+先计算 ca[i]，保存有 i 个节点的树可有多少个，在每个节点试探左儿子有多少个节点，右儿子有多少节点，然后进行一些细节的计算。
+
+比如得到左儿子节点数后，就知道左儿子是那种树（节点数相同是一种树），这时再计算左儿子应该是这种树中的第几棵。

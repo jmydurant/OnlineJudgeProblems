@@ -1,0 +1,125 @@
+#include <cstdio>   //不能多说。。当时不能再沙茶了。。现在半个小时不到就能写完。。当时的我真弱。。
+#include <cstring>
+#include <algorithm>
+#define maxn 110000
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define tt(x) ((x)*((x)-1)/2)
+using namespace std;
+typedef long long LL;
+struct node{
+    int l,r;
+    LL len;
+    LL zero,one,ans;
+    bool lazy;
+}tree[maxn<<4];
+int c[maxn];
+char s[maxn];
+inline void update(int ind){
+    if(tree[ind].l == tree[ind].r) return;
+    tree[ind].one = tree[lson].one + tree[rson].one;
+    tree[ind].zero = tree[lson].zero + tree[rson].zero;
+    tree[ind].ans = tree[lson].ans + tree[rson].ans + tree[lson].zero * tree[rson].one;
+}
+inline void pushdown(int ind){
+    if(tree[ind].lazy && (tree[ind].l != tree[ind].r)){
+        swap(tree[lson].one,tree[lson].zero);
+        swap(tree[rson].one,tree[rson].zero);
+        tree[lson].ans = tt(tree[lson].len) - tt(tree[lson].one) - tt(tree[lson].zero) - tree[lson].ans;
+        tree[rson].ans = tt(tree[rson].len) - tt(tree[rson].one) - tt(tree[rson].zero) - tree[rson].ans;
+        tree[lson].lazy ^= true;
+        tree[rson].lazy ^= true;
+        tree[ind].lazy = false;
+    }
+}
+void build(int l,int r,int ind){
+    tree[ind].l = l;
+    tree[ind].r = r;
+    tree[ind].len = (r-l+1);
+    tree[ind].lazy = false;
+    if(l == r){
+        tree[ind].ans = 0;
+        tree[ind].zero = (c[l] == 0);
+        tree[ind].one = (c[l] == 1);
+        return;
+    }
+    int mid = (l+r)>>1;
+    build(l,mid,lson);
+    build(mid+1,r,rson);
+    update(ind);
+}
+
+void change(int l,int r,int ind){
+    if(l<=tree[ind].l && tree[ind].r<=r){
+        tree[ind].lazy ^= true;
+        swap(tree[ind].one,tree[ind].zero);
+        tree[ind].ans = tt(tree[ind].len) - tt(tree[ind].zero) - tt(tree[ind].one) - tree[ind].ans;
+        return;
+    }
+    pushdown(ind);
+    int mid = (tree[ind].l+tree[ind].r)>>1;
+    if(r<=mid) change(l,r,lson);
+    else if(l > mid) change(l,r,rson);
+    else{
+        change(l,mid,lson);
+        change(mid+1,r,rson);
+    }
+    update(ind);
+}
+node req(int l,int r,int ind){
+    if(l<=tree[ind].l && tree[ind].r<=r){
+        return tree[ind];
+    }
+    pushdown(ind);
+    int mid = (tree[ind].l + tree[ind].r)>>1;
+    if(r<=mid) return req(l,r,lson);
+    else if(mid < l) return req(l,r,rson);
+    else{
+        node t1 = req(l,mid,lson);
+        node t2 = req(mid+1,r,rson);
+        node ans;
+        ans.len = t1.len + t2.len;
+        ans.zero = t1.zero + t2.zero;
+        ans.one = t1.one + t2.one;
+        ans.ans = t1.zero * t2.one + t1.ans + t2.ans;
+        return ans;
+    }
+}
+int n,m;
+void INIT(void){
+    scanf("%d%d%s",&n,&m,s);
+    FOR(i,0,n-1){
+        c[i+1] = s[i]-'0';
+    }
+    build(1,n,1);
+    while(m--){
+        int op,a,b; scanf("%d%d%d",&op,&a,&b);
+        a++; b++;
+        if(op == 0){
+            change(a,b,1);
+        }
+        else{
+            node ans = req(a,b,1);
+            printf("%lld\n",ans.ans);
+        }
+    }
+}
+
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--){
+        INIT();
+    }return 0;
+}
+
+
+
+
+
+
+
+
+

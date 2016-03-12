@@ -1,0 +1,35 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+char a[40];
+int num[4];
+int reverse(int n);
+int main(void)
+{
+    int casenmu;
+    scanf("%d",&casenmu);
+    getchar();
+    while(casenmu--)
+    {
+        int i;
+        gets(a);
+        for(i=0;i<4;i++)
+        {
+            num[i]=reverse(8*i);
+            printf("%d%c",num[i],(i+1)%4?'.':'\n');
+        }
+    }
+    return 0;
+}
+int reverse(int n)
+{
+    int j=n+7;
+    int result=0;
+    int power=1;
+    for(;j>=n;j--)
+    {
+        result+=power*(a[j]-'0');
+        power*=2;
+    }
+    return result;
+}

@@ -1,0 +1,27 @@
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define INF 0x7f7f7f7f
+using namespace std;
+int main(void)
+{
+    int girl,boy,k;
+    while(3==scanf("%d%d%d",&girl,&boy,&k))
+    {
+        int team=MIN(girl/2,boy);
+        int total=girl+boy;
+        if(total-3*team>=k)printf("%d\n",team);
+        else
+        {
+            int tmpt=(k-total+3*team);
+            tmpt=(tmpt-1)/3+1;
+            team-=tmpt;
+            printf("%d\n",team);
+        }
+    }
+    return 0;
+}

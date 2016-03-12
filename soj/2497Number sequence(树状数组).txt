@@ -1,0 +1,54 @@
+#include<cstring>     //看了一段时间线段树。。。咱也学习一下更加高效的树状数组。。。。应用lowbit可以来维护这个数组。。看来不是太难。。
+#include<algorithm>   //他的优点是。。省空间。。时间上虽然复杂度一样。。但是。。其实更加高效。。因为线段树有可能被一些BT的数据之间废掉。。
+#include<cmath>      //但是树状数组就很稳定。。。
+#include<cstdio>     //忘了记下这道题目的思路了。。先从左往右扫。。记录下比这个数字小的左边的数字的个数。。再向右更新。。右边的数组全部加一。。说明
+#include<map>        //比这个数字更大的数又可以多一个选择了。。。
+#define INF 100000000
+#define lowbit(x)  ((x)&(-x))
+#define maxn 50010
+using namespace std;
+long long ans;
+int left[50010];
+int num[50010];
+int C[110000];
+int sum(int x)
+{
+    int result=0;
+    while(x>0)
+    {
+        result+=C[x];
+        x-=(lowbit(x));
+    }
+    return result;
+}
+void change(int x)
+{
+    while(x<maxn)
+    {
+        C[x]++;
+        x+=(lowbit(x));
+    }
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        ans=0;
+        memset(C,0,sizeof(C));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",num+i);
+            left[i]=sum(num[i]-1);
+            change(num[i]);
+        }
+        memset(C,0,sizeof(C));
+        for(int i=N;i>=1;i--)
+        {
+            ans+=sum(num[i]-1)*left[i];
+            change(num[i]);
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}

@@ -1,0 +1,98 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //就是用源点 --- food --- cow --- cow --- drink -- 汇点的方法建图。。将牛拆点是防止牛多吃多占。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 500
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int r[maxn][maxn];
+int n,f,d,op,ed;
+int dis[maxn];
+bool bfs(void){
+    rst(dis,0);
+    queue<int> q;
+    q.push(op);
+    dis[op] = 1;
+    while(!q.empty()){
+        int u = q.front(); q.pop();
+        for(int i = 0;i<=ed;i++){
+            if(!dis[i] && r[u][i] > 0){
+                q.push(i);
+                dis[i] = dis[u] + 1;
+                if(i == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed)return c;
+    int temp = c;
+    for(int i = 0;i<=ed; i++){
+        if(dis[i] == dis[u] + 1 && temp && r[u][i] > 0){
+            int tt = dfs(i,MIN(temp , r[u][i]));
+            r[u][i] -= tt;
+            r[i][u] += tt;
+            temp -= tt;
+        }
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op , INF);
+    return maxflow;
+}
+void solve(void){
+    rst(r,0);
+    op = 0 , ed = 2*n + f + d + 1;
+    FOR(i,1,f) r[0][2*n+i] = 1;
+    FOR(i,1,d) r[2*n+f+i][2*n+f+d+1] = 1;
+    FOR(i,1,n) r[i][n+i] = 1;
+    FOR(i,1,n){
+        int nf,nd;
+        scanf("%d%d",&nf,&nd);
+        REP(kk,nf){
+            int tt; scanf("%d",&tt);
+            r[tt+n*2][i] = 1;
+        }
+        REP(kk,nd){
+            int tt; scanf("%d",&tt);
+            r[i+n][tt+n*2+f] = 1;
+        }
+    }
+    //FOR(i,0,ed){FOR(j,0,ed)printf("%d ",r[i][j]);printf("\n");}
+    printf("%d\n",dinic());
+}
+
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&f,&d)) solve();
+    return 0;
+}

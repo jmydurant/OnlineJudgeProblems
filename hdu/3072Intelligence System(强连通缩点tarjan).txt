@@ -1,0 +1,98 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //因为内部传播不需要cost。。显然强连通完缩点。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 51000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,m;
+struct node{
+    int f,t,w,nxt;
+}edge[maxn<<1];
+int headline[maxn] , E ;
+inline void add(int f,int t,int w){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].w = w;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int dfn[maxn] , low[maxn] , tot , st[maxn] , top , belong[maxn] , scc;
+bool instack[maxn];
+int dp[maxn];
+void tarjan(int u){
+    dfn[u] = low[u] = ++tot;
+    st[top] = u; top++;
+    instack[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(dfn[u] == low[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+void solve(void){
+    rst(headline,-1);  E = 0;
+    FOR(i,1,m){
+        int a,b,c; scanf("%d%d%d",&a,&b,&c);
+        add(a,b,c);
+    }
+    rst(dfn,0); rst(instack,false);
+    tot = top = scc = 0;
+    REP(i,n)if(!dfn[i]) tarjan(i);
+    FOR(i,1,scc) dp[i] = INF;
+    REP(i,E){
+        int a = belong[edge[i].f] , b = belong[edge[i].t];
+        if(a != b){
+            dp[b] = MIN(dp[b] , edge[i].w);
+        }
+    }
+    dp[belong[0]] = 0;
+    int ans = 0;
+    FOR(i,1,scc) ans += dp[i];
+    printf("%d\n",ans);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}
+

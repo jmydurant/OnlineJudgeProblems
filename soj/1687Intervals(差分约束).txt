@@ -1,0 +1,72 @@
+#include <cstdio>
+#include <cstring>   //差分约束的思想：可以肯定的是s[bi]-s[ai-1]>=ci; 为什么要ai-1，是因为ai也要选进来在一个是s[i]-s[i-1]<=1;
+#include <algorithm>
+#include <queue>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+using namespace std;
+struct node
+{
+    int f,t;
+    int w;
+}edge[MAXN];
+int n;
+int minr,maxr;
+int dis[MAXN];
+void bellman_ford(void)
+{
+    memset(dis,0,sizeof(dis));
+    bool ok = true;
+    while(ok)
+    {
+        ok = false;
+        for(int i = 1;i<=n;i++)
+        {
+            if(dis[edge[i].t] > dis[edge[i].f] + edge[i].w)
+            {
+                dis[edge[i].t] = dis[edge[i].f] + edge[i].w;
+                ok = true;
+            }
+        }
+        for(int i = minr;i<=maxr;i++)
+        {
+            if(dis[i+1]>dis[i]+1)
+            {
+                dis[i+1] = dis[i]+1;
+                ok = true;
+            }
+        }
+        for(int i = minr;i<=maxr;i++)
+        {
+            if(dis[i] > dis[i+1])
+            {
+                dis[i] = dis[i+1];
+                ok = true;
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    while(EOF!=scanf("%d",&n))
+    {
+        minr = INF;
+        maxr = -1;
+        for(int i = 1;i<=n;i++)
+        {
+            int a,b,w;
+            scanf("%d%d%d",&a,&b,&w);
+            edge[i].f = b+1;
+            edge[i].t = a;
+            edge[i].w = -w;
+            minr = MIN(minr,a);
+            maxr = MAX(maxr,b+1);
+        }
+        bellman_ford();
+        printf("%d\n",dis[maxr]-dis[minr]);
+    }
+}

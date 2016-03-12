@@ -1,0 +1,99 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //涨知识的一题。。树枝的包含关系可以弄成一个跟括号一样的序列。然后维护就简单多了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn<<1];
+int headline[maxn] , E , n , tot;
+int c[maxn<<1] , s[maxn], e[maxn];
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+void update(int pos,int val){
+    while(pos <= 2*n){
+        c[pos] += val;
+        pos += lowbit(pos);
+    }
+}
+int req(int pos){
+    int ans = 0;
+    while(pos > 0){
+        ans += c[pos];
+        pos -= lowbit(pos);
+    }return ans;
+}
+void dfs(int u,int fa){
+    tot++;
+    s[u] = tot;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(v == fa)continue;
+        dfs(v,u);
+    }
+    tot++;
+    e[u] = tot;
+}
+int a[maxn<<1];
+void solve(void){
+    rst(headline,-1); E = 0;
+    tot = 0; rst(c, 0);
+    FOR(i,1,n) a[i] = 1;
+    FOR(i,1,n-1){
+        int f,t; scanf("%d%d",&f,&t);
+        add(f,t); add(t,f);
+    }
+    dfs(1,0);
+    int Q; scanf("%d",&Q);
+    char op[10]; int xxx;
+    FOR(i,1,n) update(s[i],1);
+    while(Q--){
+        scanf("%s%d",op,&xxx);
+        if(op[0] == 'Q'){
+            printf("%d\n",req(e[xxx]) - req(s[xxx] - 1));
+        }else{
+            if(a[xxx] == 1){
+                a[xxx] = 0;
+                update(s[xxx],-1);
+            }else{
+                a[xxx] = 1;
+                update(s[xxx],1);
+            }
+        }
+    }
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+}

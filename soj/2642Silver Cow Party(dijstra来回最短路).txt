@@ -1,0 +1,107 @@
+#include <stdio.h>   //因为是有向图。。所以回去的话就把标号互换一下就可以了。。。
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <cmath>
+#include <map>
+#include <string>
+#define INF 100000000
+#define MAXN 51000
+#define eps 1e-10
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+int puzzle[1010][1010];
+int dis[1010];
+int ans[1010];
+bool visit[1010];
+int main(void)
+{
+    int N,M,beg;
+    while(3==scanf("%d%d%d",&N,&M,&beg))
+    {
+        memset(visit,false,sizeof(visit));
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++)
+            {
+                if(i==j)
+                {
+                    puzzle[i][j]=0;
+                }
+                else
+                {
+                    puzzle[i][j]=INF;
+                }
+            }
+        }
+        for(int i=1;i<=M;i++)
+        {
+            int a,b,c;
+            scanf("%d%d%d",&a,&b,&c);
+            puzzle[a][b]=MIN(c,puzzle[a][b]);
+        }
+        for(int i=1;i<=N;i++)
+        {
+            dis[i]=INF;
+        }
+        int start=beg;
+        visit[start]=true;
+        dis[start]=0;
+        for(int step=1;step<=N-1;step++)
+        {
+            for(int i=1;i<=N;i++)
+            {
+                if((!visit[i]) && dis[i]>dis[start]+puzzle[start][i])
+                    dis[i]=dis[start]+puzzle[start][i];
+            }
+            int minr=INF,tmpt;
+            for(int i=1;i<=N;i++)
+            {
+                if((!visit[i]) && minr>dis[i])
+                {
+                    minr=dis[i];
+                    tmpt=i;
+                }
+            }
+            start=tmpt;
+            visit[start]=true;
+        }
+        for(int i=1;i<=N;i++)
+            ans[i]=dis[i];
+        memset(visit,false,sizeof(visit));
+        for(int i=1;i<=N;i++)
+            dis[i]=INF;
+        start=beg;
+        visit[start]=true;
+        dis[start]=0;
+        for(int step=1;step<=N-1;step++)
+        {
+            for(int i=1;i<=N;i++)
+            {
+                if((!visit[i]) && dis[i]>dis[start]+puzzle[i][start])
+                    dis[i]=dis[start]+puzzle[i][start];
+            }
+            int minr=INF,tmpt;
+            for(int i=1;i<=N;i++)
+            {
+                if((!visit[i]) && minr>dis[i])
+                {
+                    minr=dis[i];
+                    tmpt=i;
+                }
+            }
+            start=tmpt;
+            visit[start]=true;
+        }
+        for(int i=1;i<=N;i++)
+            ans[i]+=dis[i];
+        int res=-1;
+        for(int i=1;i<=N;i++)
+            res=MAX(ans[i],res);
+        printf("%d\n",res);
+    }
+    return 0;
+}

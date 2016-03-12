@@ -1,0 +1,77 @@
+#include <iostream>   //感觉比C难很多啊。。看了rng_58的代码才理解了题意(混蛋。。题意都理解错了。。还两次！！！)
+#include <cstdio>     //开始想用dp水过去。。发现普通根本没办法。。只能开搜。。先压状dp[i,j]代表第i条对角线某种颜色状态为j的最大值
+#include <cstring>    //还有。。由于颜色一样就能相当于等价。所以直接搜所有连着颜色的(表述渣。。程序应该很好懂)
+#include <queue>      //mask[i,j]表示第i个对角线的j颜色的连接情况(横坐标。。)神烦！！！！
+#include <algorithm>
+#include <stack>
+#include <climits>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 1000020
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+
+int dp[45][1<<20];
+int mask[45][30];
+char s[50][50];
+int n;
+int dfs(int i,int j,int c,bool first)
+{
+    if(dp[i][j] != INF) return dp[i][j];
+    int ans = -INF;
+    if(i == 2*(n-1)) ans = 0;
+    else
+    {
+        REP(color,26)
+        {
+            int ii = i+1;
+            int jj = mask[ii][color] & (j|(j<<1));
+            if(jj)
+                ans = MAX(ans,-dfs(ii,jj,color,!first));
+        }
+    }
+    if(first)
+    {
+        if(c == 0)ans++;
+        else if(c == 1)ans--;
+    }
+    else
+    {
+        if(c == 0)ans--;
+        else if(c == 1)ans++;
+    }
+    return dp[i][j] = ans;
+}
+
+int main(void)
+{
+    while(EOF != scanf("%d",&n))
+    {
+        REP(i,n) scanf("%s",s[i]);
+        rst(mask,0);
+        REP(i,2*n)REP(j,1<<n)dp[i][j] = INF;
+        FOR(i,0,2*(n))REP(c,26)REP(x,n)
+        {
+            int y = i-x;
+            if(y>=0 && y<n && c == s[x][y]-'a')
+            {
+                mask[i][c] |= (1<<x);
+            }
+        }
+        int ans = -dfs(0,1,s[0][0]-'a',false);
+        //printf("%d fsdfs \n",ans);
+        if(ans>0)
+            printf("FIRST\n");
+        else if(ans<0)
+            printf("SECOND\n");
+        else
+            printf("DRAW\n");
+    }
+    return 0;
+}

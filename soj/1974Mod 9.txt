@@ -1,0 +1,36 @@
+#include<stdio.h>
+#include<string.h>
+char num[1100000];
+int modnum;
+int main(void)
+{
+    int casenum;                        //没啥说的。。回去赶紧看BFS 和DFS。。我讨厌刷水题。。。
+    scanf("%d",&casenum);
+    getchar();
+    while(casenum--)
+    {
+        int opposite=0;
+        int i=0;
+        modnum=0;
+        gets(num);
+        if(num[0]=='-')
+        {
+            opposite=1;
+            i=1;
+        }
+        for(;num[i]!='\0';i++)
+        {
+            modnum+=(num[i]-'0');
+            modnum%=9;
+        }
+        if(opposite)
+        {
+            if(modnum)
+            {
+                modnum=(9-modnum);
+            }
+        }
+        printf("%d\n",modnum);
+    }
+    return 0;
+}

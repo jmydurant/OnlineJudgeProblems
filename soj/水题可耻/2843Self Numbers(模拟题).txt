@@ -1,0 +1,46 @@
+#include<cstring>  //反正按照题目要求做就可以了。。就像是筛选素数一样的方法。。。
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+bool visit[20000];
+int digit[20000];
+inline int getgen(int x)
+{
+    int ans=x;
+    while(x)
+    {
+        ans+=(x%10);
+        x/=10;
+    }
+    return ans;
+}
+int main(void)
+{
+    memset(visit,0,sizeof(visit));
+    int tot=0;
+    for(int i=1;i<=10000;i++)
+    {
+        if(!visit[i])
+        {
+            digit[++tot]=i;
+            for(int j=getgen(i);j<=10000;j=getgen(j))
+            {
+                visit[j]=true;
+            }
+        }
+    }
+    for(int i=1;i<=tot;i++)printf("%d\n",digit[i]);
+}

@@ -1,0 +1,92 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>   //dp i 为i开头的匹配数。。显然dp i += dp(i + len)对于每个匹配成功的来说。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 500000
+#define mod 835672545LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int tot , n;
+struct node{
+    int son[26] , len;
+    bool cnt;
+    void INIT(void){
+        rst(son,0);
+        len = 0;
+        cnt = 0;
+    }
+}tree[maxn];
+char ss[2000];
+int dp[2000];
+void Insert(char *s){
+    int now = 0;
+    for(int i = 0;s[i];i++){
+        int c = s[i] - 'a';
+        if(tree[now].son[c] == 0){
+            tot++; tree[tot].INIT();
+            tree[now].son[c] = tot;
+        }
+        now = tree[now].son[c];
+    }
+    tree[now].cnt = true;
+    tree[now].len = strlen(s);
+}
+void Match(char *s,int ind){
+    int now = 0;
+    for(int i = 0;s[i];i++){
+        int c = s[i] - 'a';
+        if(tree[now].son[c] == 0)return;
+        now = tree[now].son[c];
+        if(tree[now].cnt){
+            dp[ind] += dp[ind + tree[now].len];
+            dp[ind] %= mod;
+        }
+    }
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--){
+        scanf("%d",&n);
+        tot = 0;
+        tree[0].INIT();
+        rst(dp,0);
+        REP(i,n){
+            scanf("%s",ss);
+            Insert(ss);
+        }
+        scanf("%s",ss);
+        int len = strlen(ss);
+        dp[len] = 1;
+        FORD(i,len-1 , 0){
+            Match(ss + i,i);
+        }
+        printf("%d\n",dp[0]);
+    }
+}

@@ -1,0 +1,139 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //建图好建。。然后根据限制边的长短进行删边。。每次最大流如果大于牛数就可行。不断二份答案。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000
+#define maxn 110000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,m,lim ,op,ed;
+int puzzle[250][250];
+struct node{
+    int t,nxt,r;
+}edge[150000];
+int headline[250] , E , mid;
+inline void add(int f,int t,int ww){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    edge[E].r = ww;
+    headline[f] = E++;
+    edge[E].t = f;
+    edge[E].nxt = headline[t];
+    edge[E].r = 0;
+    headline[t] = E++;
+}
+void buildg(void){
+    rst(headline,-1); E = 0;
+    op = 0 ,ed = m + n + 1;
+    FOR(i,m+1,m+n){
+        FOR(j,1,m){
+            if(puzzle[i][j] <= mid) add(i,j,1);
+        }
+    }
+    FOR(i,1,m){
+        add(i,ed,lim);
+    }
+    FOR(i,m+1,m+n){
+        add(op,i,1);
+    }
+}
+int q[1000] , dis[250] , head,tail;
+bool bfs(void){
+    rst(dis,0); dis[op] = 1;
+    head = 0 ,tail = 1;
+    q[head] = op;
+    while(head < tail){
+        int u = q[head];head++;
+        for(int i = headline[u];~i;i = edge[i].nxt){
+            int v = edge[i].t;
+            if(!dis[v] && edge[i].r > 0){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+                if(v == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed)return c;
+    int temp = c;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(dis[v] == dis[u] + 1 && edge[i].r > 0){
+            int tt = dfs(v, MIN(temp , edge[i].r));
+            edge[i].r -= tt;
+            edge[i ^ 1].r += tt;
+            temp -= tt;
+        }
+        if(temp == 0)break;
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op,INF);
+    return maxflow;
+}
+void solve(void){
+    rst(puzzle,0);
+    int l = 1, r = 0;
+    FOR(i,1,n+m){
+        FOR(j,1,n+m){
+            scanf("%d",puzzle[i] + j);
+            if(puzzle[i][j] == 0 && i != j)puzzle[i][j] = INF;
+        }
+    }
+    FOR(k,1,m+n){
+        FOR(i,1,m+n){
+            if(i != k)FOR(j,1,m+n){
+                if(i != j && k != j){
+                    if(puzzle[i][j] > puzzle[i][k] + puzzle[k][j])
+                        puzzle[i][j] = puzzle[i][k] + puzzle[k][j];
+                }
+            }
+        }
+    }
+    //FOR(i,1,m+n){
+    //    FOR(j,1,m+n)printf("%d ",puzzle[i][j]);printf("\n");
+    //}
+    FOR(i,m+1,m+n)FOR(j,1,m)if(puzzle[i][j] > r)r = puzzle[i][j];
+    int ans;
+    while(l <= r){
+        mid = (l+r)>>1;
+        buildg();
+        if(dinic() >= n){
+            ans = mid;
+            r = mid-1;
+        }else l = mid+1;
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&m,&n,&lim)) solve();
+    return true;
+}

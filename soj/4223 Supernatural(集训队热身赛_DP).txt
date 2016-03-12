@@ -1,0 +1,61 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>  //因为是求所有路径中初始血量最少的。。所以正向DP是错误的。。反向才可以过。。记住。如果dp【i】【j】大于0，则把它设为0.。
+#include<climits>
+using namespace std;  //之前WA的原因是路径记录错误。。。蛋疼。。。
+int dp[510][510];
+int ditu[510][510];
+int son[510][510];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int row,col;
+        scanf("%d%d",&row,&col);
+        for(int i=1;i<=row;i++)
+            for(int j=1;j<=col;j++)scanf("%d",&ditu[i][j]);
+        for(int i=1;i<=row;i++)memset(dp[i],0,sizeof(dp[i]));
+        for(int i=row-1;i>=1;i--)
+        {
+            son[i][col]=(i+1)*10000+col;
+            if(ditu[i][col]+dp[i+1][col]>0)dp[i][col]=0;
+            else dp[i][col]=ditu[i][col]+dp[i+1][col];
+        }
+        for(int j=col-1;j>=1;j--)
+        {
+            son[row][j]=row*10000+j+1;
+            if(ditu[row][j]+dp[row][j+1]>0)dp[row][j]=0;
+            else dp[row][j]=ditu[row][j]+dp[row][j+1];
+        }
+        for(int i=row-1;i>=1;i--)
+        {
+            for(int j=col-1;j>=1;j--)
+            {
+                if(dp[i+1][j]>=dp[i][j+1])
+                {
+                    son[i][j]=(i+1)*10000+j;
+                    if(dp[i+1][j]+ditu[i][j]>0)dp[i][j]=0;
+                    else dp[i][j]=dp[i+1][j]+ditu[i][j];
+                }
+                else
+                {
+                    son[i][j]=i*10000+j+1;
+                    if(dp[i][j+1]+ditu[i][j]>0)dp[i][j]=0;
+                    else dp[i][j]=dp[i][j+1]+ditu[i][j];
+                }
+            }
+        }
+        if(dp[1][1]>0)printf("%d\n",1);
+        else printf("%d\n",1-dp[1][1]);
+        int x=1,y=1;
+        for(int i=1;i<=row+col-1;i++)
+        {
+            int a=son[x][y]/10000,b=son[x][y]%10000;
+            printf("%d %d\n",x,y);
+            x=a;y=b;
+        }
+        printf("\n");
+    }
+}

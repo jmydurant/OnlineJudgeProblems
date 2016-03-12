@@ -1,0 +1,55 @@
+#include<cstdio>     //和一差不多。。只是只能被一个数字整除了。。所以。。包含两个的要剪两次。。包含三个的要相应的加上3次。。一次类推。。。
+#include<iostream>
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+using namespace std;
+int a[20];
+inline int gcd(int a,int b)
+{
+    int tmpt;
+    while(b)
+    {
+        tmpt=a%b;
+        a=b;b=tmpt;
+    }
+    return a;
+}
+int make_ans(int n,int m)
+{
+    int ans=0;
+    long long tmpt;
+    int flag;
+    for(int i=1;i<(1<<n);i++)
+    {
+        flag=0;tmpt=1;
+        for(int j=0;(j<n)&&(tmpt<=m);j++)
+        {
+            if(i&(1<<j))
+            {
+                flag++;
+                tmpt=(long long)(a[j]/gcd(tmpt,a[j]))*tmpt;
+            }
+        }
+        if(flag&1)ans+=(m/tmpt)*flag;
+        else ans-=(m/tmpt)*flag;
+        //printf("%d\n",flag);
+    }
+    return ans;
+}
+int main(void)
+{
+    int casenum;  scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int M;
+        int N; scanf("%d%d",&N,&M);
+        for(int i=0;i<N;i++)scanf("%d",a+i);
+        int res=make_ans(N,M);
+        printf("%d\n",res);
+    }
+    return 0;
+}

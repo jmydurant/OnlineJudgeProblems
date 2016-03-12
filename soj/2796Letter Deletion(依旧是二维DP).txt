@@ -1,0 +1,63 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+int dpway(int i,int j);
+int visit[220][220];
+int length[220][220];                     //最长公共子序列。。如果知道公式的话其实很好做
+char a[220];                             //稍微比较一下就行了。。简单的DP看来是能做了
+char b[220];
+int main(void)
+{
+    while(EOF!=scanf("%s%s",a,b))
+    {
+        int alenth,blenth;
+        int result;
+        int i;
+        for(i=0;i<=219;i++)
+        {
+            memset(visit[i],0,sizeof(visit[i]));
+        }
+        alenth=strlen(a);
+        blenth=strlen(b);
+        result=dpway(alenth-1,blenth-1);
+        printf("%d\n",result);
+    }
+    return 0;
+}
+int dpway(int i,int j)
+{
+    if(i<0||j<0)
+    {
+        return 0;
+    }
+    if(visit[i][j])
+    {
+        return length[i][j];
+    }
+    else
+    {
+        if(a[i]==b[j])
+        {
+            length[i][j]=dpway(i-1,j-1)+1;
+            visit[i][j]=1;
+            return length[i][j];
+        }
+        else
+        {
+            int aresult,bresult;
+            visit[i][j]=1;
+            aresult=dpway(i-1,j);
+            bresult=dpway(i,j-1);
+            if(aresult>bresult)
+            {
+                length[i][j]=aresult;
+            }
+            else
+            {
+                length[i][j]=bresult;
+            }
+            return length[i][j];
+        }
+    }
+}

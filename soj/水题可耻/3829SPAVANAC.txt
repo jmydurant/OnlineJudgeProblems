@@ -1,0 +1,15 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+using namespace std;          //时间换算。。把时间往前拨45分钟而已。。
+int main(void)
+{
+    int hour,minute;
+    while(EOF!=scanf("%d%d",&hour,&minute))
+    {
+        int answer=hour*60+minute-45;
+        if(answer<0)answer+=60*24;
+        printf("%d %d\n",answer/60,answer%60);
+    }
+    return 0;
+}

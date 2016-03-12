@@ -1,0 +1,24 @@
+#include<stdio.h>
+
+int main(void)
+{
+    int sum,divide;
+    int a,b;
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&sum,&divide);
+        a=(sum+divide)/2;
+        b=(sum-divide)/2;
+        if(a>=0&&b>=0&&sum==a+b&&divide==a-b)   //其实以后这种程度的题目可以不做了。。。没什么意思了。。。
+        {
+            printf("%d %d\n",a,b);
+        }
+        else
+        {
+            printf("impossible\n");
+        }
+    }
+    return 0;
+}

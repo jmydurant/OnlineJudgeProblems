@@ -1,0 +1,65 @@
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>   //这本来应该是第一道BFS的。。居然现在才看到。。浪费了开始入门的机会。。原理简单的不能再简单了。。用queue确实做的很快
+#include<queue>     //现在写这种代码已经相当熟练了。。原理就不讲了。。
+using namespace std;
+struct abc
+{
+    int x,y;
+    int step;
+}start;
+int x_ter,y_ter;
+int dx[]={1,1,-1,-1,2,2,-2,-2};
+int dy[]={2,-2,2,-2,1,-1,1,-1};
+int visit[9][9];
+int bfs();
+int main(void)
+{
+    int m,n;
+    char a,b;
+    while(EOF!=scanf("%c",&a))
+    {
+        int ok;
+        scanf("%d",&m);
+        getchar();
+        scanf("%c",&b);
+        scanf("%d",&n);
+        getchar();
+        for(int i=0;i<9;i++)memset(visit[i],0,sizeof(visit[i]));
+        start.x=a-'a'+1;start.y=m;start.step=0;
+        x_ter=b-'a'+1;y_ter=n;
+        ok=bfs();
+        printf("To get from %c%d to %c%d takes %d knight moves.\n",a,m,b,n,ok);
+    }
+}
+int bfs()
+{
+    abc tmpt;
+    queue<abc>q;
+    q.push(start);
+    visit[start.x][start.y]=1;
+    if(x_ter==start.x&&y_ter==start.y)return 0;
+    while(!q.empty())
+    {
+        start=q.front();
+        for(int i=0;i<8;i++)
+        {
+            tmpt=start;
+            tmpt.x=start.x+dx[i];
+            tmpt.y=start.y+dy[i];
+            if(tmpt.x>0&&tmpt.x<9&&tmpt.y>0&&tmpt.y<9)
+            {
+                if(x_ter==tmpt.x&&y_ter==tmpt.y)return tmpt.step+1;
+                if(0==visit[tmpt.x][tmpt.y])
+                {
+                    visit[tmpt.x][tmpt.y]=1;
+                    tmpt.step++;
+                    q.push(tmpt);
+                }
+            }
+        }
+        q.pop();
+    }
+    return -1;
+}

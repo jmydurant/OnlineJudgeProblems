@@ -1,0 +1,109 @@
+#include <cstdio>    //老子的第一道强连通。。。好TM的帅气。。。给个链接吧
+#include <cstring>    //http://www.nocow.cn/index.php/Kosaraju%E7%AE%97%E6%B3%95
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 10100
+#define MAXV 50100
+using namespace std;
+
+struct node
+{
+    int s,t;
+    int nxt1,nxt2;
+}edge[MAXV];
+int headline1[MAXN],headline2[MAXN];
+int n,m;
+bool visit[MAXN];
+int tot;
+int order[MAXN];
+int belong[MAXN];
+int out[MAXN];
+int floor;
+void dfs(int u)
+{
+    visit[u] = true;
+    for(int i = headline1[u];i != -1; i = edge[i].nxt1)
+    {
+        int b = edge[i].t;
+        if(!visit[b])
+            dfs(b);
+    }
+    order[++tot] = u;
+}
+
+void ndfs(int u,int floor)
+{
+    belong[u] = floor;
+    visit[u] = true;
+    for(int i = headline2[u];i != -1;i = edge[i].nxt2)
+    {
+        int a = edge[i].s;
+        if(!visit[a])
+            ndfs(a,floor);
+    }
+}
+
+void kosaraju(void)
+{
+    memset(visit,false,sizeof(visit));
+    tot = 0;
+    for(int i = 1;i<=n;i++)
+    {
+        if(!visit[i])
+            dfs(i);
+    }
+    memset(visit,false,sizeof(visit));
+    floor = 0;
+    for(int i = n;i>=1;i--)
+    {
+        if(!visit[order[i]])
+            ndfs(order[i],++floor);
+    }
+}
+
+int main(void)
+{
+    while(2==scanf("%d%d",&n,&m))
+    {
+        memset(headline1,-1,sizeof(headline1));
+        memset(headline2,-1,sizeof(headline2));
+        for(int i = 1;i<=m;i++)
+        {
+            scanf("%d%d",&edge[i].s,&edge[i].t);
+            edge[i].nxt1 = headline1[edge[i].s];
+            edge[i].nxt2 = headline2[edge[i].t];
+            headline1[edge[i].s] = i;
+            headline2[edge[i].t] = i;
+        }
+        kosaraju();
+        memset(out,0,sizeof(out));
+        for(int i = 1;i<=m;i++)
+        {
+            int a = edge[i].s,b = edge[i].t;
+            if(belong[a] != belong[b])
+                out[belong[a]]++;
+        }
+        int none = 0;
+        int temp;
+        for(int i = 1;i<=floor;i++)
+        {
+            if(out[i] == 0)
+            {
+                none++;
+                temp = i;
+            }
+        }
+        if(none == 1)
+        {
+            int ans = 0;
+            for(int i = 1;i<=n;i++)
+            {
+                if(belong[i] == temp)
+                    ans++;
+            }
+            printf("%d\n",ans);
+        }
+        else
+            printf("0\n");
+    }
+    return 0;
+}

@@ -1,0 +1,57 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //沙茶裸题。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 51000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int c[33000];
+int num[15100],n;
+void update(int pos){
+    while(pos < 33000){
+        c[pos]++;
+        pos += lowbit(pos);
+    }
+}
+int req(int pos){
+    int ans = 0;
+    while(pos > 0){
+        ans += c[pos];
+        pos -= lowbit(pos);
+    }return ans;
+}
+int main(void){
+    while(EOF != scanf("%d",&n)){
+        rst(c,0); rst(num,0);
+        int x,y;
+        FOR(i,1,n){
+            scanf("%d%d",&x,&y);
+            x++;
+            int tt = req(x);
+            num[tt]++;
+            update(x);
+        }
+        REP(i,n)printf("%d\n",num[i]);
+    }
+}

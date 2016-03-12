@@ -1,0 +1,35 @@
+#include<cstring>    //纯模拟。。没有技术含量。。。
+#include<algorithm>
+#include<cmath>
+#include<cstdio>
+#include<climits>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define INF 0x7f7f7f7f
+using namespace std;
+int main(void)
+{
+    int N,len;
+    while(2==scanf("%d%d",&N,&len))
+    {
+        int left=1;
+        int result=0;
+        int k;scanf("%d",&k);
+        for(int i=1;i<=k;i++)
+        {
+            int apple;scanf("%d",&apple);
+            if(apple>=left&&apple<=left+len-1)continue;
+            else if(apple<left)
+            {
+                result+=(left-apple);
+                left=apple;
+            }
+            else
+            {
+                result+=(apple-left-len+1);
+                left+=((apple-left-len+1));
+            }
+        }
+        printf("%d\n",result);
+    }
+}

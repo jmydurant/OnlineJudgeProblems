@@ -1,0 +1,125 @@
+#include<cstdio>   //还是一个标准的模板。。。只是中间老是有小错误。。蛋疼。。模板就不要说什么原理了吧。。。
+#include<climits>  //原理见下。。
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+char s1[10],s2[10];
+int equ,var;
+int a[310][310];
+int x[310];
+int change(char s[10])
+{
+    if(0==strcmp(s,"MON"))return 1;
+    if(0==strcmp(s,"TUE"))return 2;
+    if(0==strcmp(s,"WED"))return 3;
+    if(0==strcmp(s,"THU"))return 4;
+    if(0==strcmp(s,"FRI"))return 5;
+    if(0==strcmp(s,"SAT"))return 6;
+    return 7;
+}
+void Gauss(void)
+{
+    int col=0,k=0;
+    for(;k<equ && col<var;k++,col++)
+    {
+        if(0==a[k][col])
+        {
+            int tmpt;
+            for(tmpt=k+1;tmpt<equ;tmpt++)
+                if(a[tmpt][col])break;
+            if(a[tmpt][col])
+            for(int i=col;i<=var;i++)
+                swap(a[k][i],a[tmpt][i]);
+        }
+        if(0==a[k][col])
+        {
+            k--;
+            continue;
+        }
+        for(int i=k+1;i<equ;i++)
+        {
+            if(a[i][col])
+            {
+                int x=a[i][col],y=a[k][col];
+                for(int j=col;j<=var;j++)
+                {
+                    a[i][j]=(y*a[i][j]-x*a[k][j]);
+                    a[i][j]=((a[i][j]%7)+7)%7;
+                }
+            }
+        }
+    }
+    for(int i=k;i<equ;i++)
+    {
+        if(a[i][var])
+        {
+            printf("Inconsistent data.\n");
+            return;
+        }
+    }
+    if(k<var)
+    {
+        printf("Multiple solutions.\n");
+        return;
+    }
+    for(int i=var-1;i>=0;i--)
+    {
+        x[i]=a[i][var];
+        for(int j=i+1;j<var;j++)
+        {
+            x[i]-=a[i][j]*x[j];
+            x[i]=(x[i]%7+7)%7;
+        }
+        //printf("%d %d pass\n",x[i],a[i][i]);
+        while(x[i]%a[i][i])x[i]+=7;
+        x[i]/=a[i][i];
+        x[i]%=7;
+        if(x[i]<3)x[i]+=7;
+    }
+    for(int i=0;i<var;i++)
+    {
+        printf("%d%c",x[i],i==(var-1)?'\n':' ');
+    }
+}
+int main(void)
+{
+    while(2==scanf("%d%d",&var,&equ))
+    {
+        if(!var && !equ)break;
+        memset(a,0,sizeof(a));
+        for(int i=0;i<equ;i++)
+        {
+            int k;
+            scanf("%d%s%s",&k,s1,s2);
+            a[i][var]=(change(s2)-change(s1)+1+7)%7;
+            for(int j=1;j<=k;j++)
+            {
+                int tmpt; scanf("%d",&tmpt);
+                a[i][tmpt-1]++;
+            }
+            for(int j=0;j<var;j++)a[i][j]=(a[i][j]%7+7)%7;
+        }
+        Gauss();
+    }
+    return 0;
+}
+建立方程
+A11*X1+A12*X2+……A1N*XN同余B1%7
+A21*X1+A22*X2+……A2N*XN同余B2%7
+
+AM1*X1+AM2*X2+……AMN*XN同余BM%7
+然后便是高斯消元解这个方程，
+无解情况，出现一行系统全为0，等式右边却不为0。
+多解情况，变元个数大于方程个数
+否则为一解情况，解出方程的解便可

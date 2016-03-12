@@ -1,0 +1,110 @@
+#include <vector>   //ÄáÂê¡£¡£¸Äµ½ËÀ¡£¡£¡£
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <cstring>
+#define INF 999999999.0
+#define eps 1e-11
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+using namespace std;
+struct point
+{
+    double x, y;
+}up[200],down[200];
+int dcmp(double x)
+{
+    if(fabs(x)<eps) return 0;
+    if(x>0.0)
+        return 1;
+    else
+        return -1;
+}
+double cross(point p0,point p1,point p2)
+{
+    return (p1.x-p0.x)*(p2.y-p0.y)-(p2.x-p0.x)*(p1.y-p0.y);
+}
+double dx,ans;
+bool judge(point a,point b,point c,point d)
+{
+    double s1=cross(a,b,c);
+    double s2=cross(a,b,d);
+    int f1=dcmp(s1);
+    int f2=dcmp(s2);
+    if(f1*f2<0)
+    {
+        dx=(s2*c.x-s1*d.x)/(s2-s1);
+        return true;
+    }
+    else if(f1*f2==0)
+        return true;
+    return false;
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N) && N)
+    {
+        for(int i=0;i<N;i++)
+        {
+            scanf("%lf%lf",&up[i].x,&up[i].y);
+            down[i]=up[i];
+            down[i].y--;
+        }
+        dx=-INF;
+        ans=-INF;
+        for(int i=0;i<N;i++)
+        {
+            for(int j=0;j<N;j++)
+            {
+                int k=0;
+                for(;k<N;k++)
+                {
+                    if(!judge(up[i],down[j],up[k],down[k]))
+                    {
+                        break;
+                    }
+                }
+                if(k==N)
+                {
+                    ans=up[N-1].x;
+                }
+                else if(k>MAX(i,j))
+                {
+                    judge(up[i],down[j],up[k-1],up[k]);
+                    ans=MAX(ans,dx);
+                    judge(up[i],down[j],down[k-1],down[k]);
+                    ans=MAX(ans,dx);
+                }
+                //printf("%lf passs\n",ans);
+            }
+        }
+        if(ans==up[N-1].x)
+        {
+            printf("Through all the pipe.\n");
+        }
+        else
+        {
+            printf("%.2lf\n",ans);
+        }
+    }
+    return 0;
+}
+
+
+
+

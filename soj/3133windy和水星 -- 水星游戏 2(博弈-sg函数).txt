@@ -1,0 +1,60 @@
+#include <iostream>   //比3132不同的是。。现在可以每个都动一下了。。所以找sg中是否有不为0的。。如果有。。那么把他们全变成0状态
+#include <cstdio>     //这样对手面临的就是全是 0 状态的局面。。不管怎么动。。我们都把不是0的转换为0.。因为终结状态是全0
+#include <cstring>    //所以我方必胜。。。但如果一开始我方就面临全0状态那么我们不管怎么动。。对方都有变成全0的对策。。则我方必败
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 1100
+#define lowbit(x) ((x)&(-(x)))
+using namespace std;
+bool visit[110][110];
+int sg[110][110];
+int dx[] = {-2,-2,-1,1};
+int dy[] = {-1,1,-2,-2};
+int row,col;
+
+int find_sg(int i,int j)
+{
+    if(visit[i][j])
+        return sg[i][j];
+    bool test[201] = {0};
+    for(int k = 0;k<4;k++)
+    {
+        int x = i + dx[k];
+        int y = j + dy[k];
+        if(x>=0 && x<row && y>=0 && y<col)
+        {
+            test[find_sg(x,y)] = true;
+        }
+    }
+    for(int s = 0;s<=200;s++)
+        if(!test[s])
+        {
+            sg[i][j] = s;
+            break;
+        }
+    visit[i][j] = true;
+    return sg[i][j];
+}
+
+int main(void)
+{
+    int k;
+    while(3 == scanf("%d%d%d",&row,&col,&k))
+    {
+        memset(visit,false,sizeof(visit));
+        memset(sg,0,sizeof(sg));
+        bool ok = false;
+        for(int i = 0;i<k;i++)
+        {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            if(find_sg(a,b))
+                ok = true;
+           // printf(" kuma %d\n",find_sg(a,b));
+        }
+        if(ok)
+            printf("yes\n");
+        else
+            printf("no\n");
+    }
+    return 0;
+}

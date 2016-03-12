@@ -1,0 +1,15 @@
+#include<cstdio>      //次奥。。看代码TM的那么简单。。但是原理我可想了很长时间。。。
+#include<cstring>
+#include<algorithm>
+using namespace std;
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&N)
+    {
+        if(N>2)printf("Bob\n");
+        else printf("Alice\n");
+    }
+    return 0;
+}
+//说一下原理吧。。对于任何一个大于3的环。。爱丽丝不管怎么断。。剩下的东西鲍勃总能把这个链子一道切成左右对称的部分。。之后爱丽丝怎么选。。鲍勃就在对面那个堆里拿走对称的东西就可以了。。这样鲍勃一定会赢。。。

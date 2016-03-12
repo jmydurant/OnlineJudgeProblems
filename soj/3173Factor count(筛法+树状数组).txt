@@ -1,0 +1,131 @@
+#include <iostream>     //先把1到1000000的数字全部用素数筛一遍。。。得到每个的组成方法数。。然后用树状数组保存。。
+#include <cstdio>       //这样区间查询就非常快了。。。
+#include <cstring>      //下面有一个更绝的筛法。。。
+#define MAX(a,b) ((ans[a])>(ans[b])?(a):(b))
+#define MAXN 1000100
+#define lowbit(x) ((x)&(-(x)))
+using namespace std;
+bool visit[MAXN];
+int prime[200];
+int ans[MAXN];
+int c[MAXN];
+int tot;
+void INIT(void)
+{
+    memset(visit,false,sizeof(visit));
+    memset(ans,0,sizeof(ans));
+    tot = 0;
+    for(int i = 2;i<=1000;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot] = i;
+            for(int j = i*i;j<=1000000;j+=i)
+                visit[j] = true;
+        }
+    }
+    ans[1] = 1;
+    for(int i = 2;i<=1000000;i++)
+    {
+        int temp = i;  ans[i] = 1;
+        for(int j = 1;j<=tot && prime[j]<=temp;j++)
+        {
+            int k = 1;
+            while(temp%prime[j] == 0)
+            {
+                k++;
+                temp /= prime[j];
+            }
+            ans[i] *= k;
+        }
+        if(temp>1)
+            ans[i]*=2;
+    }
+    for(int i = 1;i<=1000000;i++)
+    {
+        c[i] = i;
+        for(int j = 1;j<lowbit(i);j<<=1)
+            c[i] = MAX(c[i],c[i-j]);
+    }
+}
+
+int req(int l,int r)
+{
+    int res = r;
+    while(true)
+    {
+        res = MAX(res,r);
+        if(l == r)break;
+        for(r -= 1 ; r - l >=lowbit(r) ; r -= lowbit(r))
+            res = MAX(res,c[r]);
+    }
+    return res;
+}
+
+int main(void)
+{
+    INIT();
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int a,b;
+        scanf("%d%d",&a,&b);
+        printf("%d\n",req(a,b));
+    }
+    return 0;
+}
+
+//下面的程序逆天的快。。。。。。
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#define MAX(a,b) ((ans[a])>(ans[b])?(a):(b))
+#define MAXN 1000100
+#define lowbit(x) ((x)&(-(x)))
+using namespace std;
+int ans[MAXN];
+int c[MAXN];
+int tot;
+void INIT(void)
+{
+    memset(ans,0,sizeof(ans));
+    tot = 0;
+    for(int i = 1;i<=1000;i++)
+    {
+        ans[i*i]++;
+        for(int j = i+1;i*j<=1000000;j++)
+            ans[i*j]+=2;
+    }
+    for(int i = 1;i<=1000000;i++)
+    {
+        c[i] = i;
+        for(int j = 1;j<lowbit(i);j<<=1)
+            c[i] = MAX(c[i],c[i-j]);
+    }
+}
+
+int req(int l,int r)
+{
+    int res = r;
+    while(true)
+    {
+        res = MAX(res,r);
+        if(l == r)break;
+        for(r -= 1 ; r - l >=lowbit(r) ; r -= lowbit(r))
+            res = MAX(res,c[r]);
+    }
+    return res;
+}
+
+int main(void)
+{
+    INIT();
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int a,b;
+        scanf("%d%d",&a,&b);
+        printf("%d\n",req(a,b));
+    }
+    return 0;
+}

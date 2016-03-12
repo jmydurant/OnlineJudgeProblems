@@ -1,0 +1,120 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //比较普通的建图。。就是string比较麻烦。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 1100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int r[500][500];
+string device[500] , adapt[500];
+int n,m,k,op,ed,tot;
+map<string,int> bst;
+int dis[500];
+bool bfs(void){
+    queue<int> q; q.push(op);
+    rst(dis,0);
+    dis[op] = 1;
+    while(!q.empty()){
+        int u = q.front(); q.pop();
+        for(int i = 0;i<=ed;i++){
+            if(!dis[i] && r[u][i] > 0){
+                dis[i] = dis[u] + 1;
+                q.push(i);
+            }
+        }
+        if(u == ed)return true;
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed)return c;
+    int temp = c;
+    for(int i = 0;i<=ed;i++){
+        if(dis[i] == dis[u] + 1 && temp && r[u][i] > 0){
+            int tt = dfs(i , MIN(temp , r[u][i]));
+            r[u][i] -= tt;
+            r[i][u] += tt;
+            temp -= tt;
+        }
+    }
+    if(c == temp) dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs( op , INF);
+    return maxflow;
+}
+void solve(void){
+    tot = 0;
+    bst.clear();
+    rst(r,0);
+    FOR(i,1,n){
+        adapt[i].clear();
+        cin >> adapt[i];
+        bst.insert(make_pair(adapt[i] , i));
+    }
+    cin >> m;
+    op = 0 , tot = n;
+    FOR(i,1,m){
+        string aa;
+        device[i].clear();
+        cin >> device[i] >> aa;
+        int ind = bst[aa];
+        if(ind == 0){
+            bst[aa] = ++tot;
+            ind = tot;
+        }
+        r[i][ind+m] = 1;
+        r[op][i] = 1;
+    }
+    cin >> k;
+    FOR(st,1,k){
+        string aa , bb; cin >> aa >> bb;
+        int ia = bst[aa] , ib = bst[bb];
+        if(ia == 0){
+            bst[aa] = ++tot;
+            ia = tot;
+        }
+        if(ib == 0){
+            bst[bb] = ++tot;
+            ib = tot;
+        }
+        r[ia+m][ib+m] = INF;
+    }
+    ed = m + tot + 1;
+    FOR(i,1,n){
+        r[i+m][ed] = 1;
+    }
+    int ans = dinic();
+    printf("%d\n",m - ans);
+}
+int main(void){
+    while(cin >> n) solve();
+}

@@ -1,0 +1,75 @@
+#include<cstdio>   //真是开了眼界了。。。处理单调函数二分确实是个好方法。。但是处理凸函数。。三分法真是绝了。！！方法见下。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const double esp=1e-12;
+const double Pi=2.0*asin(1.0);
+struct point
+{
+    double x,y;
+}Po[40];
+int N;
+double arae(double angle)
+{
+    double maxx=-100000000.0,maxy=-100000000.0;
+    double minx=100000000.0,miny=100000000.0;
+    for(int i=1;i<=N;i++)
+    {
+        double x=Po[i].x*cos(angle)-Po[i].y*sin(angle);
+        double y=Po[i].x*sin(angle)+Po[i].y*cos(angle);
+        maxx=MAX(x,maxx);
+        minx=MIN(x,minx);
+        maxy=MAX(y,maxy);
+        miny=MIN(y,miny);
+    }
+    double L=MAX(maxx-minx,maxy-miny);
+    return L;
+}
+int main(void)
+{
+    //printf("%lf\n",Pi);
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d",&N);
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%lf%lf",&Po[i].x,&Po[i].y);
+        }
+        double left=0.0;
+        double right=0.5*Pi;
+        double mid,midmid;
+        while(fabs(right-left)>esp)
+        {
+            //printf("pass\n");
+            mid=(left+right)/2.0;
+            midmid=(mid+right)/2.0;
+            double s1=arae(mid);
+            double s2=arae(midmid);
+            if(s1>s2)left=mid;
+            else right=midmid;
+        }
+        //printf("%lf\n",arae(0.0));
+        double s=arae(mid);
+        s*=s;
+        printf("%.2lf\n",s);
+    }
+    return 0;
+}
+有两种解法，一种为逼近法，就是每次m分角度，求出最符合的角度，再继续m分，如此进行times次，即可求出较为精确的解。(m 大概取10, times取30即可)
+
+第二种解法即为三分法，首先旋转的角度只要在0到180度即可，超过180度跟前面的相同的。坐标轴旋转后，坐标变换为：
+X’ = x * cosa - y * sina;
+y’ = y * cosa + x * sina;

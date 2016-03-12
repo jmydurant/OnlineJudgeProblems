@@ -1,0 +1,163 @@
+#include<cstring>      //这道题目太综合了。。。爽。。。用到了polya定理。。欧拉函数。。矩阵二分。。扩展欧几里得。。
+#include<cstdio>       //其他的定理因为都在color那题里做到了。。所以就只是说明一下矩阵二分。。。见下。。。
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+typedef long long LL;
+const int mod=9973;
+bool visit[40010];
+int prime[40010];
+int tot;
+int N,M,K;
+void IINT(void)
+{
+    memset(visit,false,sizeof(visit));
+    tot=0;
+    for(int i=2;i*i<=1000000000;i++)
+    {
+        if(!visit[i])
+        {
+            prime[++tot]=i;
+            for(int j=i*i;j<=40000;j+=i)visit[j]=true;
+        }
+    }
+    //printf("%d %d\n",prime[5],prime[tot]);
+}
+int phi(int n)
+{
+    int ans=n;
+    for(int i=1; prime[i]*prime[i]<=n && i<=tot;i++)
+    {
+        if(0==n%prime[i])
+        {
+            ans-=(ans/prime[i]);
+            while(0==n%prime[i])n/=prime[i];
+        }
+    }
+    if(n>1)ans-=(ans/n);
+    return ans;
+}
+struct matrix
+{
+    long long digit[11][11];
+    matrix(){memset(digit,0,sizeof(digit));}
+}A;
+long long m_pow(matrix x,int n)
+{
+    matrix ans=x;n--;
+    while(n)
+    {
+        if(n%2)
+        {
+            matrix tmpt;
+            for(int i=1;i<=M;i++)
+            {
+                for(int j=1;j<=M;j++)
+                {
+                    for(int k=1;k<=M;k++)
+                    {
+                        tmpt.digit[i][j]+=(ans.digit[i][k]*x.digit[k][j]);
+                        tmpt.digit[i][j]%=mod;
+                    }
+                }
+            }
+            ans=tmpt;
+        }
+        matrix tmpt;
+        for(int i=1;i<=M;i++)
+        {
+            for(int j=1;j<=M;j++)
+            {
+                for(int k=1;k<=M;k++)
+                {
+                    tmpt.digit[i][j]+=(x.digit[i][k]*x.digit[k][j]);
+                    tmpt.digit[i][j]%=mod;
+                }
+            }
+        }
+        x=tmpt;
+        n/=2;
+    }
+    long long res=0;
+    for(int i=1;i<=M;i++)
+    {
+        res+=ans.digit[i][i];
+        res%=mod;
+    }
+    return res;
+}
+void e_gcd(LL a,LL b,LL &d,LL &x,LL &y)
+{
+    if(!b)
+    {
+        d = a;
+        x = 1;
+        y = 0;
+    }
+    else
+    {
+        e_gcd(b, a%b ,d ,y ,x);
+        y -= x*(a/b);
+    }
+}
+int main(void)
+{
+    int casenum;
+    IINT();
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d%d",&N,&M,&K);
+        for(int i=1;i<=M;i++)
+        {
+            for(int j=1;j<=M;j++)
+            {
+                A.digit[i][j]=1;
+            }
+        }
+        for(int i=1;i<=K;i++)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            A.digit[a][b]=0;
+            A.digit[b][a]=0;
+        }
+        int ans=0;
+        int i;
+        for(i=1;i*i<N;i++)
+        {
+            if(0==N%i)
+            {
+                ans+=((phi(N/i)%mod)*m_pow(A,i));
+                ans%=mod;
+                ans+=((phi(i)%mod)*m_pow(A,N/i));
+                ans%=mod;
+            }
+        }
+        if(i*i==N)
+        {
+            ans+=((phi(i)%mod)*m_pow(A,i));
+            ans%=mod;
+        }
+        LL d=1;
+        LL x,y;
+        e_gcd(N,(long long)mod,d,x,y);
+        x=((x+mod)%mod);
+        //printf("%d\n",ans);
+        ans*= x;
+        ans%=mod;
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+这题和POJ2154 题目大致相同，不同的是这里多了一个限制条件，即可能两种颜色不能涂在相邻的珠子上面。对于这种情况我们可以通过矩阵连乘得到，先初始化矩阵array[i][j]为1.如果颜色a和颜色b不能涂在相邻的珠子，那么array[a][b] = array[b][a] = 0; 对于具有n/L个循环节的置换(L为每个循环节的长度)。先求出array[][]的n/L次幂，然后将这个矩阵的array[i][i] (1<=i<=m)全部加起来即为这种置换下涂色不变的方法数。对于为什么这样做，仔细想一想就清楚了，其余的算法基本和POJ 2154相同，这里就不解释了。

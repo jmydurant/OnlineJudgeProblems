@@ -1,0 +1,16 @@
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    int result=0;
+    char a[200];
+    while(gets(a))
+    {
+        result++;
+    }
+    cout <<result<<endl;
+    return 0;
+}

@@ -1,0 +1,88 @@
+#include <stdio.h>    //尼玛spfa真是无解啊。。速度那么快。。这道题如果想求回来的边只要把原来所有的边都反向。。然后求spfa就是从所有的点到原点的cost了。
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#define INF 0xffffffff
+#define MAXN 1010000
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+struct Edge
+{
+    int s,e,w,next;
+}puzzle[2][MAXN];
+int headline[2][MAXN];
+int N;
+long long dis[MAXN];
+bool visit[MAXN];
+void INIT(void)
+{
+    memset(headline,-1,sizeof(headline));
+    //printf("%d pass\n",headline[1][10]);
+}
+long long spfa(void)
+{
+    long long ans=0;
+    for(int step=0;step<2;step++)
+    {
+        for(int i=1;i<=N;i++)
+            dis[i]=INF;
+        memset(visit,false,sizeof(visit));
+        queue<int> q;
+        int start=1;
+        visit[start]=true;
+        dis[start]=0;
+        q.push(start);
+        while(!q.empty())
+        {
+            //printf("visit %d",step);
+            start=q.front();
+            q.pop();
+            visit[start]=false;
+            for(int i=headline[step][start];i!=-1;i=puzzle[step][i].next)
+            {
+                int tail=puzzle[step][i].e;
+                if(dis[tail]>dis[start]+puzzle[step][i].w)
+                {
+                    dis[tail]=dis[start]+puzzle[step][i].w;
+                    if(!visit[tail])
+                    {
+                        q.push(tail);
+                        visit[tail]=true;
+                    }
+                }
+            }
+        }
+        for(int i=2;i<=N;i++)
+        {
+            ans+=dis[i];
+        }
+    }
+    return ans;
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int M; scanf("%d%d",&N,&M);
+        INIT();
+        for(int i=1;i<=M;i++)
+        {
+            int a,b,c; scanf("%d%d%d",&a,&b,&c);
+            puzzle[0][i].s=a;
+            puzzle[0][i].e=b;
+            puzzle[0][i].w=c;
+            puzzle[0][i].next=headline[0][a];
+            headline[0][a]=i;
+            puzzle[1][i].s=b;
+            puzzle[1][i].e=a;
+            puzzle[1][i].w=c;
+            puzzle[1][i].next=headline[1][b];
+            headline[1][b]=i;
+        }
+        long long ans=spfa();
+        cout << ans << endl;
+    }
+}

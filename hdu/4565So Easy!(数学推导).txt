@@ -1,0 +1,67 @@
+#include <cstdio>  //先说下思路吧。。这道题需要这样的推导。。(x+(y)^1/2) ^ n 的小数部分是1 - (x-(y)^1/2) ^ n这样答案就是(x+(y)^1/2) ^ n + (x-(y)^1/2) ^ n
+#include <cstring> //设他为cn  奇葩的发现。。cn+1 = 2a*cn - (a*a-b)*cn-1然后矩阵快速幂。。小心快速幂模完出现的负数。。
+#include <algorithm>
+using namespace std;
+typedef long long LL;
+struct mat{
+    LL a[2][2];
+    mat(){memset(a,0,sizeof(a));}
+    void INIT(){
+        a[0][0] = a[1][1] = 1;
+        a[1][0] = a[0][1] = 0;
+    }
+    void show(){
+        for(int i = 0;i<2;i++){
+            for(int j = 0;j<2;j++){
+                printf("%I64d ",a[i][j]);
+            }printf("\n");
+        }
+    }
+};
+mat mul(mat & a,mat & b,LL mod){
+    mat ans;
+    for(int i = 0;i<2;i++){
+        for(int j = 0;j<2;j++){
+            for(int k = 0;k<2;k++){
+                ans.a[i][j] += a.a[i][k]*b.a[k][j];
+                ans.a[i][j] %= mod;
+            }
+        }
+    }return ans;
+}
+mat power(mat &a,LL n,LL mod){
+    mat ans; ans.INIT();
+    while(n){
+        if(n % 2){
+            ans = mul(ans,a,mod);
+        }
+        a = mul(a,a,mod);
+        n /= 2;
+        //printf("loop n %I64d\n",n);
+        //ans.show();
+    }return ans;
+}
+LL a,b,n,m;
+void solve(){
+    LL kk[4];
+    kk[1] = 2*a; kk[2] = 2*(a*a%m+b); kk[3] = 2*(a*a%m*a%m+3*a*b%m)%m;
+    for(int i = 1;i<=3;i++) kk[i] %= m;
+    if(n <=3){
+        printf("%I64d\n",kk[n] % m);
+    }else{
+        mat A;
+        A.a[0][0] = kk[3]; A.a[1][0] = A.a[0][1] = kk[2]; A.a[1][1] = kk[1];
+        mat B;
+        //A.show();
+        B.a[0][0] = 2*a; B.a[0][1] = ((b-a*a)%m+m)%m; B.a[1][0] = 1;
+        //B.show();
+        mat ans = power(B,n-3,m);
+        ans = mul(ans,A,m);
+        printf("%I64d\n",(ans.a[0][0]%m + m)% m);
+    }
+}
+int main(void){
+    while(4 == scanf("%I64d%I64d%I64d%I64d",&a,&b,&n,&m))
+    solve();
+    return 0;
+}

@@ -1,0 +1,76 @@
+#include<cstring>    //又重新温习了下最短路算法。。因为理解了。。上手非常快。。、注意。。除了指针直接指向的点为代价0外。。其余点为代价1.。
+#include<algorithm>   //最近神过题啊。。状态神勇！！！！不过说。。。这种算法还是可以改进的。。等我学会了堆之后就可以了。。。
+#include<cmath>
+#include<cstdio>
+#include<map>
+#define INF 100000000
+using namespace std;
+int ditu[110][110];
+int path[110];
+int visit[110];
+int N;
+void IINT(void);
+int Dijkstra(int beg,int aim);
+inline int MIN(int a,int b){return a<b?a:b;}
+int main(void)
+{
+    while(EOF!=scanf("%d",&N))
+    {
+        int x,y;
+        memset(visit,0,sizeof(visit));
+        IINT();
+        scanf("%d%d",&x,&y);
+        for(int i=1;i<=N;i++)
+        {
+            int k;
+            scanf("%d",&k);
+            for(int j=0;j<k;j++)
+            {
+                int m;scanf("%d",&m);
+                ditu[i][m]=(j==0?0:1);
+            }
+        }
+       // printf("pass/n");
+        int result=Dijkstra(x,y);
+        if(result<INF)printf("%d\n",result);
+        else printf("KK can not find his friend.\n");
+    }
+}
+int Dijkstra(int beg,int aim)
+{
+    int start=beg;
+    visit[start]=1;
+    path[start]=0;
+    while(start!=aim)
+    {
+        int tmpt,minroad=INF;
+        for(int i=1;i<=N;i++)
+        {
+            if(INF!=ditu[start][i]&&0==visit[i])
+            {
+                path[i]=MIN(path[i],path[start]+ditu[start][i]);
+            }
+            if(0==visit[i]&&path[i]<minroad)
+            {
+                tmpt=i;
+                minroad=path[i];
+            }
+        }
+        if(minroad==INF)break;
+        start=tmpt;
+        visit[start]=1;
+    }
+    return path[aim];
+}
+void IINT(void)
+{
+    for(int i=0;i<=108;i++)
+    {
+        path[i]=INF;
+        for(int j=0;j<=108;j++)
+        {
+            if(i==j)ditu[i][j]=0;
+            else ditu[i][j]=INF;
+        }
+    }
+}

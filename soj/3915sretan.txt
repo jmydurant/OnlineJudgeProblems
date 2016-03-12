@@ -1,0 +1,43 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int digit[100];
+int main(void)
+{
+    int num;
+    while(EOF!=scanf("%d",&num))                      // 题目挺水的。。但是手生了。。没办法。。。
+    {
+        long long i,j,k;
+        i=4;j=1;
+        while(i<num+2)
+        {
+            i*=2;j++;
+        }
+        memset(digit,0,sizeof(digit));
+        k=1;
+        for(i=2;k<=j;k++)
+        {
+            long long m=num%i;
+            if(2*m<=i&&m)
+            {
+                digit[k]=4;
+            }
+            else
+            {
+                digit[k]=7;
+            }
+            num-=i;
+            i*=2;
+        }
+        for(k=99;0==digit[k];k--)
+        {
+            ;
+        }
+        for(;k>=1;k--)
+        {
+            printf("%d",digit[k]);
+        }
+        printf("\n");
+    }
+    return 0;
+}

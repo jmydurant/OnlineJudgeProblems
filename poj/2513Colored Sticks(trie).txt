@@ -1,0 +1,121 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //狗日的写了好长一段。。原来太天真了。。还要判断图是否联通。。所以又dfs了一次。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[510000*2];
+int headline[510000],E;
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+struct Trie{
+    int son[3000000][26];
+    int tail[3000000];
+    int lab[3000000];
+    int ltot;
+    int tot , unbalance;
+    void INIT(void){
+        tot = ltot = 0;
+        REP(i,26) son[0][26] = 0;
+        tail[0] = 0;
+        unbalance = 0;
+        lab[0] = 0;
+    }
+    inline int getnew(){
+        tot++;
+        REP(i,26)son[tot][i] = 0;
+        tail[tot] = 0;
+        lab[tot] = 0;
+        return tot;
+    }
+    int Insert(char *s){
+        int now = 0;
+        for(int i = 0;s[i];i++){
+            int c = s[i] - 'a';
+            if(son[now][c] == 0){
+                son[now][c] = getnew();
+            }
+            now = son[now][c];
+        }
+        tail[now] ++;
+        if(lab[now] == 0)lab[now] = ++ltot;
+        return lab[now];
+    }
+    void judge(int now){
+        if(tail[now]%2) unbalance++;
+        REP(i,26){
+            if(son[now][i]) judge(son[now][i]);
+        }
+        return;
+    }
+}fuck;
+bool visit[510000];
+void dfs(int u){
+    visit[u] = true;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!visit[v]){
+            visit[v] = true;
+            dfs(v);
+        }
+    }
+}
+char aaa[15] , bbb[15];
+int main(void){
+    fuck.INIT();
+    rst(headline,-1), E = 0;
+    while(~scanf("%s",aaa)){
+        scanf("%s",bbb);
+        int a = fuck.Insert(aaa);
+        int b = fuck.Insert(bbb);
+        add(a,b); add(b,a);
+    }
+    fuck.judge(0);
+    rst(visit,false);
+    if(fuck.unbalance <= 2){
+        dfs(1);
+        FOR(i,1,fuck.ltot){
+            if(!visit[i]){
+                printf("Impossible\n");
+                return 0;
+            }
+        }
+        printf("Possible\n");
+        return 0;
+    }
+    else printf("Impossible\n");
+    return 0;
+}

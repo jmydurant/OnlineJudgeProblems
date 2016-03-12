@@ -1,0 +1,23 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>    //通项公式我就不推理了。。。新加进去的元素A分为和之前对角元素B相同和不相同两种情况。。。
+#include<climits>
+using namespace std;
+int main(void)
+{
+    long long m,n;
+    while(EOF!=scanf("%lld%lld",&n,&m))
+    {
+        long long result=((m-1)*m)%19871118;
+        m=m*m-3*m+3;
+        m%=19871118;
+        n--;
+        while(n>0)
+        {
+            if(n%2)result=(result*m)%19871118;
+            m=(m*m)%19871118;
+            n/=2;
+        }
+        printf("%lld\n",result);
+    }
+}

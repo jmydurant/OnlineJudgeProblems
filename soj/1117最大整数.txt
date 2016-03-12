@@ -1,0 +1,75 @@
+#include<stdio.h>
+#include<string.h>
+int num[7];
+int rank[7];
+int numlen[7];
+void Numcmp(int x,int y);
+int main(void)
+{
+    int casenum;
+
+
+    scanf("%d",&casenum);                       //原来使用字符串做的。。发现指针用的实在是太烂了。。
+    while(casenum--)                            //所以改用数字做。。麻烦了许多。。但是不会出现乱指的问题
+    {                                           //这个题目算是我做的第一道贪心法吧。。还是得纪念一下。。
+        int n;
+        int i,j;
+        scanf("%d",&n);
+
+        for(i=0;i<7;i++)
+        {
+
+            rank[i]=i;
+            numlen[i]=1;
+        }
+        for(i=0;i<n;i++)
+        {
+            int power=10;
+            scanf("%d",&num[i]);
+            for(;(num[i]-power>=0);)
+            {
+                numlen[i]++;
+                power*=10;
+            }
+        }
+        for(i=0;i<n-1;i++)
+        {
+            for(j=0;j<n-i-1;j++)
+            {
+                Numcmp(j,j+1);
+            }
+        }
+        for(i=0;i<n;i++)
+        {
+            printf("%d",num[rank[i]]);
+        }
+        printf("\n");
+
+    }
+    return 0;
+}
+void Numcmp(int x,int y)
+{
+    int i;
+    int a,b;
+    int power=10;
+    for(i=1;i<numlen[rank[y]];i++)
+    {
+        power*=10;
+    }
+    a=num[rank[x]]*power+num[rank[y]];
+    power=10;
+    for(i=1;i<numlen[rank[x]];i++)
+    {
+        power*=10;
+    }
+    b=num[rank[y]]*power+num[rank[x]];
+    if(a<b)
+    {
+        power=rank[x];
+        rank[x]=rank[y];
+        rank[y]=power;
+    }
+
+
+}

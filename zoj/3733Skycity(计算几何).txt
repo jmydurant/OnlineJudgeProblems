@@ -1,0 +1,61 @@
+#include <iostream>   //我是沙茶.....
+#include <cstdio>     //逗比的一道题目。。理解题意之后就是秒。。但是题目好难懂。。关键没有电子词典估计也是跪的节奏。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define maxn 50010
+#define INF 100000
+#define mod 10007
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+double r,R,H,S;
+int F;
+double ra;
+const double pi = acos(-1.0);
+double kill_la_kill(void){
+    int kill = 3,la = INF;
+    double ans = 0.0;
+    while(kill <= la){
+        int mid = (kill + la) >> 1;
+        double deta = pi / mid;
+        double c = 2.0*H*ra*tan(deta);
+        //printf("mid is %d\n",mid);
+        //system("pause");
+        if(c >= S){
+            ans = c*mid;
+            kill = mid + 1;
+        }else la = mid - 1;
+    }return ans;
+}
+void INIT(void){
+    double deta = (R-r)/F; H /= F;
+    ra = r;
+    double ans = 0.0;
+    for(int i = 0;i<F; ra += deta, i++){
+        ans += kill_la_kill();
+    }
+    printf("%lf\n",ans);
+}
+int main(void){
+    while(cin >> R >> r >> H >> F >> S){
+        INIT();
+    }return 0;
+}

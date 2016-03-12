@@ -1,0 +1,85 @@
+#include<cstdio>
+#include<cstring>    // 其实真的没什么好说的。。快速幂嘛。。记住就行。。。
+#include<algorithm>
+#include<deque>
+#include<climits>
+using namespace std;
+struct abc
+{
+    int digit[2][2];
+    abc(){memset(digit,0,sizeof(digit));}
+}A,B;
+void IINT(void)
+{
+    A.digit[0][0]=1;A.digit[0][1]=1;
+    A.digit[1][0]=0;A.digit[1][1]=0;
+    B.digit[0][0]=1;B.digit[0][1]=1;
+    B.digit[1][0]=1;B.digit[1][1]=0;
+}
+void times(int n)
+{
+    while(n)
+    {
+        if(n%2)
+        {
+            abc tmpt;
+            for(int i=0;i<2;i++)
+            {
+                for(int j=0;j<2;j++)
+                {
+                    for(int k=0;k<2;k++)
+                    {
+                        tmpt.digit[i][j]+=A.digit[i][k]*B.digit[k][j];
+                        tmpt.digit[i][j]%=10000;
+                    }
+                }
+            }
+            for(int i=0;i<2;i++)
+            {
+                for(int j=0;j<2;j++)
+                {
+                    A.digit[i][j]=tmpt.digit[i][j];
+                }
+            }
+        }
+        abc tmpt;
+        for(int i=0;i<2;i++)
+        {
+            for(int j=0;j<2;j++)
+            {
+                for(int k=0;k<2;k++)
+                {
+                    tmpt.digit[i][j]+=B.digit[i][k]*B.digit[k][j];
+                    tmpt.digit[i][j]%=10000;
+                }
+            }
+        }
+        for(int i=0;i<2;i++)
+        {
+            for(int j=0;j<2;j++)
+            {
+                B.digit[i][j]=tmpt.digit[i][j];
+            }
+        }
+        n/=2;
+    }
+}
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N)&&(-1!=N))
+    {
+        if(0==N)
+        {
+            printf("%d\n",0);continue;
+        }
+        if(1==N||2==N)
+        {
+            printf("%d\n",1);continue;
+        }
+        IINT();
+        times(N-2);
+        printf("%d\n",A.digit[0][0]);
+    }
+    return 0;
+}

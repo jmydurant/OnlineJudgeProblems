@@ -1,0 +1,64 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-8
+#define INF 500000000
+#define maxn 110000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int visit[100];
+int used[101];
+char s1[maxn] , s2[maxn];
+int main(void){
+    scanf("%s%s",s1,s2);
+    int len = strlen(s1);
+    rst(visit,0);
+    rst(used,0);
+    REP(i,len){
+        visit[s1[i] - 'a'] ++;
+        used[s1[i] - 'a'] = 1;
+    }
+    int ans = 0;
+    len = strlen(s2);
+    REP(i,len){
+        if(visit[s2[i] - 'a'] > 0){
+            ans++;
+            visit[s2[i] - 'a']--;
+        }else if(used[s2[i] - 'a']){
+            continue;
+        }else{
+            printf("-1\n");
+            return 0;
+        }
+    }
+    if(ans != 0){
+        printf("%d\n",ans);
+    }else printf("-1\n");
+}

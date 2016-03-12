@@ -1,0 +1,109 @@
+#include <stdio.h>   //输入方式爆麻烦。。所以搞了很久。。注意地铁只能快速到达相邻的站点。。
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <cmath>
+#include <map>
+#include <string>
+#define INF 1e8
+#define MAXN 51000
+#define eps 1e-10
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+struct point
+{
+    int x,y;
+}p[250];
+int train[250];
+double cal(point a,point b)
+{
+    return sqrt((double)(a.x-b.x)*(a.x-b.x)+(double)(a.y-b.y)*(a.y-b.y));
+}
+double puzzle[250][250];
+int N,cnt;
+double dis[250];
+bool visit[250];
+int check(point a)
+{
+    for(int i=1;i<=N;i++)
+    {
+        if(p[i].x==a.x && p[i].y==a.y)
+        {
+            return i;
+        }
+    }
+    N++;
+    p[N]=a;
+    return N;
+}
+void dijkstra(void)
+{
+    memset(visit,false,sizeof(false));
+    for(int i=1;i<=N;i++)
+        dis[i]=INF;
+    int start=1;
+    visit[start]=true;
+    dis[start]=0.0;
+    while(start!=2)
+    {
+        //printf("start is no    %d\n",start);
+        double minr=INF;
+        int tmpt;
+        for(int i=1;i<=N;i++)
+        {
+            if((!visit[i]) && dis[i]>dis[start]+puzzle[start][i])
+                dis[i]=dis[start]+puzzle[start][i];
+        }
+        for(int i=1;i<=N;i++)
+        {
+            if((!visit[i]) && minr>dis[i])
+            {
+                minr=dis[i];
+                tmpt=i;
+            }
+        }
+        start=tmpt;
+        visit[start]=true;
+    }
+    printf("%.0lf\n",dis[2]);
+}
+int main(void)
+{
+    //freopen("in.txt","r",stdin);
+    while(4==scanf("%d%d%d%d",&p[1].x,&p[1].y,&p[2].x,&p[2].y))
+    {
+        for(int i=1;i<=249;i++)
+            for(int j=1;j<=249;j++)
+            puzzle[i][j]=INF;
+        N=2;
+        point a;
+        while(2==scanf("%d%d",&a.x,&a.y))
+        {
+            //printf("i am in\n");
+            cnt=0;
+            train[++cnt]=check(a);
+            point b;
+            while(2==scanf("%d%d",&b.x,&b.y) && (-1 != b.x && -1 != b.y))
+            {
+                train[++cnt]=check(b);
+            }
+            for(int i=1;i<cnt;i++)
+            {
+                puzzle[train[i]][train[i+1]]=puzzle[train[i+1]][train[i]]=(cal(p[train[i]],p[train[i+1]])*3.0/2000.0);
+            }
+        }
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=N;j++){
+                puzzle[i][j]=MIN(puzzle[i][j],(cal(p[i],p[j])*3.0/500.0));
+                puzzle[j][i]=puzzle[i][j];
+            }
+        }
+        dijkstra();
+        break;
+    }
+    return 0;
+}

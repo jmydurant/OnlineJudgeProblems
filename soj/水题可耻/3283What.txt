@@ -1,0 +1,6 @@
+#include<stdio.h>
+int main(void)
+{
+  printf("Accepted");
+  return 0;                        //我居然N次之后才过的。。。这题目。。太贱了
+}

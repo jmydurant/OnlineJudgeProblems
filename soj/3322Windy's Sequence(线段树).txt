@@ -1,0 +1,110 @@
+#include<cstdio>    // 和那个第二个版本一样。。只是数据小了一些。。解析见那个题目吧。。。
+#include<cmath>
+#include<cstring>
+#include<deque>
+#include<queue>
+#include<algorithm>
+#include<climits>
+using namespace std;
+struct Node
+{
+    int maxn,minn,value;
+};
+struct P
+{
+    int left,right,mid;
+    Node info;
+}tree[4020];
+int digit[1010];
+inline int MAX(int a,int b){return a>b?a:b;}
+inline int MIN(int a,int b){return a<b?a:b;}
+void build_tree(int x,int y,int num);
+void change_tree(int loc,int p,int num);
+Node Req_tree(int x,int y,int num);
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N,m;
+        scanf("%d%d",&N,&m);
+        for(int i=0;i<N;i++){scanf("%d",digit+i);}
+        build_tree(0,N-1,1);
+        for(int i=1;i<=m;i++)
+        {
+            char op;
+            int a,b;
+            while(op=getchar())
+            {
+                if(op!=' '&&op!='\n')break;
+            }
+            scanf("%d%d",&a,&b);
+            if(op=='Q')
+            {
+                printf("%d\n",Req_tree(a,b,1).value);
+            }
+            else
+            {
+                change_tree(a,b,1);
+            }
+        }
+    }
+    return 0;
+}
+Node Req_tree(int x,int y,int num)
+{
+    if(x==tree[num].left&&y==tree[num].right)return tree[num].info;
+    int middle=tree[num].mid;
+    if(y<=middle)return Req_tree(x,y,2*num);
+    else if(x>middle)return Req_tree(x,y,2*num+1);
+    else
+    {
+        Node a=Req_tree(x,middle,2*num);
+        Node b=Req_tree(middle+1,y,2*num+1);
+        Node result;
+        result.maxn=MAX(a.maxn,b.maxn);
+        result.minn=MIN(a.minn,b.minn);
+        result.value=MAX(MAX(a.value,b.value),a.maxn-b.minn);
+        return result;
+    }
+}
+void change_tree(int loc,int p,int num)
+{
+    if(tree[num].left==tree[num].right&&tree[num].left==loc)
+    {
+        tree[num].info.maxn=p;
+        tree[num].info.minn=p;
+        return;
+    }
+    int middle=tree[num].mid;
+    if(loc<=middle)change_tree(loc,p,2*num);
+    else change_tree(loc,p,2*num+1);
+    tree[num].info.maxn=MAX(tree[2*num].info.maxn,tree[2*num+1].info.maxn);
+    tree[num].info.minn=MIN(tree[2*num].info.minn,tree[2*num+1].info.minn);
+    tree[num].info.value=MAX(MAX(tree[2*num].info.value,tree[2*num+1].info.value),tree[2*num].info.maxn-tree[2*num+1].info.minn);
+    return;
+}
+void build_tree(int x,int y,int num)
+{
+    tree[num].left=x;
+    tree[num].right=y;
+    tree[num].mid=(x+y)>>1;
+    if(x==y)
+    {
+        tree[num].info.maxn=digit[x];
+        tree[num].info.minn=digit[x];
+        tree[num].info.value=INT_MIN;
+        return ;
+    }
+    int middle=tree[num].mid;
+    build_tree(x,middle,2*num);
+    build_tree(middle+1,y,2*num+1);
+    tree[num].info.maxn=MAX(tree[2*num].info.maxn,tree[2*num+1].info.maxn);
+    tree[num].info.minn=MIN(tree[2*num].info.minn,tree[2*num+1].info.minn);
+    tree[num].info.value=MAX(MAX(tree[2*num].info.value,tree[2*num+1].info.value),tree[2*num].info.maxn-tree[2*num+1].info.minn);
+    return ;
+}
+
+
+

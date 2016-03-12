@@ -1,0 +1,65 @@
+#include<stdio.h>
+#include<string.h>
+int m;
+int hexadecimal[4];
+int duodecimal[4];
+int gethex(int num);          //做的一手好水题。。。作死的节奏。。。
+int getduo(int num);
+int main(void)
+{
+    int i,j,k;
+    for(m=2992;m<=9929;m++)
+    {
+        int n=m;
+        i=0;j=0;k=0;
+        i+=n%10;
+        n/=10;
+        i+=n%10;
+        n/=10;
+        i+=n%10;
+        n/=10;
+        i+=n%10;
+        j=gethex(m);
+        k=getduo(m);
+        if(i==j)
+        {
+            if(j==k)
+            {
+                printf("%d\n",m);
+            }
+        }
+    }
+    return 0;
+}
+int gethex(int num)
+{
+    int i;
+    int sum=0;
+    memset(hexadecimal,0,sizeof(hexadecimal));
+    for(i=0;i<=3;i++)
+    {
+        hexadecimal[i]=num%16;
+        num/=16;
+    }
+    for(i=0;i<=3;i++)
+    {
+        sum+=hexadecimal[i];
+    }
+    return sum;
+}
+int getduo(int num)
+{
+    int i;
+    int sum=0;
+    memset(duodecimal,0,sizeof(duodecimal));
+    for(i=0;i<=3;i++)
+    {
+        duodecimal[i]=num%12;
+        num/=12;
+    }
+    for(i=0;i<=3;i++)
+    {
+        sum+=duodecimal[i];
+    }
+    return sum;
+}

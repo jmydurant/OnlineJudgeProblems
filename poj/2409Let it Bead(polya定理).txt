@@ -1,0 +1,69 @@
+#include<cstdio>   //比较裸的polya定理。。原理不解释。。。soj上面有更难的题目。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+long long ans;
+long long gcd(long long a,long long b)
+{
+    long long tmpt;
+    while(b)
+    {
+        //printf("pass\n");
+        tmpt=a%b;
+        a=b;
+        b=tmpt;
+    }
+    return a;
+}
+long long p_pow(long long a,long long n)
+{
+    long long ans=1;
+    while(n)
+    {
+        if(n%2)ans*=a;
+        a*=a;
+        n/=2;
+    }
+    return ans;
+}
+int main(void)
+{
+    long long N,C;
+   // printf("%I64d\n",gcd(3,6));
+    while(EOF!=scanf("%I64d%I64d",&C,&N))
+    {
+        if(!C && !N)break;
+        if(0==N)
+        {
+            printf("%d\n",0);
+            continue;
+        }
+        ans=0;
+        for(long long i=1;i<=N;i++)
+            ans+=p_pow(C,gcd(i,N));
+        if(N%2)
+        {
+            ans+=(N)*p_pow(C,N/2+1);
+        }
+        else
+        {
+            ans+=(N/2)*p_pow(C,N/2);
+            ans+=(N/2)*p_pow(C,N/2+1);
+        }
+        ans/=(2*N);
+        printf("%I64d\n",ans);
+    }
+    return 0;
+}

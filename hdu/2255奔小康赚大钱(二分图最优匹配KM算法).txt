@@ -1,0 +1,83 @@
+#include <iostream>   //这篇博文不错http://blog.sina.com.cn/s/blog_691ce2b701016reh.html
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 350
+#define INF 2100001000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+int puzzle[maxn][maxn];
+int link[maxn],lx[maxn],ly[maxn],slack[maxn];
+bool vx[maxn],vy[maxn];
+int n;
+bool dfs(int x){
+    vx[x] = true;
+    FOR(y,1,n){
+        if(vy[y]) continue;
+        int tt = lx[x] + ly[y] - puzzle[x][y];
+        if(tt == 0){
+            vy[y] = true;
+            if(link[y] == -1 || dfs(link[y])){
+                link[y] = x;
+                return true;
+            }
+        }else if(slack[y] > tt){
+            slack[y] = tt;
+        }
+    }
+    return false;
+}
+int km(void){
+    rst(link,-1);
+    rst(ly,0);
+    FOR(i,1,n){
+        lx[i] = -INF;
+        FOR(j,1,n){
+            if(puzzle[i][j] > lx[i]) lx[i] = puzzle[i][j];
+        }
+    }
+    FOR(x,1,n){
+        FOR(y,1,n)slack[y] = INF;
+        while(true){                      //必须找到增广路才能退出while循环..
+            rst(vx,false);
+            rst(vy,false);
+            if(dfs(x))break;
+            int deta = INF;
+            FOR(y,1,n)if((!vy[y]) && slack[y] < deta)deta = slack[y];
+            FOR(i,1,n)if(vx[i]) lx[i] -= deta;
+            FOR(j,1,n){
+                if(vy[j]) ly[j] += deta;
+                else      slack[j] -= deta;
+            }
+        }
+    }
+    int ans = 0;
+    FOR(y,1,n)if(link[y] > -1) ans += puzzle[link[y]][y];
+    return ans;
+}
+void INIT(void){
+    FOR(i,1,n)FOR(j,1,n) scanf("%d",&puzzle[i][j]);
+    printf("%d\n",km());
+}
+int main(void){
+    while(EOF != scanf("%d",&n)){
+        INIT();
+    }return 0;
+}

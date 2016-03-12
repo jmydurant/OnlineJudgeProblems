@@ -1,0 +1,141 @@
+#include <stdio.h>   //没想到tarjan算法还有这种妙用。。思路见下。。
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <cmath>
+#include <map>
+#include <string>
+#define INF 100000000
+#define MAXN 40001
+#define eps 1e-10
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+struct node
+{
+    int s,e,w;
+    int next;
+}tree[101000];
+struct test
+{
+    int s,e,ans;
+    int next;
+}Q[101000];
+int N,M;
+bool visit[MAXN];
+int fa[MAXN];
+int headline[MAXN],Qline[MAXN];
+int dis[MAXN];
+int tot;
+void INIT(void)
+{
+    memset(headline,-1,sizeof(headline));
+    memset(Qline,-1,sizeof(Qline));
+    memset(dis,0,sizeof(dis));
+    memset(visit,false,sizeof(visit));
+    for(int i=1;i<=N;i++)
+        fa[i]=i;
+    tot=0;
+}
+int find_fa(int x)
+{
+    if(fa[x]==x)
+        return x;
+    fa[x]=find_fa(fa[x]);
+    return fa[x];
+}
+void union_fa(int x,int y)
+{
+    int a=find_fa(x);
+    int b=find_fa(y);
+    if(x==y)
+        return;
+    fa[b]=a;
+    return ;
+}
+void tarjan(int u,int f)
+{
+    fa[u]=u;
+    for(int i=headline[u];i!=-1;i=tree[i].next)
+    {
+        if(f==tree[i].s)
+            continue;
+        dis[tree[i].s]=dis[u]+tree[i].w;
+        tarjan(tree[i].s,u);
+        union_fa(u,tree[i].s);
+    }
+    visit[u]=true;
+    for(int i=Qline[u];i!=-1;i=Q[i].next)
+    {
+        if(visit[Q[i].s])
+        {
+            Q[i].ans=find_fa(Q[i].s);
+        }
+    }
+}
+void tree_insert(int a,int b,int k,bool istree,int abc=1)
+{
+    if(istree)
+    {
+        tot++;
+        tree[tot].e=a;
+        tree[tot].s=b;
+        tree[tot].w=k;
+        tree[tot].next=headline[a];
+        headline[a]=tot;
+    }
+    else
+    {
+        Q[abc].e=a;
+        Q[abc].s=b;
+        Q[abc].ans=-1;
+        Q[abc].next=Qline[a];
+        Qline[a]=abc;
+    }
+}
+
+int main(void)
+{
+    while(2==scanf("%d%d",&N,&M))
+    {
+        INIT();
+        int a,b,c;
+        char op[10];
+        for(int i=1;i<=M;i++)
+        {
+            scanf("%d%d%d",&a,&b,&c);
+            scanf("%s",op);
+            tree_insert(a,b,c,tree,1);
+            tree_insert(b,a,c,tree,1);
+        }
+        int Question;
+        scanf("%d",&Question);
+        for(int i=1;i<=Question;i++)
+        {
+            scanf("%d%d",&a,&b);
+            tree_insert(a,b,1,false,i);
+            tree_insert(b,a,1,false,i+Question);
+        }
+        for(int i=1;i<=N;i++)
+        {
+            if(!visit[i])
+            {
+                tarjan(i,-1);
+            }
+        }
+        for(int i=1;i<=Question;i++)
+        {
+            int x,y,ans;
+            x=Q[i].s;
+            y=Q[i].e;
+            ans=Q[i].ans;
+            ans=MAX(ans,Q[i+Question].ans);
+            printf("%d\n",dis[x]+dis[y]-2*dis[ans]);
+        }
+    }
+    return 0;
+}
+这道题可以转换成Tarjan LCA来做，假如x和y有一条树上最短路径，那么一定会经过他们的最近公共祖先，那么从任意一个点Dfs，然后一边求x和y的最近公共祖先，一边计算点到根的距离dis，那么假如x和y的最近公共祖先是z，那么x和y的最短距离为dis[x]+dis[y]-2*dis[z],就是不走公共祖先到根的那段路径,这样就可以很快的算完多达10000次询问,复杂度O(N+K),已经很快了。
+    注意本题有询问x到x点的最短距离！

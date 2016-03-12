@@ -1,0 +1,204 @@
+#include <iostream>   //再战splay....
+#include <cstdio>     //这几天写splay感觉有点心得了。。。就是注意小细节。。很多TLE并不是splay本身慢。。而是自己的程序有小问题。。
+#include <cstring>    //对于一个包含关系可以用dfs得到类似于括号的关系。。然后拆的时候加到要加的地方的后一个地方就可以了。。
+#include <algorithm>  //查找祖先就直接找最左边的数字是什么。。
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) (x)>0?(x):(-(x))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 100010
+#define INF 1000000000
+using namespace std;
+typedef long long LL;
+int seq[maxn],E,n,Q;
+bool visit[maxn];
+struct node
+{
+    int t,nxt;
+}edge[maxn];
+int headline[maxn];
+void add(int f,int t)
+{
+    E++;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E;
+}
+struct spl
+{
+    int son[maxn][2],fa[maxn];
+    int root;
+    void INIT(void)
+    {
+        root = 0;
+        son[0][0] = son[0][1] = fa[0] = 0;
+    }
+    void getnew(int &x,int is,int _fa)
+    {
+        x = is;
+        son[is][0] = son[is][1] = 0;
+        fa[is] = _fa;
+    }
+    void rolate(int x,int kind)        //还是老样子。。0代表左旋。。1代表右旋
+    {
+        int y = fa[x];
+        int z = fa[y];
+        son[y][!kind] = son[x][kind];
+        fa[son[x][kind]] = y;
+        son[x][kind] = y;
+        fa[x] = z;
+        son[z][son[z][1] == y] = x;
+        fa[y] = x;
+    }
+    void splay(int x,int aim)
+    {
+        if(x != aim)
+        {
+            while(fa[x] != aim)
+            {
+                if(son[fa[x]][0] == x)
+                    rolate(x,1);
+                else
+                    rolate(x,0);
+            }
+        }
+    }
+    void build(int &x,int l,int r,int _fa)
+    {
+        if(l<=r)
+        {
+            int mid = (l+r)>>1;
+            getnew(x,seq[mid],_fa);
+            build(son[x][0],l,mid-1,x);
+            build(son[x][1],mid+1,r,x);
+        }
+    }
+    int findmin(int x)
+    {
+        while(son[x][0])
+            x = son[x][0];
+        return x;
+    }
+    int findmax(int x)
+    {
+        while(son[x][1])
+            x = son[x][1];
+        return x;
+    }
+    void Move(int x,int y)
+    {
+        if(x == y)return;
+        splay(x,0);
+        splay(x+n,x);
+        for(int temp = y;temp;temp = fa[temp])
+            if(temp == son[x+n][0])return;
+        int a = son[x][0];
+        int b = son[x+n][1];
+        fa[a] = fa[b] = 0;
+        son[x][0] = son[x+n][1] = 0;
+        if(a && b)
+        {
+            int c = findmin(b);
+            fa[a] = c;
+            son[c][0] = a;
+        }
+        if(y == 0)return;
+        splay(y,0);
+        int temp = y[son][1];
+        temp = findmin(temp);
+        splay(temp,y);
+        fa[x] = temp;
+        son[temp][0] = x;
+    }
+    int req_(int x)
+    {
+        splay(x,0);
+        while(son[x][0])
+            x = son[x][0];
+        return x;
+    }
+    void test(int x)
+    {
+        if(!x)return;
+        printf("(");
+        test(son[x][0]);
+        printf("%d",x);
+        test(son[x][1]);
+        printf(")");
+    }
+}splaytree;
+int cnt;
+void dfs(int xxx)
+{
+    seq[cnt++] = xxx;
+    for(int i = headline[xxx];i != -1;i = edge[i].nxt)
+    {
+        int v = edge[i].t;
+        dfs(v);
+    }
+    seq[cnt++] = xxx+n;
+}
+void INIT(void)
+{
+    E = cnt = 0;
+    rst(headline,-1);
+    rst(visit,false);
+    splaytree.INIT();
+    FOR(i,1,n)
+    {
+        int t; scanf("%d",&t);
+        if(t == 0)visit[i] = true;
+        else
+            add(t,i);
+    }
+    FOR(i,1,n)
+    {
+        if(visit[i])
+        {
+            cnt = 0;
+            dfs(i);
+            //FOR(j,0,cnt-1)printf("%d",seq[j]);
+            //printf("\n");
+            splaytree.build(splaytree.root,0,cnt-1,0);
+            //splaytree.test(splaytree.root);
+        }
+    }
+}
+
+
+int main(void)
+{
+    bool flag = false;
+    while(EOF != scanf("%d",&n))
+    {
+        if(flag)
+            printf("\n");
+        else
+            flag = true;
+        INIT();
+        scanf("%d",&Q);
+        while(Q--)
+        {
+            char op[10];
+            int a;
+            scanf(" %s%d",op,&a);
+            if(op[0] == 'Q')
+                printf("%d\n",splaytree.req_(a));
+            else
+            {
+                int b; scanf("%d",&b);
+                splaytree.Move(a,b);
+            }
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,46 @@
+#include<stdio.h>
+#include<string.h>
+char digit[1010];
+
+int main(void)
+{
+    int i;
+    for(i=0;i<=9;i++)
+    {
+        int k;
+        int odd,even;
+        int divide;
+        odd=0;even=0;
+        memset(digit,0,sizeof(digit));     //不得不说这三个星期进步还是很大的。。。这种题目已经沦为水题了。。。 
+
+        scanf("%s",digit);
+        for(k=0;digit[k]!=0;k++)
+        {
+            if(k%2)
+            {
+                odd+=(digit[k]-'0');
+            }
+            else
+            {
+                even+=(digit[k]-'0');
+            }
+        }
+        if(odd>even)
+        {
+            divide=odd-even;
+        }
+        else
+        {
+            divide=even-odd;
+        }
+        if(divide%11)
+        {
+            printf("no\n");
+        }
+        else
+        {
+            printf("yes\n");
+        }
+    }
+    return 0;
+}

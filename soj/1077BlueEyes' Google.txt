@@ -1,0 +1,68 @@
+#include <iostream>
+#include <algorithm>
+#include <cstdio>
+using namespace std;
+int datanum[1010];
+int database[1010][1010];                                 //这个地方弄了好多次。。。最终得出结论。。。大的数组全部开到外边。。否则死翘翘
+int requestnum[15];
+int request[15][15];
+int jiance(int troopnum ,int cmpnum);
+int main()
+{
+    int n;
+    int j;
+    int i;
+
+
+    scanf("%d",&n);
+    for(i=0;i<n;i++)
+    {
+        int k;
+        scanf("%d",&datanum[i]);
+        for(k=0;k<datanum[i];k++)
+        {
+            scanf("%d",&database[i][k]);
+        }
+        sort(database[i],database[i]+datanum[i]);
+    }
+    scanf("%d",&j);
+    for(i=0;i<j;i++)
+    {
+        int k;
+        int ok=0;
+        scanf("%d",&requestnum[i]);
+        for(k=0;k<requestnum[i];k++)
+        {
+            scanf("%d",&request[i][k]);
+        }
+        sort(request[i],request[i]+requestnum[i]);
+        for(k=0;k<n;k++)
+        {
+            ok+= jiance(i,k);
+        }
+        printf("%d\n",ok);
+    }
+
+    return 0;
+}
+int jiance(int troopnum,int cmpnum)
+{
+    int passgame=1;
+    int findone;
+    int m;
+    int q;
+    for(m=0;m<requestnum[troopnum];m++)
+    {
+        findone=0;
+        for(q=0;q<datanum[cmpnum];q++)                                   //第一次操作二维数组。。好辛苦。。而且是第一次在C++上编题。。
+        {
+            if(database[cmpnum][q]==request[troopnum][m])                //头文件全部变了。。虽说流很好用。。但是效率太低。。  
+            findone=1;                                                   //为了好用的sort函数。。也只能这样了
+        }
+        if(0==findone)
+        {
+            return 0;
+        }
+    }
+    return passgame;
+}

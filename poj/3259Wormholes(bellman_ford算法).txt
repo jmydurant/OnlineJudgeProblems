@@ -1,0 +1,79 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,E,M,WWW;
+struct node{
+    int f,t;
+    int w;
+}edge[maxn];
+int dis[1100];
+bool bellman(void){
+    FOR(i,1,n)dis[i] = INF;
+    dis[1] = 0;
+    FOR(i,1,n){
+        REP(j,E){
+            int u = edge[j].f , v = edge[j].t , ww = edge[j].w;
+            if(dis[v] > dis[u] + ww) dis[v] = dis[u] + ww;
+        }
+    }
+    REP(j,E){
+        int u = edge[j].f , v = edge[j].t , ww = edge[j].w;
+        if(dis[v] > dis[u] + ww)return true;
+    }return false;
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--){
+        E = 0;
+        scanf("%d%d%d",&n,&M,&WWW);
+        REP(ind,M){
+            int f,t,w; scanf("%d%d%d",&f,&t,&w);
+            edge[lson].f = f;
+            edge[lson].t = t;
+            edge[lson].w = w;
+            edge[rson].f = t;
+            edge[rson].t = f;
+            edge[rson].w = w;
+        }
+        E = 2 * M + WWW;
+        FOR(i,2*M,E - 1){
+            int f,t,w; scanf("%d%d%d",&f,&t,&w);
+            edge[i].f = f;
+            edge[i].t = t;
+            edge[i].w = -w;
+        }
+        if(bellman())printf("YES\n");
+        else printf("NO\n");
+    }return 0;
+}

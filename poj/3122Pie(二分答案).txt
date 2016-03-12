@@ -1,0 +1,58 @@
+#include<cstdio>   //应该是很标准的二分答案吧。。但是我却做的很蛋疼。。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+const double Pi=asin(1.0);   //注意这是Pi的一半。。。
+const double eps=1e-6;
+double R[10010];
+int N,F;
+bool judge(double C)
+{
+    int tot=0;
+    for(int i=1;i<=N;i++)
+    {
+        double S=R[i]*R[i];
+        while(S>=C)
+        {
+            S-=C;
+            tot++;
+        }
+    }
+    if(tot>=F+1)return true;
+    return false;
+}
+int main(void)
+{
+    int casenum;  scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&N,&F);
+        double left=0.0,right=0.0;
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%lf",R+i);
+            right=MAX(right,R[i]*R[i]);
+        }
+        double mid=(left+right)/2.0;
+        while(right-left>eps)
+        {
+            if(judge(mid))left=mid;
+            else right=mid;
+            mid=(left+right)/2.0;
+        }
+        printf("%.4lf\n",2.0*mid*Pi);
+    }
+    return 0;
+}

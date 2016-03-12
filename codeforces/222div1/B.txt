@@ -1,0 +1,101 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个二分答案。。加贪心凑答案的题目。。艹。。自己太弱了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101000
+#define mod 1000000007LL
+#define fr first
+#define se second
+using namespace std;
+typedef long long LL;
+typedef pair<int,int> pi;
+typedef pair<pi,int> pii;
+pi A[maxn];
+pii B[maxn];
+vector<pii> qq;
+vector<int> ans;
+int finally[maxn];
+int n,m,re;
+bool check(int _day){
+    multiset<pi> ss;
+    ans.clear();
+    LL tot = 0;
+    for(int i = m-1,j = 0;i>=0 ;i -= _day){
+        while(j <n && qq[j].first.first >= A[i].first){
+            ss.insert(make_pair(qq[j].first.second,qq[j].second));
+            j++;
+        }
+        if(ss.empty())return false;
+        tot += ss.begin()->first;
+        ans.push_back(ss.begin()->second);
+        ss.erase(ss.find(*ss.begin()));
+    }
+    return tot <= re;
+}
+int b_search(int l,int r){
+    if(l == r)return r;
+    int mid = (l+r)>>1;
+    if(check(mid))return b_search(l,mid);
+    return b_search(mid+1,r);
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&m,&re)){
+        qq.clear();
+        REP(i,m){
+            scanf("%d",&A[i].first);
+            A[i].second = i;
+        }
+        REP(i,n){
+            scanf("%d",&B[i].first.first);
+            B[i].second = i;
+        }
+        REP(i,n){
+            scanf("%d",&B[i].first.second);
+            if(B[i].first.second <= re){
+                qq.push_back(B[i]);
+            }
+        }
+        n = qq.size();
+        sort(A,A+m);
+        sort(qq.begin(),qq.end());
+        reverse(qq.begin(),qq.end());
+        if(n == 0 || A[m-1].first > qq[0].first.first){
+            printf("NO\n");
+            continue;
+        }
+        int day = b_search(1,m);
+        check(day);
+        int cnt = 0;
+        for(int i = m-1, j = 0;i>=0;i--){
+            cnt++;
+            finally[A[i].second] = ans[j] + 1;
+            if(cnt == day){
+                cnt = 0;
+                j++;
+            }
+        }
+        printf("YES\n");
+        REP(i,m)printf("%d%c",finally[i],(i == m-1)?'\n':' ');
+    }return 0;
+}

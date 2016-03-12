@@ -1,0 +1,122 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>    //因为原理太过于酷炫。。我把它粘到后面。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 510
+//#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int r[110][110];
+int n,m ,op,ed;
+int dis[110] , q[101010] , head,tail;
+bool bfs(void){
+    rst(dis,0);
+    head = 0 , tail = 1;
+    dis[op] = 1;
+    q[head] = op;
+    while(head < tail){
+        int u = q[head]; head++;
+        for(int v = op;v <= ed;v++){
+            if(!dis[v] && r[u][v] > 0){
+                dis[v] = dis[u] + 1;
+                q[tail] = v; tail++;
+                if(v == ed)return true;
+            }
+        }
+    }return false;
+}
+int dfs(int u,int c){
+    if(u == ed || (!c))return c;
+    int temp = c;
+    for(int v = op;v<=ed;v++){
+        if(dis[v] == dis[u] + 1 && r[u][v] > 0){
+            int tt = dfs(v , MIN(temp,r[u][v]));
+            r[u][v] -= tt;
+            r[v][u] += tt;
+            temp -= tt;
+            if(!temp)break;
+        }
+    }
+    if(temp == c)dis[u] = -1;
+    return c - temp;
+}
+int dinic(void){
+    int maxflow = 0;
+    while(bfs()) maxflow += dfs(op,INF);
+    return maxflow;
+}
+void solve(void){
+    rst(r,0);
+    op = 0,ed = n+m+1;
+    int tot = 0;
+    FOR(i,1,n){
+        scanf("%d",&r[op][i]);
+        tot += r[op][i];
+        int dd; char cc;
+        while(2 == scanf("%d%c",&dd,&cc)){
+            r[i][dd+n] = INF;
+            if(cc == '\n')break;
+        }
+    }
+    FOR(i,1,m){
+        scanf("%d",&r[i+n][ed]);
+    }
+    printf("%d\n",tot - dinic());
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}
+1.  问题分析： 
+最大权闭合图问题，可以转化成最小割问题，进而用最大流解决。 
+ 
+2.  建模方法： 
+把每个实验看作二分图X ( + ) 集合中的顶点，每个设备看作二分图Y ( - ) 集合中的顶点，增加源S和汇T。 
+ 
+建图： 
+(1): 从S向每个Xi连接一条容量为该点收入的有向边。w ：( + ) 
+(2): 从Yi向T连接一条容量为该点支出的有向边。w ：- ( - ) 
+(3): 如果一个实验i需要设备j，连接一条从Xi到Yj容量为无穷大的有向边。w ：INF 
+ 
+计算最大权闭合图的权值： 
+(1): 统计出所有实验的收入之和Total。 
+(2): 求网络最大流Maxflow。 
+(3): 最大收益 ( 最大权闭合图的权值 Wmax) = Total-Maxflow。 
+(4): 对应的解 ( 最大权闭合图的点集V1 ) 就是最小割划分出的S集合中的点 ( 除去S点 )，也就是最后一次增广找到阻塞流时能从S访问到的顶点。即在残留网络中从S开始dfs，所能到达的所有点的集合就是V1。
+ 
+3.  建模分析： 
+(1): 定义一个割划分出来的S集合( 除去S点 )，为一个闭合图的点集V1。并且V2 = V – V1。 
+(2): C [ S , T ] = V2中的正权值 - V1中的负权值。 
+(3): 闭合图的权值W = V1中的正权值 + V1中的负权值。 
+(4): C [ S , T ] + W = V2中的正权值 - V1中的负权值+ V1中的正权值 + V1中的负权值 
+        = V1中的正权值 + V2中的正权值 
+        = V中的正权值 
+(5): 由( 4 )可以推出 W = V中的正权值 – C [ S , T ]. 
+(6): 由( 5 )可以推出 Wmax = V中的正权值 - C [ S , T ]min.  
+ 
+4.  PS 
+该问题的一般模型为最大权闭合图，相关讨论见《最小割模型在信息学竞赛中的应用》作者胡伯涛。 

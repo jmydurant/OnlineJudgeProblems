@@ -1,0 +1,86 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个拆数字组数字的问题。枚举切割点就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 200
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+#define y1 fslkd
+using namespace std;
+typedef long long LL;
+int aim , n;
+int source[10] , len;
+int ans[10] , temp[10],best,bestnum,bestlen;
+void dfs(int ind,int last,int num,int sum){
+    if(last+sum > aim)return;
+    if(ind == len + 1){
+        temp[num+1] = last;
+        if(last+sum > best){
+            best = last+sum;
+            bestnum = 1;
+            bestlen = num+1;
+            FOR(i,1,bestlen)ans[i] = temp[i];
+        }else if(last+sum == best){
+            bestnum++;
+        }
+        return;
+    }
+    dfs(ind+1,last*10+source[ind],num,sum);
+    int tt = sum+last;
+    temp[num+1] = last;
+    dfs(ind+1,source[ind],num+1,tt);
+}
+void solve(void){
+    len = 0;
+    while(n){
+        len++;
+        source[len] = n % 10;
+        n /= 10;
+    }
+    FOR(i,1,len/2){
+        int tt = source[i];
+        source[i] = source[len - i + 1];
+        source[len - i + 1] = tt;
+    }
+    best = -1 , bestnum = 0;
+    dfs(2,source[1],0,0);
+    if(best != -1){
+        if(bestnum == 1){
+            printf("%d",best);
+            FOR(i,1,bestlen)printf(" %d",ans[i]);
+            printf("\n");
+        }else printf("rejected\n");
+
+    }else printf("error\n");
+}
+int main(void){
+    while(2 == scanf("%d%d",&aim , &n)){
+        if(aim == 0 && n == 0)return 0;
+        solve();
+    }return 0;
+}

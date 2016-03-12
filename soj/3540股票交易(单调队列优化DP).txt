@@ -1,0 +1,89 @@
+#include <iostream>  //具体思想见下。。。。
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+#include <stack>
+#include <deque>
+#include <climits>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n)  for(int i = 0;i<(n);i++)
+#define maxn 2010
+#define rst(x,k) memset(x,k,sizeof(x))
+#define INF 1000010000
+#define mod 1000000007LL
+#define h(i,j) (i*col+j)
+using namespace std;
+typedef long long LL;
+typedef pair<int,int> P;
+deque<P> q;
+int dp[maxn][maxn];
+int W,limit,n;
+
+int main(void)
+{
+    while(3 == scanf("%d%d%d",&n,&limit,&W))
+    {
+        rst(dp,0xc0);
+        dp[0][0] = 0;
+        int ans = 0;
+        FOR(i,1,n)
+        {
+            int ap,bp,as,bs;
+            scanf("%d%d%d%d",&ap,&bp,&as,&bs);
+            FOR(j,0,as) dp[i][j] = -ap*j;
+            FOR(j,0,limit) dp[i][j] = MAX(dp[i-1][j],dp[i][j]);
+            int t = i-W-1;
+            if(t>=0)
+            {
+                q.clear();
+                FOR(j,0,limit)
+                {
+                    while((!q.empty()) && j-as>q.front().first)
+                        q.pop_front();
+                    while((!q.empty()) && q.back().second <= dp[t][j]+ap*j)
+                        q.pop_back();
+                    q.push_back(P(j,dp[t][j]+ap*j));
+                    dp[i][j] = MAX(dp[i][j],q.front().second-j*ap);
+                }
+                q.clear();
+                FORD(j,limit,0)
+                {
+                    while((!q.empty()) && j+bs<q.front().first)
+                        q.pop_front();
+                    while((!q.empty()) && q.back().second<= dp[t][j]+bp*j)
+                        q.pop_back();
+                    q.push_back(P(j,dp[t][j]+bp*j));
+                    dp[i][j] = MAX(dp[i][j],q.front().second-j*bp);
+                }
+            }
+            //FOR(j,0,limit)printf("dp%d %d   is   %d\n",i,j,dp[i][j]);
+            ans = MAX(ans,dp[i][0]);
+        }
+        printf("%d\n",ans);
+    }
+}
+首先写个裸的DP：
+f[i][j] 表示前i天并且第i天可以操作，手里有j股股票的时候最多能赚多少钱，转移为：
+f[i][j] = max{f[i-1][j],  //不干事
+                  f[i-W-1][j-k] - AP[i-W-1] * k, // 买 , i-W-1>=0 && j-k>=0 && k<=AS[i-W-1]
+                  f[i-W-1][j+k] + BP[i-W-1] * k} // 卖, i-W-1>=0 && j+k<=MaxP && k<=BS[i-W-1]
+复杂度O(T * MaxP^2)
+为了优化复杂度，我们考虑在某一天i时，上一次可以操作的时间为t = i-W-1
+令g[j] = f[t][j],  h[j] = f[i][j]
+不考虑不干事的转移则有：
+   h[j] = max{g[j-k] - AP[t] * k,
+                     g[j+k] + BP[t] * k}
+令p = j-k则：
+   h[j] = max{g[p] - AP[t] * (j-p),  ................(1)
+                     g[p] + BP[t] * (p-j)} ................(2)
+考虑转移(1) 发现，h[j]的转移都是在前面固定的一天的j之前的不超过AS[t]的一段区间转移过来，于是考虑用单调队列。
+但转移的值会随着j的改变而改变，无法用单调队列，所以考虑化简式子：
+如果有p,q满足p,q∈[j-AS[t], j-1] 且 g[p] - AP[t] * (j - p) > g[q] - AP[t] * (j - q)， 则对于状态j来说，决策p要优于决策q
+化简得：g[p] + p * AP[t] > g[q] + q * AP[t]，即决策的好坏由本身决定，与所要转移的状态无关。
+转移(2)类似。
+所以可以用单调队列维护g[p] + p * AP[t]，使转移均摊O(1)，总复杂度降到O(T * MaxP)
+

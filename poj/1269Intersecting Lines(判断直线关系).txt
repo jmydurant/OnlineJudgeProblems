@@ -1,0 +1,59 @@
+#include<cstdio>    //模板上面求直线交点很奇葩。。要用面积算的。。应该说是比较标准的程序吧。。可能哈。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+//#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF -0x0f0f0f0f
+#define lowbit(a) ((a)&(-(a)))
+#define MAXN 1001000
+#define esp 1e-8
+using namespace std;
+double x1,y1,x2,y2,x3,y3,x4,y4;
+double cross(double a1,double a2,double b1,double b2,double c1,double c2)
+{
+    return abs(b1*c2+a1*b2+a2*c1-b1*a2-c1*b2-a1*c2);
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    int iCase=1;
+    while(casenum--)
+    {
+        scanf("%lf%lf%lf%lf%lf%lf%lf%lf",&x1,&y1,&x2,&y2,&x3,&y3,&x4,&y4);
+        if(1==iCase)
+        {
+            printf("INTERSECTING LINES OUTPUT\n");
+        }
+        iCase++;
+        if(abs((y1-y2)*(x3-x4)-(x1-x2)*(y3-y4))<esp)
+        {
+            if(abs((y3-y1)*(x1-x2)-(y1-y2)*(x3-x1))<esp)
+            {
+                printf("LINE\n");
+            }
+            else
+            {
+                printf("NONE\n");
+            }
+        }
+        else
+        {
+            double s1=cross(x1,y1,x3,y3,x4,y4);
+            double s2=cross(x2,y2,x3,y3,x4,y4);
+            double t=s1/(s1+s2);
+            double x=x1+(x2-x1)*t;
+            double y=y1+(y2-y1)*t;
+            printf("POINT %.2lf %.2lf\n",x,y);
+        }
+    }
+    printf("END OF OUTPUT\n");
+    return 0;
+}

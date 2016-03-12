@@ -1,0 +1,21 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;
+int main(void)
+{
+    long long sum;
+    long long i;
+    while(EOF!=scanf("%lld",&i))      //我真的刷水题刷上瘾了。。。
+    {
+        long long k;
+        long long m;
+        sum=((i+1)*i)/2;
+        for(k=1;k<i;k++)
+        {
+            scanf("%lld",&m);
+            sum-=m;
+        }
+        printf("%lld",sum);
+    }
+    return 0;
+}

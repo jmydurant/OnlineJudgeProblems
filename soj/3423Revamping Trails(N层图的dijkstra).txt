@@ -1,0 +1,120 @@
+#include <cstdio>    //运用了一些dp的思想
+#include <cstring>   //思路见下
+#include <algorithm>
+#include <queue>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 10010
+#define INF 500000000
+using namespace std;
+typedef long long LL;
+int dis[25][MAXN];
+bool visit[MAXN];
+struct node
+{
+    int t,nxt;
+    int w;
+}edge[MAXN*10];
+int headline[MAXN];
+int tot;
+int n,m;
+int cen;   // 层数
+void ADD(int a,int b,int w)
+{
+    tot++;
+    edge[tot].t = b;
+    edge[tot].nxt = headline[a];
+    headline[a] = tot;
+    edge[tot].w = w;
+}
+
+struct cmp
+{
+    bool operator () (const int &a,const int & b) const
+    {
+        return dis[cen][a] > dis[cen][b];
+    }
+};
+
+priority_queue<int,vector<int>,cmp> q;
+
+void dijkstra0(int s,int e)
+{
+    int now = s;
+    visit[s] = true;
+    dis[0][now] = 0;
+    for(int step = 1;step<n;step++)
+    {
+        //printf("loop %d and now is %d\n",step,now);
+        for(int i = headline[now]; i!= -1;i = edge[i].nxt)
+        {
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(dis[0][b] > dis[0][now] + w)
+                dis[0][b] = dis[0][now] + w;
+        }
+        int minr = INF,temp;
+        for(int i = 1;i<=n;i++)
+        {
+            if(dis[0][i] < minr && (!visit[i]))
+            {
+                minr = dis[0][i];
+                temp = i;
+            }
+        }
+        now = temp;
+        visit[now] = true;
+    }
+}
+
+void dijkstra(int s,int e,int floor)
+{
+    int now = s;
+    while(!q.empty()) q.pop();
+    dis[floor][s] = 0;
+    q.push(s);
+    while(!q.empty())
+    {
+        now = q.top();
+        q.pop();
+        for(int i = headline[now];i != -1;i = edge[i].nxt)
+        {
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(dis[floor][b] > MIN(dis[floor-1][now],dis[floor][now] + w))
+            {
+                dis[floor][b] = MIN(dis[floor-1][now],dis[floor][now] + w);
+                q.push(b);
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    int K;
+    while(3==scanf("%d%d%d",&n,&m,&K))
+    {
+        memset(headline,-1,sizeof(headline));
+        memset(visit,false,sizeof(visit));
+        tot = 0;
+        while(m--)
+        {
+            int a,b,w;
+            scanf("%d%d%d",&a,&b,&w);
+            ADD(a,b,w);
+            ADD(b,a,w);
+        }
+        for(int i = 0;i<=K;i++)
+            for(int j = 1;j<=n;j++)
+            dis[i][j] = INF;
+        dijkstra0(1,n);
+        for(cen = 1;cen<=K;cen++)
+            dijkstra(1,n,cen);
+        printf("%d\n",dis[K][n]);
+    }
+    return 0;
+}
+/*d[i][j]表示在顶点i处，修改了j条路后从1到i的最短路径长度。很明显d[i][j]=min(d[v1][j]+v1到i的长度,d[v1][j-1],d[v2][j]+v2到i的长度,d[v2][j-1],.......d[vn][j]+vn到i的长度,d[vn][j-1]),v1,v2,v3....vn是与i相连的点。*/
+
+
+

@@ -1,0 +1,66 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //无环图中最小路径覆盖 == n - 最大匹配数。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 600
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,m,puzzle[130][130];
+int link[130] , visit[130] , ind;
+bool Hungary(int u){
+    FOR(v,1,n){
+        if(puzzle[u][v] && visit[v] != ind){
+            visit[v] = ind;
+            if(link[v] == -1 || Hungary(link[v])){
+                link[v] = u;
+                return true;
+            }
+        }
+    }return false;
+}
+void solve(void){
+    scanf("%d%d",&n,&m);
+    rst(puzzle,0);rst(visit,0);rst(link,-1);
+    REP(i,m){
+        int a,b; scanf("%d%d",&a,&b);
+        puzzle[a][b] = true;
+    }
+    int ans = 0;
+    FOR(i,1,n){
+        ind = i;
+        if(Hungary(i))ans++;
+    }
+    printf("%d\n",n - ans);
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return true;
+}

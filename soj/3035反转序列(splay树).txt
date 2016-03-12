@@ -1,0 +1,121 @@
+#include <iostream>   //Œ“ «…≥≤Ë.....∏¥œ∞splay°£°£
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 50010
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+int n,Q;
+struct SPLAY{
+    int root;
+    int son[maxn][2],fa[maxn],s[maxn];
+    bool lazy[maxn];
+    inline void update(int x){
+        if(x)s[x] = s[son[x][1]] + s[son[x][0]] +1;
+    }
+    void build(int &x,int l,int r,int _fa){
+        if(l>r)return;
+        int mid = (l+r)>>1;
+        x = mid; fa[mid] = _fa; lazy[mid] = false;
+        son[mid][0] = son[mid][1] = 0;
+        if(l<=r){
+            build(son[mid][0],l,mid-1,mid);
+            build(son[mid][1],mid+1,r,mid);
+        }
+        update(mid);
+    }
+    inline void INIT(int n){
+        son[0][0] = son[0][1] = fa[0] = s[0] = 0;
+        root = 1;
+        son[1][0] = fa[1] = 0; son[1][1] = n+2;
+        fa[n+2] = 1; son[n+1][0] = 0;
+        lazy[0] = lazy[1] = lazy[n+2] = 0;
+        build(son[n+2][0],2,n+1,n+2);
+        update(n+2);update(1);
+    }
+    inline void pushdown(int x){
+        if(lazy[x]){
+            lazy[x] = false;
+            swap(son[x][0],son[x][1]);
+            lazy[son[x][0]] ^= true;
+            lazy[son[x][1]] ^= true;
+        }
+    }
+    inline void rolate(int x,int kind){
+        int y = fa[x], z = fa[y];
+        pushdown(y); pushdown(x);
+        son[y][!kind] = son[x][kind];
+        if(son[x][kind]) fa[son[x][kind]] = y;
+        son[x][kind] = y;
+        if(z) son[z][son[z][1] == y] = x;
+        fa[x] = z; fa[y] = x;
+        update(y); update(x);
+    }
+    void splay(int x,int aim){
+        while(fa[x] != aim){
+            pushdown(x);
+            if(son[fa[x]][0] == x)
+                rolate(x,1);
+            else
+                rolate(x,0);
+        }
+        if(!aim)root = x;
+    }
+    int FINDK(int k){
+        pushdown(root);
+        int x;
+        for(x = root;s[son[x][0]] + 1 != k;){
+            if(s[son[x][0]]+1 < k){
+                k -= (s[son[x][0]]+1);
+                x = son[x][1];
+            }else{
+                x = son[x][0];
+            }
+            pushdown(x);
+        }return x;
+    }
+    void rev(int x,int y){
+        x = FINDK(x);
+        y = FINDK(y+2);
+        splay(x,0);
+        splay(y,x);
+        lazy[son[y][0]] ^= true;
+    }
+    void pr(int x){
+        if(x == 0)return;
+        pushdown(x);
+        pr(son[x][0]);
+        if(x != 1 && x != n+2)printf("%d ",x-1);
+        pr(son[x][1]);
+    }
+}spl;
+int main(void){
+    while(2 == scanf("%d%d",&n,&Q)){
+        spl.INIT(n);
+        //spl.pr(spl.root);
+        while(Q--){
+            int a,b; scanf("%d%d",&a,&b);
+            spl.rev(a,b);
+        }spl.pr(spl.root);printf("\n");
+    }return 0;
+}

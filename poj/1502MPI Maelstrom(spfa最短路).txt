@@ -1,0 +1,96 @@
+#include <stdio.h>      //spfa算法+邻接表。。这个基础知识一直不算很牢靠。。不过这次又实现了一遍之后发现已经可以了。。。
+#include <cstring>
+#include <queue>
+#define INF 100000
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+struct Edge
+{
+    int s,e,w,next;
+}puzzle[11000];
+int dis[110];
+bool visit[110];
+int headline[110];
+int N,tot;
+void INIT(void)
+{
+    tot=0;
+    memset(visit,false,sizeof(visit));
+    for(int i=1;i<=N;i++)
+        headline[i]=-1;
+    for(int i=1;i<=N;i++)
+        dis[i]=INF;
+}
+int zhuanhuan(char *A)
+{
+    int len=strlen(A);
+    int ans=0;
+    for(int i=0;i<len;i++)
+    {
+        ans*=10;
+        ans+=A[i]-'0';
+    }
+    return ans;
+}
+void spfa()
+{
+    queue<int> q;
+    int start=1;
+    visit[start]=true;
+    dis[start]=0;
+    q.push(start);
+    while(!q.empty())
+    {
+        start=q.front();
+        q.pop();
+        for(int i=headline[start];i!=-1;i=puzzle[i].next)
+        {
+            int tail=puzzle[i].e;
+            if(dis[tail]>dis[start]+puzzle[i].w)
+            {
+                dis[tail]=dis[start]+puzzle[i].w;
+                q.push(tail);
+            }
+        }
+    }
+    int ans=0;
+    for(int i=2;i<=N;i++)
+    {
+        ans=MAX(ans,dis[i]);
+    }
+    printf("%d\n",ans);
+}
+int main(void)
+{
+    while(EOF!=scanf("%d",&N))
+    {
+        INIT();
+        char op[10];
+        for(int i=2;i<=N;i++)
+        {
+            for(int j=1;j<i;j++)
+            {
+                scanf("%s",op);
+                if(0!=strcmp(op,"x"))
+                {
+                    int num=zhuanhuan(op);
+                    puzzle[tot].s=i;
+                    puzzle[tot].e=j;
+                    puzzle[tot].w=num;
+                    puzzle[tot].next=headline[i];
+                    headline[i]=tot;
+                    tot++;
+                    puzzle[tot].e=i;
+                    puzzle[tot].s=j;
+                    puzzle[tot].w=num;
+                    puzzle[tot].next=headline[j];
+                    headline[j]=tot;
+                    tot++;
+                }
+            }
+        }
+        spfa();
+    }
+    return 0;
+}

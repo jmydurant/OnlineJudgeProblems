@@ -1,0 +1,66 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 301000
+#define mod 1000000007LL
+#define fr first
+#define se second
+using namespace std;
+typedef long long LL;
+struct node{
+    int ind,need,get;
+    bool operator < (const node & temp) const{
+        return need < temp.need;
+    }
+}pp[maxn];
+int ans[maxn],n;
+int main(void){
+    while(EOF != scanf("%d",&n)){
+        REP(i,n){
+            scanf("%d",&pp[i].need);
+            pp[i].ind = i+1;
+        }
+        sort(pp,pp+n);
+        int now = 1;
+        REP(i,n){
+            if(pp[i].need <= now){
+                pp[i].get = now;
+                now++;
+            }else{
+                now = pp[i].need + 1;
+                pp[i].get = pp[i].need;
+            }
+        }
+        REP(i,n){
+            ans[pp[i].ind] = pp[i].get;
+        }
+        FOR(i,1,n){
+            printf("%d%c",ans[i],(i == n)?'\n':' ');
+        }
+    }return 0;
+}
+
+
+

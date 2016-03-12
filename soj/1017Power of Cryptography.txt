@@ -1,0 +1,14 @@
+#include<cstdio>
+#include<cstring>
+#include<cmath>
+using namespace std;
+int main(void)
+{
+    double a,b,result;
+    while(EOF!=scanf("%lf%lf",&a,&b))//稍微处理了一下double型数字。。让其四舍五入。。
+    {
+        result=0.5+pow(b,1.0/a);
+        printf("%d\n",(int)result);
+    }
+    return 0;
+}

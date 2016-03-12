@@ -1,0 +1,66 @@
+#include<cstdio>
+#include<cstring>
+using namespace std;          //主要思想是这样的。。。先从左边扫描。。如果超出则找到那堵对后面影响最大的墙。。将其除去。。。别忘了重新扫描这里
+int column[110];
+struct block                  //老是有小错误。。耽误了很多的精力。。不过还好终于出来了。。
+{
+    int begin;
+    int end;
+}wall[110];
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int i,j;
+        int HP;int wallnum;
+        int count=0;
+        scanf("%d%d",&wallnum,&HP);
+        memset(column,0,sizeof(column));
+        for(i=1;i<=wallnum;i++)
+        {
+            scanf("%d%d",&wall[i].begin,&j);
+            scanf("%d%d",&wall[i].end,&j);
+            if(wall[i].begin>wall[i].end)
+            {
+                j=wall[i].end;
+                wall[i].end=wall[i].begin;
+                wall[i].begin=j;
+            }
+            for(j=wall[i].begin;j<=wall[i].end;j++)
+            {
+                column[j]++;
+            }
+        }
+        for(i=0;i<=100;i++)
+        {
+            if(column[i]>HP)
+            {
+                int maxlen=-1;
+                int maxwall=0;
+                count++;
+                for(j=1;j<=wallnum;j++)
+                {
+                    if(wall[j].begin<=i&&wall[j].end>=i)
+                    {
+                        if(maxlen<wall[j].end-i)
+                        {
+                            maxlen=wall[j].end-i;
+                            maxwall=j;
+                        }
+                    }
+                }
+                for(j=wall[maxwall].begin;j<=wall[maxwall].end;j++)
+                {
+                    column[j]--;
+                }
+                wall[maxwall].begin=-1;wall[maxwall].end=-1;
+                i--;
+            }
+
+        }
+        printf("%d\n",count);
+    }
+    return 0;
+}

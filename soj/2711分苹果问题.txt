@@ -1,0 +1,17 @@
+#include<stdio.h>
+
+int main(void)
+{
+    int N;
+    int M;
+    while(scanf("%d%d",&N,&M)==2)
+    {
+        if(N%M==0)
+        printf("%d\n",0);
+        else
+        {
+            printf("%d\n",(M-N%M));
+        }
+    }
+    return 0;
+}

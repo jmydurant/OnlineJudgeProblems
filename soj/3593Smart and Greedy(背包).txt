@@ -1,0 +1,63 @@
+#include <cstdio>   //这两天做的题目有点水。。。先看一会专题去了。。。
+#include <cstring>
+#include <algorithm>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 100000000
+#define MAXN 10100
+using namespace std;
+int M,n;
+int tot;
+int a[MAXN],b[MAXN];
+int v[110];
+void cal(int volum)
+{
+    int k = tot-1;
+    int temp = volum;
+    while(temp)
+    {
+        if(v[k]<=temp)
+        {
+            b[volum] += temp/v[k];
+            temp %= v[k];
+        }
+        k--;
+    }
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&n,&M);
+        tot = 0;
+        for(int i = 0;i<n;i++)
+        {
+            int k;
+            scanf("%d",&k);
+            if(k<=M)
+                v[tot++] = k;
+        }
+        for(int i = 1;i<=M;i++)
+        {
+            a[i] = INF;
+            b[i] = 0;
+        }
+        a[0] = 0; b[0] = 0;
+        sort(v,v+tot);
+        for(int i = 1;i<=M;i++)
+            cal(i);
+        for(int i = 0;i<tot;i++)
+        {
+            for(int j = v[i];j<=M;j++)
+            {
+                a[j] = MIN(a[j],a[j-v[i]]+1);
+            }
+        }
+        int ans = 0;
+        for(int i = 1;i<=M;i++)
+            if(a[i] != b[i])
+            ans++;
+        printf("%d\n",ans);
+    }
+}

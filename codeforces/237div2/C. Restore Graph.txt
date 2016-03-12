@@ -1,0 +1,75 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //他想判断是否有一个图满足这个要求。。其实最简单就是给他构造一棵树。。如果不行就真的不行了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 50000000
+#define maxn 101000
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+vector<LL> e[maxn];
+int n,k;
+int dis[maxn];
+int deg[maxn];
+void solve(void){
+    int maxr = -1;
+    FOR(i,1,n) scanf("%d",dis + i) , maxr = MAX(maxr , dis[i]);
+    FOR(i,0,maxr) e[i].clear() , e[i].push_back(0);
+    rst(deg,0);
+    FOR(i,1,n){
+        e[dis[i]][0]++;
+        e[dis[i]].push_back(i);
+    }
+    if(e[0][0] != 1){
+        printf("-1\n");
+        return;
+    }
+    if(e[0][0] * k < e[1][0]){
+        printf("-1\n");
+        return;
+    }
+    FOR(i,2,maxr){
+        if(e[i-1][0] * (k-1) <  e[i][0]){
+            printf("-1\n");
+            return;
+        }
+    }
+    printf("%d\n",n-1);
+    FOR(i,1,maxr){
+        int ll = 1;
+        FOR(j,1,e[i][0]){
+            printf("%I64d %I64d\n",e[i-1][ll] , e[i][j]);
+            deg[e[i-1][ll]]++;
+            if((i == 1 && deg[e[i-1][ll]] == k ) || (i != 1 && deg[e[i-1][ll]] == k-1))ll++;
+        }
+    }
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&k)) solve();
+    return 0;
+}

@@ -1,0 +1,26 @@
+#include<cstdio>
+using namespace std;
+int main(void)
+{
+    int win,lose;
+    int casenum;
+    while(EOF!=scanf("%d",&casenum)&&casenum)
+    {
+        int i;
+        win=0;lose=0;
+        while(casenum--)
+        {
+            scanf("%d",&i);
+            if(1==i)
+            {
+                win++;
+            }
+            else
+            {
+                lose++;
+            }
+        }
+        printf("Mary won %d times and John won %d times\n",lose,win);
+    }
+    return 0;
+}

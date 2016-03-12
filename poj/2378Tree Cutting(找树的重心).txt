@@ -1,0 +1,82 @@
+#include <iostream>   //我是沙茶....唉。。有点水。。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-9
+#define maxn 110000
+#define INF 1000000000
+#define mod 1000000007LL
+#define mod1 222222224LL
+#define mod2 183120LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int t,nxt;
+}edge[maxn<<1];
+vector<int> qqq;
+int headline[maxn],E;
+void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+bool visit[maxn];
+int son[maxn],n;
+int maxr,id;
+void dfs(int u){
+    son[u] = 0;
+    visit[u] = true;
+    int tt = 0;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!visit[v]){
+            dfs(v);
+            son[u] += son[v] + 1;
+            tt = MAX(tt,son[v]+1);
+        }
+    }
+    tt = MAX(tt,n-1-son[u]);
+    if(tt < maxr ){
+        maxr = tt;
+        qqq.clear();
+        qqq.push_back(u);
+    }else if(tt == maxr) qqq.push_back(u);
+}
+void solve(){
+    rst(headline,-1);
+    rst(visit,false);
+    REP(i,n-1){
+        int a,b; scanf("%d%d",&a,&b);
+        add(a,b); add(b,a);
+    }
+    maxr = id = INF;
+    qqq.clear();
+    dfs(1);
+    sort(qqq.begin(),qqq.end());
+    if(qqq.size() == 0)printf("NONE\n");
+    else{
+        for(unsigned int i = 0;i<qqq.size();i++)printf("%d\n",qqq[i]);
+    }
+}
+int main(void){
+    while(EOF != scanf("%d",&n))solve();
+    return 0;
+}

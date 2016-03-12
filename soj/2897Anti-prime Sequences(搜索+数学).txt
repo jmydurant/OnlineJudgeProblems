@@ -1,0 +1,82 @@
+#include <iostream>   //一个一个的搜索就行了。。然后。。很快的。。。
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXV 10010
+#define MAXN 1010
+using namespace std;
+
+
+bool notprime[MAXV];
+bool visit[MAXN];
+int ans[MAXN];
+void INIT(void)
+{
+    memset(notprime,false,sizeof(notprime));
+    notprime[1] = true;
+    for(int i = 2;i*i<MAXV;i++)
+    {
+        if(!notprime[i])
+        {
+            for(int j = i*2; j<=MAXV;j+=i)
+                notprime[j] = true;
+        }
+    }
+    //cout << notprime[3] << notprime[5] << notprime[10] <<endl;
+}
+bool judge(int index,int k)
+{
+    if(index == 1)
+        return true;
+    int sum = ans[index];
+    int cap = MAX(1,index-k+1);
+    for(int i = index-1;i>=cap;i--)
+    {
+        sum += ans[i];
+        if(!notprime[sum])
+            return false;
+    }
+    return true;
+}
+
+bool dfs(int a,int b,int k,int index)
+{
+    if(index == b-a+2)
+        return true;
+    for(int i = a;i<=b;i++)
+    {
+        if(!visit[i])
+        {
+            ans[index] = i;
+            visit[i] = true;
+            if(judge(index,k) && dfs(a,b,k,index+1))
+                return true;
+            visit[i] = false;
+        }
+    }
+    return false;
+}
+int main(void)
+{
+    int a,b,k;
+    INIT();
+    while(3==scanf("%d%d%d",&a,&b,&k))
+    {
+        if(a == 0 && b == 0 && k == 0)
+            break;
+        memset(visit,false,sizeof(visit));
+        if(dfs(a,b,k,1))
+        {
+            for(int i = 1;i<=b-a;i++)
+                printf("%d,",ans[i]);
+            printf("%d\n",ans[b-a+1]);
+        }
+        else
+        {
+            printf("No anti-prime sequence exists.\n");
+        }
+    }
+}
+
+

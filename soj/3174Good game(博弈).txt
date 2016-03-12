@@ -1,0 +1,81 @@
+#include <iostream>   //还是老思想。。从一个状态开始转移。。枚举他所以可能转移的方法。。如果到失败点。那么这个就是必胜点
+#include <cstdio>     //然后找最近的失败点就可以了。。。
+#include <cstring>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAXN 1000100
+#define INF 100000000
+#define lowbit(x) ((x)&(-(x)))
+using namespace std;
+bool visit[MAXN];
+bool win[MAXN];
+int ans[MAXN];
+bool dfs(int x)
+{
+    if(visit[x])
+        return win[x];
+    int minr = INF;
+    int cap = 10;
+    while(x>=cap)
+    {
+        bool ok = false;
+        int temp = x;
+        int k = temp%cap;
+        temp /= cap;
+        if(k>=(cap/10) && (!dfs(x-k)))
+        {
+            ok = true;
+            minr = MIN(minr,k);
+        }
+        while(temp)
+        {
+            k /= 10;
+            k += (cap/10) * (temp%10);
+            temp /= 10;
+            if(k>=(cap/10) && (!dfs(x-k)))
+            {
+                ok = true;
+                minr = MIN(minr,k);
+            }
+        }
+        if(ok)
+            break;
+        cap *= 10;
+    }
+    visit[x] = true;
+    if(minr == INF)
+        win[x] = false;
+    else
+        win[x] = true;
+    ans[x] = minr;
+    return win[x];
+}
+
+
+
+void INIT(void)
+{
+    memset(visit,false,sizeof(visit));
+    for(int i = 0;i<=9;i++)
+    {
+        win[i] = false;
+        visit[i] = true;
+    }
+    for(int i = 10;i<=1000000;i++)
+        dfs(i);
+}
+
+int main(void)
+{
+    INIT();
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n; scanf("%d",&n);
+        if(win[n])
+            printf("%d\n",ans[n]);
+        else
+            printf("Bad Game\n");
+    }
+    return 0;
+}

@@ -1,0 +1,42 @@
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<algorithm>   //先求从左到右的最大和子串。。为了求断开的那部分。。可以先求从左到右的最小和子串。。然后用数列的和减去就可以了
+#include<climits>       //最后在比较那个更大。。（还得和sum相比）。。。这种DP是最基础的了。。
+#include<cmath>
+using namespace std;
+int dp[1000010];
+int digit[1000010];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        int result=INT_MIN;
+        int r_result=INT_MAX;
+        int sum=0;
+        memset(dp,0,sizeof(dp));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",&digit[i]);
+            sum+=digit[i];
+            if(dp[i-1]>0)dp[i]=dp[i-1]+digit[i];
+            else dp[i]=digit[i];
+            if(dp[i]>result)result=dp[i];
+        }
+        memset(dp,0,sizeof(dp));
+        for(int i=1;i<=N;i++)
+        {
+            if(dp[i-1]<0)dp[i]=dp[i-1]+digit[i];
+            else dp[i]=digit[i];
+            if(r_result>dp[i])r_result=dp[i];
+        }
+       // printf("%d\n",r_result);
+        if(sum>result)result=sum;
+        if(result<sum-r_result)result=sum-r_result;
+        printf("%d\n",result);
+    }
+    return 0;
+}

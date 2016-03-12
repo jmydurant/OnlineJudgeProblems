@@ -1,0 +1,107 @@
+#include <cstdio>    //思路见下
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 1000
+#define rst(x) memset(x,0,sizeof(x))
+//#define MAXV 101000
+#define INF 500000000
+using namespace std;
+struct node
+{
+    int s,t,w;
+}edge[MAXN];
+int n,m;
+int dis[MAXN];
+bool bellman_ford()
+{
+    rst(dis);
+    for(int step = 1;step<=n;step++)
+    {
+        for(int i = 1;i<=m;i++)
+        {
+            int a = edge[i].s;
+            int b = edge[i].t;
+            int w = edge[i].w;
+            if(dis[b] > dis[a] + w)
+                dis[b] = dis[a] + w;
+        }
+    }
+    for(int i = 1;i<=m;i++)
+    {
+        int a = edge[i].s;
+        int b = edge[i].t;
+        int w = edge[i].w;
+        if(dis[b] > dis[a] + w)
+            return false;
+    }
+    return true;
+}
+
+int main(void)
+{
+    while(EOF!=scanf("%d",&n) && n)
+    {
+        scanf("%d",&m);
+        for(int i = 1;i<=m;i++)
+        {
+            int a,k,w;
+            char op[10];
+            scanf("%d%d%s%d",&a,&k,op,&w);
+            if(op[0] == 'g')
+            {
+                edge[i].s = a+k;
+                edge[i].t = a-1;
+                edge[i].w = -(w+1);
+            }
+            else
+            {
+                edge[i].s = a-1;
+                edge[i].t = a+k;
+                edge[i].w = w-1;
+            }
+        }
+        if(bellman_ford())
+            printf("lamentable kingdom\n");
+        else
+            printf("successful conspiracy\n");
+    }
+    return 0;
+}
+题目大意:现在假设有一个这样的序列，S={a1，a2，a3，a4...ai...at}
+其中ai=a*si,其实这句可以忽略不看
+现在给出一个不等式，使得ai+a(i+1)+a(i+2)+...+a(i+n)<ki或者是ai+a(i+1)+a(i+2)+...+a(i+n)>ki
+首先给出两个数分别代表S序列有多少个，有多少个不等式
+不等式可以这样描述
+给出四个参数第一个数i可以代表序列的第几项，然后给出n，这样前面两个数就可以描述为ai+a(i+1)+...a(i+n)，即从i到n的连续和，再给出一个符号和一个ki
+当符号为gt代表‘>’,符号为lt代表‘<'
+那么样例可以表示
+1 2 gt 0
+a1+a2+a3>0
+2 2 lt 2
+a2+a3+a4<2
+最后问你所有不等式是否都满足条件，若满足输出lamentable kingdom，不满足输出successful conspiracy，这里要注意了，不要搞反了
+
+ 
+
+解题思路：一个典型的差分约束，很容易推出约束不等式
+
+首先设Si=a1+a2+a3+...+ai
+
+那么根据样例可以得出
+S3-S0>0---->S0-S3<=-1
+S4-S1<2---->S4-S1<=1
+因为差分约束的条件是小于等于，所以我们将ki-1可以得到一个等于号
+那么通式可以表示为
+a  b  gt  c
+S[a-1]-s[a+b]<=-ki-1
+a  b  lt  c
+S[a+b]-S[a-1]<=ki-1
+
+那么根据差分约束建图,加入这些有向边
+gt:  <a+b，a-1>=-ki-1
+lt:  <a-1，a+b>=ki-1
+再根据bellman_ford判断是否有无负环即可
+若出现负环了则这个序列不满足所有的不等式

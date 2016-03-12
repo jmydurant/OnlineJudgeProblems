@@ -1,0 +1,62 @@
+#include<cstdio>
+#include<cstring>    //鉴于范围很小。。其实不写素数筛也可以。。但我是那种偷懒的人么。。。（说笑的）
+#include<algorithm>
+#include<deque>
+#include<climits>
+int prime[1000];
+int visit[2000];
+int main(void)
+{
+    int total=1;int N,C;
+    memset(prime,0,sizeof(prime));
+    memset(visit,0,sizeof(visit));
+    prime[1]=1;
+    for(int i=2;i<1400;i++)
+    {
+        if(visit[i])continue;
+        prime[++total]=i;
+        for(int k=i*2;k<=1500;k+=i)
+        {
+            visit[k]=1;
+        }
+    }
+    while(2==scanf("%d%d",&N,&C))
+    {
+        total=0;
+        for(int i=1;i<200;i++)
+        {
+            if(prime[i]>N)break;
+            total++;
+        }
+        printf("%d %d:",N,C);
+        if(total<=C)
+        {
+            for(int i=1;i<=total;i++)
+            {
+                printf(" %d",prime[i]);
+            }
+
+        }
+        else
+        {
+            if(total%2)
+            {
+                int start=total/2-C+2;
+                for(int i=start;i<=(total/2+C);i++)
+                {
+                    printf(" %d",prime[i]);
+                }
+            }
+            else
+            {
+                int start=total/2-C+1;
+                for(int i=start;i<=(total/2+C);i++)
+                {
+                    printf(" %d",prime[i]);
+                }
+            }
+        }
+        printf("\n\n");
+    }
+    return 0;
+}

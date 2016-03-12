@@ -1,0 +1,98 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //并查集来合并可以直接到不需要代价的点。。然后如果满足题意。再用floyd做一遍就ok了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000
+#define maxn 2010000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int puzzle[510][510];
+int _hash[101010];
+int ss[510];
+int n,m,kind;
+int fa[101010];
+int findfa(int x){
+    if(fa[x] != x)fa[x] = findfa(fa[x]);
+    return fa[x];
+}
+void solve(void){
+    int last = 0;
+    FOR(i,1,kind){
+        scanf("%d",ss + i);
+        FOR(j,1,ss[i]){
+            last++; _hash[last] = i;
+        }
+    }
+    FOR(i,1,n)fa[i] = i;
+    FOR(i,1,kind)FOR(j,1,kind){
+        if(i != j) puzzle[i][j] = INF;
+        else puzzle[i][j] = 0;
+    }
+    REP(i,m){
+        int a,b,w; scanf("%d%d%d",&a,&b,&w);
+        if(!w){
+            int fx = findfa(a) , fy = findfa(b);
+            if(fx != fy) fa[fx] = fy;
+        }
+        a = _hash[a] , b = _hash[b];
+        if(puzzle[a][b] > w){
+            puzzle[a][b] = puzzle[b][a] = w;
+        }
+    }
+    bool ok = true;
+    int sum = 0;
+    FOR(i,1,kind){
+        FOR(j,sum+1,sum+ss[i]){
+            int fx = findfa(sum+1) , fy = findfa(j);
+            if(fx != fy){
+                ok = false;
+                break;
+            }
+        }
+        if(!ok)break;
+        sum += ss[i];
+    }
+    if(ok){
+        printf("Yes\n");
+        FOR(k,1,kind){
+            FOR(i,1,kind){
+                if(i != k)FOR(j,1,kind){
+                    if(i != j && k != j){
+                        if(puzzle[i][j] > puzzle[i][k] + puzzle[k][j]) puzzle[i][j] = puzzle[i][k] + puzzle[j][k];
+                    }
+                }
+            }
+        }
+        FOR(i,1,kind){
+            FOR(j,1,kind)printf("%d ",puzzle[i][j] == INF ? -1 : puzzle[i][j]); printf("\n");
+        }
+    }else printf("No\n");
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&n,&m,&kind)) solve();
+    return 0;
+}

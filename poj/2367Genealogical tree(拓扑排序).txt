@@ -1,0 +1,85 @@
+#include <vector>    //最基础的一道题目。。。原来就不说了。。
+#include <queue>
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <cstring>
+#define INF 999999999.0
+#define eps 1e-11
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+using namespace std;
+vector<int> puzzle[110];
+int tot[110],ans[110];
+bool visit[110];
+int N;
+void toposort(void)
+{
+    int num=0;
+    queue<int>q;
+    for(int i=1;i<=N;i++)
+    {
+        if(0==tot[i])
+        {
+            ans[++num]=i;
+            q.push(i);
+        }
+    }
+    while(!q.empty())
+    {
+        int start=q.front();
+        q.pop();
+        int n=puzzle[start].size();
+        for(int i=0;i<n;i++)
+        {
+            int abc=puzzle[start][i];
+            tot[abc]--;
+            if(0==tot[abc])
+            {
+                ans[++num]=abc;
+                q.push(abc);
+            }
+        }
+    }
+}
+int main(void)
+{
+    while(EOF!=scanf("%d",&N))
+    {
+        memset(tot,0,sizeof(tot));
+        memset(visit,false,sizeof(visit));
+        for(int i=1;i<=N;i++)puzzle[i].clear();
+        for(int i=1;i<=N;i++)
+        {
+            int tmpt;
+            while(EOF!=scanf("%d",&tmpt) && tmpt)
+            {
+                tot[tmpt]++;
+                puzzle[i].push_back(tmpt);
+            }
+        }
+        toposort();
+        for(int i=1;i<=N;i++)
+        {
+            printf("%d%c",ans[i],i==N?'\n':' ');
+        }
+    }
+    return 0;
+}
+
+
+

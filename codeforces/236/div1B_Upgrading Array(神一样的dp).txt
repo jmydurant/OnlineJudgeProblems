@@ -1,0 +1,109 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //这道题可以说是一道非常给力的好题。。
+#include <cstdio>     //考虑这样一个dp(i , j) i代表扫过的前缀长 ，j代表最后一次用变换的前缀长
+#include <cstring>    //显然dp方向是这样的i--(n+1-->1)  j--(n+1--->i) 然后有两个可以刷新的点(n+1)代表什么也没做
+#include <algorithm>  //dp(i-1,j) = MIN(dp(i-1,j) , dp(i,j)) 说明走到i-1什么也没干
+#include <queue>      //dp(i-1,i-1) = MIN(dp(i-1,i-1) , dp(i,j) + (i-1) * f(gcd(i-1) - gcd(j))) 代表如果i-1刷新会怎么样
+#include <stack>      //其中f（x）是计算x 的分数  gcd(i) 是1----i的前缀最大公约数..这样。。题目就能解了。。
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+//#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 5110
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+map<int,int> bst;
+int gcd(int a,int b){
+    int temp;
+    while(b){
+        temp = a % b;
+        a = b;
+        b = temp;
+    }return a;
+}
+bool visit[40000];
+int prime[40000] , tot;
+int a[maxn] , b[maxn] , ggcd[maxn];
+int dp[maxn][maxn];
+int gggcd[maxn];
+void INIT(void){
+    rst(visit,false);
+    FOR(i,2,39999){
+        if(!visit[i]){
+            prime[++tot] = i;
+            for(int j = i*i;j < 40000;j += i)visit[j] = true;
+        }
+    }
+    //printf("%d\n",tot);
+}
+int n,m;
+int f(int x){
+    int ans = 0;
+    for(int i = 1;i<=tot && prime[i] * prime[i] <= x;i++){
+        if(x % prime[i] == 0){
+            int kk = 1;
+            if(bst[prime[i]]) kk = -1;
+            while(x % prime[i] == 0){
+                ans += kk;
+                x /= prime[i];
+            }
+        }
+    }
+    if(x > 1){
+        if(bst[x])ans--;
+        else ans++;
+    }
+    return ans;
+}
+void solve(void){
+    bst.clear();
+    FOR(i,1,n) scanf("%d",a+i);
+    FOR(i,1,m) scanf("%d",b+i) , bst.insert(make_pair(b[i] , 1));
+    ggcd[1] = a[1];
+    FOR(i,2,n) ggcd[i] = gcd(a[i] , ggcd[i-1]);
+    ggcd[n+1] = 0;
+    FOR(i,1,n+1)FOR(j,1,n+1)dp[i][j] = -INF;
+    dp[n+1][n+1] = 0;
+    FOR(i,1,n) dp[n+1][n+1] += f(a[i]);
+    FOR(i,1,n+1) gggcd[i] = f(ggcd[i]);
+    for(int i = n+1;i>=2;i--){
+        for(int j = n+1;j>=i;j--){
+            dp[i-1][j] = MAX(dp[i-1][j] , dp[i][j]);
+            int tt = (i-1)*(gggcd[i-1] - gggcd[j]);
+            dp[i-1][i-1] = MAX(dp[i-1][i-1] , dp[i][j] - tt);
+        }
+    }
+    //for(int i = 1;i<=n+1;i++){
+    //    for(int j = 1;j<=n+1;j++)printf("%d ",dp[i][j]);printf("\n");
+    //}
+    int ans = -INF;
+    for(int i = 1;i<=n+1;i++){
+        ans = MAX(dp[1][i] , ans);
+    }
+    printf("%d\n",ans);
+}
+int main(void){
+    INIT();
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

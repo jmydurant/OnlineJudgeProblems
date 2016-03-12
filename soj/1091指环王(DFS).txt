@@ -1,0 +1,69 @@
+#include<cstdio>
+#include<cstring>
+#include<string>
+#include<iostream>
+using namespace std;
+int result;
+void dfs(int dis,int x,int y,int total);
+string target="1111101111002110000100000";
+string component[5];
+string puzzle[10000];
+int dx[]={1,1,2,2,-1,-1,-2,-2};
+int dy[]={2,-2,1,-1,2,-2,1,-1};                //垃圾算法。。差点没过。。。我是用string来记录重复的。。。加上cin。。所以慢的要死。。。
+int main(void)
+{
+    int casenum;
+    cin >>casenum;
+    while(casenum--)
+    {
+        int i;
+        result =20;
+        puzzle[0]="";
+        for(i=0;i<=4;i++)
+        {
+            cin >>component[i];
+            puzzle[0]+=component[i];
+        }
+        for(i=0;i<25;i++){if(puzzle[0][i]=='2')break;}
+        dfs(0,i/5,i%5,0);
+        if(result<=10)
+        {
+            printf("Solvable in %d move(s).\n",result);
+        }
+        else
+        {
+            printf("Unsolvable in less than 11 move(s).\n");
+        }
+    }
+    return 0;
+}
+void dfs(int dis,int x,int y,int total)
+{
+    if(puzzle[total]==target)
+    {
+        if(dis<result)result=dis;
+        return ;
+    }
+    if(dis>=result||dis>10)return;
+    for(int i=0;i<total;i++)
+    {
+        if(puzzle[i]==puzzle[total])
+        {
+            puzzle[total]="";
+            return ;
+        }
+    }
+    for(int i=0;i<8;i++)
+    {
+        int nx=x+dx[i],ny=y+dy[i];
+        if(nx>=0&&nx<5&&ny>=0&&ny<5)
+        {
+            for(int k=0;k<25;k++){puzzle[total+1]=puzzle[total];}
+            puzzle[total+1][5*x+y]=puzzle[total+1][5*nx+ny];
+            puzzle[total+1][5*nx+ny]='2';
+            dfs(dis+1,nx,ny,total+1);
+            puzzle[total+1]="";
+        }
+    }
+    return ;
+}

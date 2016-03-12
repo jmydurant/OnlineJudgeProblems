@@ -1,0 +1,138 @@
+#include <iostream>   //我是沙茶.....魔方题。。所以要模拟来写。。因为最多只要转7次。。所以连判重都可以免了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 10010
+#define INF 2100001000
+#define mod 10007
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    char st[25];
+    bool operator < (const node & temp)const{
+        return (strcmp(st,temp.st) < 0);
+    }
+    int judge(){
+        int ans = 0;
+        if(st[0] == st[1] && st[1] == st[2] && st[2] == st[3])ans++;
+        if(st[4] == st[5] && st[5] == st[10] && st[10] == st[11])ans++;
+        if(st[6] == st[7] && st[7] == st[12] && st[12] == st[13])ans++;
+        if(st[8] == st[9] && st[9] == st[14] && st[14] == st[15])ans++;
+        if(st[16] == st[17] && st[17] == st[18] && st[18] == st[19])ans++;
+        if(st[20] == st[21] && st[21] == st[22] && st[22] == st[23])ans++;
+        return ans;
+    }
+    void show(){
+        FOR(i,0,23)printf("%c ",st[i]);printf("\n");
+    }
+};
+node rolate(node & temp,int kind){              //旋转 1代表正面 2代表侧面 3代表上面 正是顺时针 负是逆时针
+    node ans = temp;
+    int num = 2;
+    if(kind == 1){
+        char tt = ans.st[6];
+        ans.st[6] = ans.st[12]; ans.st[12] = ans.st[13]; ans.st[13] = ans.st[7]; ans.st[7] = tt;
+        while(num--){
+            tt = ans.st[2];
+            ans.st[2] = ans.st[5]; ans.st[5] = ans.st[11]; ans.st[11] = ans.st[16]; ans.st[16] = ans.st[17];
+            ans.st[17] = ans.st[14]; ans.st[14] = ans.st[8]; ans.st[8] = ans.st[3]; ans.st[3] = tt;
+        }
+    }else if(kind == -1){
+        char tt = ans.st[7];
+        ans.st[7] = ans.st[13]; ans.st[13] = ans.st[12]; ans.st[12] = ans.st[6]; ans.st[6] = tt;
+        while(num--){
+        tt = ans.st[3];
+        ans.st[3] = ans.st[8]; ans.st[8] = ans.st[14]; ans.st[14] = ans.st[17]; ans.st[17] = ans.st[16];
+        ans.st[16] = ans.st[11]; ans.st[11] = ans.st[5]; ans.st[5] = ans.st[2]; ans.st[2] = tt;
+        }
+    }else if(kind == 2){
+        char tt = ans.st[4];
+        ans.st[4] = ans.st[10]; ans.st[10] = ans.st[11]; ans.st[11] = ans.st[5]; ans.st[5] = tt;
+        while(num--){
+        tt = ans.st[0];
+        ans.st[0] = ans.st[22]; ans.st[22] = ans.st[20]; ans.st[20] = ans.st[18]; ans.st[18] = ans.st[16];
+        ans.st[16] = ans.st[12]; ans.st[12] = ans.st[6]; ans.st[6] = ans.st[2]; ans.st[2] = tt;
+        }
+    }else if(kind == -2){
+        char tt = ans.st[5];
+        ans.st[5] = ans.st[11]; ans.st[11] = ans.st[10]; ans.st[10] = ans.st[4]; ans.st[4] = tt;
+        while(num--){
+        tt = ans.st[2];
+        ans.st[2] = ans.st[6]; ans.st[6] = ans.st[12]; ans.st[12] = ans.st[16]; ans.st[16] = ans.st[18];
+        ans.st[18] = ans.st[20]; ans.st[20] = ans.st[22]; ans.st[22] = ans.st[0]; ans.st[0] = tt;
+        }
+    }else if(kind == 3){
+        char tt = ans.st[0];
+        ans.st[0] = ans.st[2]; ans.st[2] = ans.st[3]; ans.st[3] = ans.st[1]; ans.st[1] = tt;
+        while(num--){
+        tt = ans.st[4];
+        ans.st[4] = ans.st[5]; ans.st[5] = ans.st[6]; ans.st[6] = ans.st[7]; ans.st[7] = ans.st[8];
+        ans.st[8] = ans.st[9]; ans.st[9] = ans.st[23]; ans.st[23] = ans.st[22]; ans.st[22] = tt;
+        }
+    }else if(kind == -3){
+        char tt = ans.st[1];
+        ans.st[1] = ans.st[3]; ans.st[3] = ans.st[2]; ans.st[2] = ans.st[0]; ans.st[0] = tt;
+        while(num--){
+        tt = ans.st[22];
+        ans.st[22] = ans.st[23]; ans.st[23] = ans.st[9]; ans.st[9] = ans.st[8]; ans.st[8] = ans.st[7];
+        ans.st[7] = ans.st[6]; ans.st[6] = ans.st[5]; ans.st[5] = ans.st[4]; ans.st[4] = tt;
+        }
+    }return ans;
+}
+node ss;
+int lim;
+int ans;
+int digit[25];
+map<node,bool> bst;
+void dfs(node & state,int deep,int lastop){
+    if(ans == 6 || deep >= lim)return;
+    FOR(i,-3,3){
+        if(i == 0 || i+lastop == 0)continue;
+        node tt = rolate(state,i);
+        //if(bst[tt])continue;
+        //bst[tt] = true;
+        int how = tt.judge();
+        ans = MAX(how,ans);
+        if(ans == 6)return;
+        dfs(tt,deep+1,i);
+    }
+}
+int main(void){
+    while(EOF != scanf("%d",&lim)){
+        REP(i,24)scanf("%d",digit+i);
+        REP(i,24)ss.st[i] = digit[i]+'0';
+        ss.st[24] = '\0';
+        /*
+        node x = rolate(ss,3);
+        REP(i,3)x = rolate(x,3);
+        x.show();
+        printf("x ju is %d\n",x.judge());
+        node y = rolate(x,-3);
+        y.show();
+        printf("y ju is %d\n",y.judge());
+        */
+        //bst.clear();
+        //bst[ss] = true;
+        ans = ss.judge();
+        dfs(ss,0,0);
+        printf("%d\n",ans);
+    }
+}

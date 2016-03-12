@@ -1,0 +1,99 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>    //代码和3177一样。。思路一样。。直接交了。。噗。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 5100
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int n,m;
+struct node{
+    int f,t,nxt;
+}edge[21000];
+bool puzzle[maxn][maxn];
+int headline[maxn] , E;
+void add(int f,int t){
+    edge[E].f = f;
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+int low[maxn] , dfn[maxn] , tot;
+int deg[maxn];
+void dfs(int u,int fa){
+    dfn[u] = low[u] = ++tot;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            dfs(v,u);
+            low[u] = MIN(low[u] , low[v]);
+        }
+        if(dfn[v] && v != fa){
+            low[u] = MIN(low[u] , dfn[v]);
+        }
+    }
+}
+void tarjan(void){
+    dfs(1,1);
+    rst(deg,0);
+}
+void solve(void){
+    rst(headline,-1); E = 0;
+    rst(puzzle,0);
+    rst(low,0); rst(dfn,0);
+    tot = 0;
+    REP(i,m){
+        int a,b; scanf("%d%d",&a,&b);
+        if(puzzle[a][b])continue;
+        if(a == b){
+            add(a,a);
+            puzzle[a][a] = true;
+            continue;
+        }
+        add(a,b); add(b,a);
+        puzzle[a][b] = puzzle[b][a] = true;
+    }
+    tarjan();
+    int ans = 0;
+    REP(i,E){
+        int u = edge[i].f , v = edge[i].t;
+        //printf("u is %d v is %d\n",u,v);
+        if(low[u] != low[v]){
+            deg[low[u]]++;
+        }
+    }
+    FOR(i,1,n){
+        if(deg[i] == 1)ans++;
+    }
+    printf("%d\n",(ans+1)/2);
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&m)) solve();
+    return 0;
+}

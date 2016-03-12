@@ -1,0 +1,61 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <climits>
+#include <iostream>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 100
+#define mod 1000000009LL
+using namespace std;
+
+typedef long long LL;
+LL n,m,k;
+LL x,y;
+
+LL power(LL a,int n)
+{
+    LL ans = 1;
+    while(n)
+    {
+        if(n & 1)
+        {
+            ans *= a;
+            ans %= mod;
+        }
+        a *= a;
+        a %= mod;
+        n >>= 1;
+    }
+    return ans;
+}
+int main(void)
+{
+    while(cin >> n >> m >> k)
+    {
+        if(m < k)
+            cout << m << endl;
+        else
+        {
+            if(m> (n-m+1)*(k-1))
+            {
+                x = m-(k-1)*(n-m);
+                y = m-x;
+                int t = x/k;
+                LL ans = power(2,t);
+                ans -= 1;
+                ans *= 2;
+                ans *= k;
+                ans %= mod;
+                ans += x%k;
+                ans += y;
+                ans %= mod;
+                cout  << ans << endl;
+            }
+            else
+                cout << m << endl;
+        }
+    }
+    return 0;
+}

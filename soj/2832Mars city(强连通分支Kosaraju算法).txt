@@ -1,0 +1,107 @@
+#include <cstdio>    //爽。。一气呵成。。。思路清晰。。
+#include <cstring>   //找到所以的强连通分支。。。每个缩成一个点。。每个点都是最低的cost。。然后找入度为0的点计入结果。。
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MAXN 5100
+#define MAXV 100100
+#define INF 100000000
+using namespace std;
+
+struct node
+{
+    int s,t;
+    int nxt1,nxt2;
+}edge[MAXV];
+int headline1[MAXN],headline2[MAXN];
+int n,m;
+int cost[MAXN],ans[MAXN];
+bool visit[MAXN];
+int order[MAXN],belong[MAXN];
+int tot,floor;
+int in[MAXN];
+void dfs(int u)
+{
+    visit[u] = true;
+    for(int i = headline1[u];i != -1 ;i = edge[i].nxt1)
+    {
+        int b = edge[i].t;
+        if(!visit[b])
+            dfs(b);
+    }
+    order[++tot] = u;
+}
+
+void ndfs(int u,int k)
+{
+    visit[u] = true;
+    belong[u] = k;
+    for(int i = headline2[u];i != -1; i = edge[i].nxt2)
+    {
+        int a = edge[i].s;
+        if(!visit[a])
+            ndfs(a,k);
+    }
+}
+
+void Kosaraju(void)
+{
+    tot = 0;
+    memset(visit,false,sizeof(visit));
+    for(int i = 1;i<=n;i++)
+        if(!visit[i])
+            dfs(i);
+    memset(visit,false,sizeof(visit));
+    floor = 0;
+    for(int i = n;i>0;i--)
+    {
+        if(!visit[order[i]])
+            ndfs(order[i],++floor);
+    }
+}
+
+int main(void)
+{
+    while(2==scanf("%d%d",&n,&m))
+    {
+        for(int i = 1;i<=n;i++)
+        {
+            int k,c; scanf("%d%d",&k,&c);
+            cost[k] = c;
+        }
+        memset(headline1,-1,sizeof(headline1));
+        memset(headline2,-1,sizeof(headline2));
+        for(int i = 1;i<=m;i++)
+        {
+            int a,b; scanf("%d%d",&a,&b);
+            edge[i].s = a;
+            edge[i].t = b;
+            edge[i].nxt1 = headline1[a];
+            edge[i].nxt2 = headline2[b];
+            headline1[a] = i;
+            headline2[b] = i;
+        }
+        Kosaraju();
+        for(int i = 1;i<=floor;i++)
+        {
+            in[i] = 0;
+            ans[i] = INF;
+        }
+        for(int i = 1;i<=n;i++)
+        {
+            if(ans[belong[i]]>cost[i])
+                ans[belong[i]] = cost[i];
+        }
+        for(int i = 1;i<=m;i++)
+        {
+            int a = edge[i].s;
+            int b = edge[i].t;
+            if(belong[a] != belong[b])
+                in[belong[b]]++;
+        }
+        int res = 0;
+        for(int i = 1;i<=floor;i++)
+            if(in[i] == 0)
+            res += ans[i];
+        printf("%d\n",res);
+    }
+    return 0;
+}

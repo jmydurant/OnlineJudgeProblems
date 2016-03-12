@@ -1,0 +1,31 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;        //勾股定理。。我都堕落到这种程度了么。。
+int main(void)
+{
+    int a[3];
+    int casenum;
+    int k=1;
+    scanf("%d",&casenum);
+    while(k<=casenum)
+    {
+        int i;
+        for(i=0;i<=2;i++)
+        {
+            scanf("%d",&a[i]);
+        }
+        sort(a,a+3);
+        printf("Scenario #%d:\n",k);
+        if(a[2]*a[2]-a[1]*a[1]-a[0]*a[0])
+        {
+            printf("no\n");
+        }
+        else
+        {
+            printf("yes\n");
+        }
+        printf("\n");
+        k++;
+    }
+    return 0;
+}

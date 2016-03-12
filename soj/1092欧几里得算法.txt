@@ -1,0 +1,28 @@
+#include<cstdio>
+using namespace std;  //我发现我数论弱爆了。。狂补才能解恨。。。
+int x,y,d;
+void gcd(int a,int b)
+{
+int temp;
+if(b==0)
+{
+   x=1,y=0,d=a;
+}
+else
+{
+   gcd(b,a%b);
+   temp=x;
+   x=y;
+   y=temp-a/b*y;
+}
+}
+int main()
+{
+int a,n;
+while(EOF!=scanf("%d%d",&a,&n)&&(n|a))
+{
+   gcd(a,n);
+   printf("%d\n",(x%n+n)%n);
+}
+return 0;
+}

@@ -1,0 +1,74 @@
+#include <iostream>   //原题格式有问题。。所以题目有可能看不懂。。。其实题意是这样的。。给一个集合A  那么V(A)的意思就是
+#include <cstdio>     //所有集合元素是奇数的取法的乘积和。。
+#include <cstring>    //还是没有解释清楚= = 举个例子：A = {1,2,3} 那么奇数的取法是1或2或3  或者1,2,3那么V(A) = 1+2+3+1*2*3 = 12
+#include <algorithm>  //这下应该理解了。。那么其实就是这个式子的结果。。很神奇
+#include <queue>      //((a1+1）*(a2+2)*....(an+1)-(1-a1)*(1-a2)*....(1-an))/2 确实。。偶数取法的都消掉了
+#include <stack>      //剩下的工作只要用乘法逆元就能解决了。。唔噗噗puma！！！
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 51010
+//#define MAXV 101000
+#define INF 500000000
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+void ex_gcd(LL a,LL b,LL& d,LL& x,LL& y)
+{
+    if(!b)
+    {
+        d = a; x = 1; y = 0;
+    }
+    else
+    {
+        ex_gcd(b,a%b,d,y,x);
+        y -= x*(a/b);
+    }
+}
+
+LL inv(LL a)
+{
+    LL d,x,y;
+    ex_gcd(a,mod,d,x,y);
+    return (x+mod)%mod;
+}
+
+const LL ni2 = inv(2);
+
+int main(void)
+{
+    int n;
+    while(EOF!=scanf("%d",&n))
+    {
+        LL s1 = 1,s2 = 1;
+        LL ans;
+        char op[20];
+        for(int i = 1;i<=n;i++)
+        {
+            LL k;
+            scanf("%s%lld",op,&k);
+            if(op[0] == 'i')
+            {
+                s1 *= (k+1);
+                s1 %= mod;
+                s2 *= (1-k+mod)%mod;
+                s2 %= mod;
+                ans = (s1 - s2 +mod)%mod;
+                ans *= ni2;
+                ans %= mod;
+            }
+            else
+            {
+                s1 *= inv(k+1);
+                s1 %= mod;
+                s2 *= inv((1-k+mod)%mod);
+                s2 %= mod;
+                ans = (s1 - s2 +mod)%mod;
+                ans *= ni2;
+                ans %= mod;
+            }
+            printf("%lld\n",ans);
+        }
+    }
+    return 0;
+}

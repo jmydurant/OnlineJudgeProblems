@@ -1,0 +1,14 @@
+#include<stdio.h>
+int main(void)
+{
+    /*我累个擦。刚刚一直超时，怒刷一道水题*/
+    int n;
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d",&n);
+        printf("%d\n",n+2001);
+    }
+    return 0;
+}

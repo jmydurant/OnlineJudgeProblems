@@ -1,0 +1,62 @@
+#include<cstdio>     //ON^3的算法。。有点渣。。。但是还算有效。。好理解。。。问题就是找最小的矩形。。里面至少有K个座位没有被占。。。
+#include<iostream>   //就跟扫最大和矩阵一样。。一行一行。。然后分列扫。。。这样就行了。。。开始记录好sum值。。慢慢做。。就ok了。。。
+#include<cstring>
+#include<climits>
+#include<stack>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<cstdlib>
+#include<queue>
+#define MAX(a,b)  ((a)>(b)?(a):(b))
+#define MIN(a,b)  ((a)<(b)?(a):(b))
+#define abs(a) ((a)>0?(a):(-(a)))
+#define INF 0x7f7f7f7f
+using namespace std;
+char puzzle[310][310];
+int sum[310][310];
+int main(void)
+{
+    int row,col,K;
+    while(EOF!=scanf("%d%d%d",&row,&col,&K)&&(row||col||K))
+    {
+        getchar();
+        memset(sum,0,sizeof(sum));
+        for(int i=0;i<row;i++)
+        {
+            gets(puzzle[i]);
+        }
+        for(int i=0;i<col;i++)
+        {
+            if('.'==puzzle[0][i])sum[1][i+1]=1;
+            for(int j=1;j<row;j++)
+            {
+                sum[j+1][i+1]=sum[j][i+1];
+                if('.'==puzzle[j][i])sum[j+1][i+1]++;
+            }
+        }
+        int ans=INT_MAX;
+        for(int i=0;i<=row-1;i++)
+        {
+            for(int j=i+1;j<=row;j++)
+            {
+                int tmpt=INT_MAX;
+                int head=1;
+                int res=0;
+                for(int k=1;k<=col;k++)
+                {
+                    res+=sum[j][k]-sum[i][k];
+                    while(res-sum[j][head]+sum[i][head]>=K)
+                    {
+                        res-=(sum[j][head]-sum[i][head]);
+                        head++;
+                    }
+                    if(res>=K && (j-i)*(k-head+1)<tmpt)tmpt=(j-i)*(k-head+1);
+                }
+                if(tmpt<ans)ans=tmpt;
+            }
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

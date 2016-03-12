@@ -1,0 +1,62 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+int rev(int n);
+int check(int n);   //水的一B。。但是还是错了一次。。不应该哈。。。
+int main(void)
+{
+    int result;
+    int num;
+    while(EOF!=scanf("%d",&num))
+    {
+        result=0;
+        while(0==check(num))
+        {
+            result++;
+            num+=rev(num);
+        }
+        printf("%d %d\n",result,num);
+    }
+    return 0;
+}
+int rev(int n)
+{
+    int a[15];
+    int i;
+    int power=1;
+    for(i=1;n>0;i++)
+    {
+        a[i]=n%10;
+        n/=10;
+    }
+    i--;
+    n=0;
+    for(;i>=1;i--)
+    {
+        n+=power*a[i];
+        power*=10;
+    }
+    return n;
+}
+int check(int n)
+{
+    int a[15];
+    int i,j;
+    int ok=1;
+    for(i=1;n>0;i++)
+    {
+        a[i]=n%10;
+        n/=10;
+    }
+    for(j=1;j<i-j;j++)
+    {
+        if(a[j]!=a[i-j])
+        {
+            ok=0;
+            break;
+        }
+    }
+    return ok;
+
+}

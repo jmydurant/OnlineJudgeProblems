@@ -1,0 +1,69 @@
+#include <cstdio>   //同poj1466。。奇葩的是。。这个居然输入不是while(1 == scanf("%d",&n))会超时。。擦。。
+#include <cstring>
+#include <cmath>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#define INF 100000000
+#define mod 1000000007LL
+#define MAXN 510
+#define eps  1e-3
+#define abs(x) ((x)>0?(x):(-(x)))
+#define link fasldfjasoif
+using namespace std;
+typedef long long LL;
+bool puzzle[MAXN][MAXN];
+int link[MAXN];
+bool visit[MAXN];
+int n;
+bool dfs(int u)
+{
+    for(int i = 0;i<n;i++)
+    {
+        if(puzzle[u][i] && (!visit[i]))
+        {
+            int j = link[i];
+            visit[i] = true;
+            link[i] = u;
+            if(-1 == j || dfs(j))
+                return true;
+            link[i] = j;
+        }
+    }
+    return false;
+}
+
+int Hungary(void)
+{
+    int ans;
+    int sum = 0;
+    memset(link,-1,sizeof(link));
+    for(int i = 0;i<n;i++)
+    {
+        for(int j = 0;j<n;j++)visit[j] = false;
+        if(dfs(i))
+            sum++;
+    }
+    ans = n - sum/2;
+    return ans;
+}
+
+int main(void)
+{
+    while(1 == scanf("%d",&n))
+    {
+        memset(puzzle,false,sizeof(puzzle));
+        for(int i = 0;i<n;i++)
+        {
+            int a,b;
+            scanf("%d: (%d)",&a,&b);
+            for(int j = 1;j<=b;j++)
+            {
+                int k; scanf("%d",&k);
+                puzzle[a][k] = true;
+            }
+        }
+        printf("%d\n",Hungary());
+    }
+    return 0;
+}

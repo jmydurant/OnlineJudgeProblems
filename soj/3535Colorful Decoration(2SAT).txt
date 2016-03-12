@@ -1,0 +1,176 @@
+#include <iostream>   //第一道2SAT。。。改废了。。。原理就是如果用A不能用B。。则必须有A -- ~B。。然后就是标准算法了。。
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <cstdlib>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#define FOR(i,a,b) for(int i = (int)a ;i<=(int)b;i++)
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define res(x,k) (memset(x,k,sizeof(x)))
+#define eps 1e-4
+#define MAXN 1500
+#define mod 1000000007LL
+using namespace std;
+
+struct node
+{
+    int t,nxt;
+}edge[MAXN*100];
+int headline[MAXN];
+char s[MAXN*10];
+int xa[MAXN],ya[MAXN],xb[MAXN],yb[MAXN];
+int a[MAXN];
+int low[MAXN],dnf[MAXN],Stack[MAXN];
+bool instack[MAXN];
+int belong[MAXN];
+int top,cnt,tot;
+int cal(int a,int b,int c,int d)
+{
+    return MAX(abs(a-c),abs(b-d));
+}
+void add(int f,int t)
+{
+    edge[tot].t = t;
+    edge[tot].nxt = headline[f];
+    headline[f] = tot;
+    tot++;
+}
+int n;
+void tarjan(int u)
+{
+    dnf[u] = low[u] = ++cnt;
+    instack[u] = true;
+    Stack[top++] = u;
+    for(int i = headline[u];i != -1;i = edge[i].nxt)
+    {
+        int b = edge[i].t;
+        if(dnf[b] == -1)
+        {
+            tarjan(b);
+            low[u] = MIN(low[u],low[b]);
+        }
+        else if(instack[b])
+        {
+            low[u] = MIN(low[u],dnf[b]);
+        }
+    }
+    if(low[u] == dnf[u])
+    {
+        tot++;
+        while(true)
+        {
+            int j = Stack[--top];
+            instack[j] = false;
+            belong[j] = tot;
+            if(j == u)
+                break;
+        }
+    }
+}
+
+inline int rev(int k)
+{
+    if(k<n)
+        return k+n;
+    return k-n;
+}
+int main(void)
+{
+    while(gets(s))
+    {
+        n = 0;int temp = 0;
+        while(true)
+        {
+            int sum=0,flag=1;
+            while(s[temp]!=0&&isdigit(s[temp]))
+            {
+                flag = 0;
+                sum = sum*10 + s[temp]-'0';
+                temp++;
+            }
+            if(s[temp] == 0)
+                break;
+            temp++;
+            if(!flag)
+            a[n++] = sum;
+        }
+       int pos=(n+1)/4;
+       for(int i=0;i<pos;i++)
+           xa[i]=a[i];
+       for(int i=0;i<pos;i++)
+           ya[i]=a[i+pos];
+       for(int i=0;i<pos;i++)
+           xb[i]=a[i+2*pos];
+       for(int i=0;i<pos;i++)
+           yb[i]=a[i+3*pos];
+       n=pos;
+        int ans = 0;
+        int l = 0,r = 0;
+        for (int i=0;i<n;i++)
+         for (int j=i+1;j<n;j++)
+         {
+             r=MAX(cal(xa[i],ya[i],xa[j],ya[j]),r);
+             r=MAX(cal(xa[i],ya[i],xb[j],yb[j]),r);
+             r=MAX(cal(xb[i],yb[i],xa[j],ya[j]),r);
+             r=MAX(cal(xb[i],yb[i],xb[j],yb[j]),r);
+         }
+        while(r >= l)
+        {
+            int mid = (r+l)>>1;
+            res(dnf,-1);
+            res(instack,false);
+            res(headline,-1);
+            tot = 0;
+            int x1,y1,x2,y2;
+            for(int i = 0;i<2*n;i++)
+            {
+                for(int j = i+1;j<2*n;j++)
+                {
+                    if(i%n != j%n)
+                    {
+                        x1 = (i < n) ? xa[i] : xb[i-n];
+                        y1 = (i < n) ? ya[i] : yb[i-n];
+                        x2 = (j < n) ? xa[j] : xb[j-n];
+                        y2 = (j < n) ? ya[j] : yb[j-n];
+                        if(abs(x1-x2)<mid && abs(y1-y2)<mid)
+                        {
+                            add(i,rev(j));
+                            add(j,rev(i));
+                        }
+                    }
+                }
+            }
+            //pri();
+
+            top = 0,cnt = 0,tot = 0;
+            for(int i = 0;i<2*n;i++)
+                if(dnf[i] == -1)
+                tarjan(i);
+            bool ok = true;
+            for(int i = 0;i<n;i++)
+            {
+                if(belong[i] == belong[i+n])
+                {
+                    ok = false;
+                    break;
+                }
+            }
+            //getchar();
+            if(ok)
+            {
+                ans = mid;
+                l = mid+1;
+            }
+            else
+            {
+                r = mid-1;
+            }
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

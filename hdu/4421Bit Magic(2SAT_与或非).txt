@@ -1,0 +1,147 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <fstream>    //对这个矩阵的二进制的每一位进行一次2SAT判断可行性。。
+#include <cstdio>     //注意与或非的建边问题。。要仔细。。
+#include <cstring>    //这是当年队训的时候光神过得一道题。。现在也能被我秒了。。好感动。。
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <list>
+#include <utility>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+//#define lson (ind<<1)
+//#define rson (ind<<1|1)
+#define eps 1e-3
+#define INF 50000000
+#define maxn 2100
+#define mod 1000000007LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int cap[31] , n;
+int a[maxn][maxn];
+struct node{
+    int t,nxt;
+}edge[5010100];
+int headline[maxn] , E;
+inline void add(int f,int t){
+    edge[E].t = t;
+    edge[E].nxt = headline[f];
+    headline[f] = E++;
+}
+void buildg(int lalala){
+    rst(headline,-1); E = 0;
+    int p = cap[lalala];
+    FOR(i,0,n-1){
+        FOR(j,2*n,3*n-1){
+            if(i == j - 2*n)continue;
+            if(i % 2 == 1 && j % 2 == 1){
+                if(a[i][j-2*n] & p){
+                    add(i+n , j);
+                    add(j+n , i);
+                }else{
+                    add(i , i+n);
+                    add(j , j+n);
+                    add(i+n , j+n);
+                    add(j+n , i+n);
+                }
+            }else if(i % 2 == 0 && j % 2 == 0){
+                if(a[i][j-2*n] & p){
+                    add(i,j);
+                    add(j,i);
+                    add(i+n , i);
+                    add(j+n , j);
+                }else{
+                    add(i , j+n);
+                    add(j , i+n);
+                }
+            }else{
+                if(a[i][j-2*n] & p){
+                    add(i,j+n);
+                    add(j,i+n);
+                    add(i+n,j);
+                    add(j+n,i);
+                }else{
+                    add(i,j);
+                    add(j,i);
+                    add(i+n,j+n);
+                    add(j+n,i+n);
+                }
+            }
+        }
+    }
+}
+int dfn[maxn] , low[maxn] , tot , st[maxn] , top , belong[maxn] , scc;
+bool instack[maxn];
+void tarjan(int u){
+    dfn[u] = low[u] = ++tot;
+    instack[u] = true;
+    st[top] = u; top++;
+    for(int i = headline[u];~i;i = edge[i].nxt){
+        int v = edge[i].t;
+        if(!dfn[v]){
+            tarjan(v);
+            low[u] = MIN(low[u] , low[v]);
+        }else if(instack[v]) low[u] = MIN(low[u] , dfn[v]);
+    }
+    if(dfn[u] == low[u]){
+        scc++;
+        while(true){
+            top--;
+            int j = st[top];
+            instack[j] = false;
+            belong[j] = scc;
+            if(j == u)break;
+        }
+    }
+}
+bool judge(void){
+    rst(dfn,0); rst(instack,false);
+    tot = top = scc = 0;
+    REP(i,4*n)if(!dfn[i])tarjan(i);
+    FOR(i,0,n-1)if(belong[i] == belong[i+n])return false;
+    FOR(i,2*n,3*n-1)if(belong[i] == belong[i+n])return false;
+    return true;
+}
+void solve(void){
+    bool flag = true;
+    REP(i,n)REP(j,n){
+        scanf("%d",a[i] + j);
+        if(i == j && a[i][j]){
+            flag = false;
+        }
+    }
+    if(!flag){
+        printf("NO\n");
+        return;
+    }
+    FOR(kk,0,30){
+        buildg(kk);
+        if(!judge()){
+            printf("NO\n");
+            return;
+        }
+    }
+    printf("YES\n");
+}
+int main(void){
+    cap[0] = 1;
+    FOR(i,1,30) cap[i] = 2 * cap[i-1];
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

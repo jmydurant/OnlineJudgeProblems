@@ -1,0 +1,63 @@
+#include<cstring>    //这个线段树对我而言比较难想。。。每一段表示这一段还剩多少位置。。比如1---4的线段。。开始有4个位置。。有一个1--4的数进入后
+#include<algorithm>   //就减少1.。。然后就可以排序了。。注意。。对于所以数据。。从后往前扫描。。。
+#include<cmath>
+#include<cstdio>
+using namespace std;
+struct Node
+{
+    int left,right,mid;
+    int value;
+}tree[800000];
+void build_tree(int x,int y,int num)
+{
+    tree[num].left=x;
+    tree[num].right=y;
+    tree[num].mid=(x+y)>>1;
+    tree[num].value=y-x+1;
+    if(x==y)return ;
+    int middle=tree[num].mid;
+    build_tree(x,middle,num<<1);
+    build_tree(middle+1,y,num<<1|1);
+}
+int req_tree(int K,int num)
+{
+    if(tree[num].left==tree[num].right)
+    {
+        tree[num].value=0;
+        return tree[num].left;
+    }
+    tree[num].value--;
+    if(K<=tree[num<<1].value)
+    {
+        return req_tree(K,num<<1);
+    }
+    else
+    {
+        return req_tree(K-tree[num<<1].value,num<<1|1);
+    }
+}
+int a[200100],b[200100];
+int pailie[200100];
+int main(void)
+{
+    int N;
+    while(EOF!=scanf("%d",&N))
+    {
+        memset(pailie,0,sizeof(pailie));
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d%d",a+i,b+i);
+        }
+        build_tree(1,N,1);
+        for(int i=N;i>=1;i--)
+        {
+            int x=req_tree(a[i]+1,1);
+            pailie[x]=i;
+        }
+        for(int i=1;i<=N;i++)
+        {
+            printf("%d%c",b[pailie[i]],(i==N)?'\n':' ');
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,65 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //练习的了一下基础的dp。。lis之后枚举每两个点就可以了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int ldp[1010] , rdp[1010] , n;
+double h[1010];
+void solve(void){
+    FOR(i,1,n) scanf("%lf",h + i);
+    rst(ldp , 0); rst(rdp , 0);
+    FOR(i,1,n){
+        ldp[i] = 1;
+        FOR(j,1,i-1){
+            if(h[i] > h[j]) ldp[i] = MAX(ldp[i] , ldp[j] + 1);
+        }
+        //printf("ldp%d is %d\n",i,ldp[i]);
+    }
+    FORD(i,n,1){
+        rdp[i] = 1;
+        FORD(j,n,i+1){
+            if(h[i] > h[j]) rdp[i] = MAX(rdp[i] , rdp[j] + 1);
+        }
+        //printf("rdp%d is %d\n",i,rdp[i]);
+    }
+    int ans = 0;
+    FOR(i,1,n-1){
+        FOR(j,i+1,n){
+            ans = MAX(ans,ldp[i]+rdp[j]);
+        }
+    }
+    printf("%d\n",n - ans);
+}
+int main(void){
+    while(EOF != scanf("%d",&n)) solve();
+    return 0;
+}

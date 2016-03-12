@@ -1,0 +1,120 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //这题建图有些麻烦。。要bfs很多遍。。不过之后过程就简单很多了。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1400000000
+#define maxn 101010
+//#define mod 1000000007LL
+#define fr first
+#define se second
+#define Pi acos(-1.0)
+//#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+typedef pair<int,int> P;
+int row,col;
+int n;
+int visit[110][110];
+int dx[] = {1,-1,0,0};
+int dy[] = {0,0,1,-1};
+int puzzle[110][110];
+char ss[55][55];
+struct kk{
+    int x,y;
+}pp[110];
+int _hash[55][55];
+int dis[55][55];
+int qx[10001] , qy[100010] ,tail,head;
+void bfs(int ind){
+    int sx = pp[ind].x , sy = pp[ind].y;
+    dis[sx][sy] = 0;
+    visit[sx][sy] = ind;
+    head = 0 , tail = 1;
+    qx[head] = sx , qy[head] = sy;
+    while(head < tail){
+        sx = qx[head] ; sy = qy[head];
+        head++;
+        if(_hash[sx][sy]){
+            puzzle[ind][_hash[sx][sy]] = dis[sx][sy];
+        }
+        REP(k,4){
+            int tx = sx + dx[k] , ty = sy + dy[k];
+            if(tx >= 0 && tx < row && ty >=0 && ty < col && ss[tx][ty] != '#' && visit[tx][ty] != ind){
+                dis[tx][ty] = dis[sx][sy]+1;
+                visit[tx][ty] = ind;
+                qx[tail] = tx; qy[tail] = ty;
+                tail++;
+            }
+        }
+    }
+}
+int path[110];
+int used[110];
+int prim(void){
+    int ans = 0;
+    FOR(i,1,n) path[i] = INF;
+    rst(used,false);
+    path[1] = 0; used[1] = true;
+    int start = 1;
+    FOR(i,2,n){
+        FOR(j,1,n){
+            if((!used[j] && puzzle[start][j] < path[j])){
+                path[j] = puzzle[start][j];
+            }
+        }
+        int minr = INF;
+        FOR(j,1,n){
+            if((!used[j]) && path[j] < minr){
+                minr = path[j];
+                start = j;
+            }
+        }
+        ans += minr;
+        used[start] = true;
+    }
+    return ans;
+}
+void solve(void){
+    scanf("%d%d",&col,&row);gets(ss[0]);
+    REP(i,row) gets(ss[i]);
+    n = 0;
+    rst(_hash,0);
+    rst(visit,0);
+    REP(i,row){
+        REP(j,col){
+            if(ss[i][j] == 'A' || ss[i][j] == 'S'){
+                n++;
+                _hash[i][j] = n;
+                pp[n].x = i, pp[n].y = j;
+            }
+        }
+    }
+    FOR(i,1,n) bfs(i);
+    printf("%d\n",prim());
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--) solve();
+    return 0;
+}

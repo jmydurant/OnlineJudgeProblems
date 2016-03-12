@@ -1,0 +1,88 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 1010
+#define mod 1000000007LL
+using namespace std;
+typedef long long LL;
+typedef pair<int,int> P;
+char puzzle[510][510];
+bool visit[510][510];
+int re;
+int row,col;
+int dx[] = {1,-1,0,0};
+int dy[] = {0,0,1,-1};
+inline bool judge(int x,int y){
+    if(x > 0 && x <= row && y > 0 && y <= col)return true;
+    return false;
+}
+int sx,sy;
+void bfs(void){
+    if(re == 0)return;
+    bool ok = false;
+    FOR(i,1,row){
+        FOR(j,1,col){
+            if(puzzle[i][j] == '.'){
+                sx = i,sy = j;
+                ok = true;
+                break;
+            }
+        }
+        if(ok)break;
+    }
+    queue<P> q;
+    stack<P> st;
+    q.push(make_pair(sx,sy));
+    visit[sx][sy] = true;
+    while(!q.empty()){
+        P temp = q.front(); q.pop();
+        st.push(temp);
+        sx = temp.first, sy = temp.second;
+        REP(i,4){
+            int x = sx + dx[i],  y = sy + dy[i];
+            if(judge(x,y) && (!visit[x][y]) && puzzle[x][y] == '.'){
+                visit[x][y] = true;
+                q.push(make_pair(x,y));
+            }
+        }
+    }
+    while(re){
+        P temp = st.top(); st.pop();
+        re--;
+        puzzle[temp.first][temp.second] = 'X';
+    }
+}
+int main(void){
+    while(3 == scanf("%d%d%d",&row,&col,&re)){
+        FOR(i,1,row){
+            scanf("%s",puzzle[i] + 1);
+        }
+        rst(visit,false);
+        bfs();
+        FOR(i,1,row){
+            printf("%s\n",puzzle[i] + 1);
+        }
+    }return 0;
+}

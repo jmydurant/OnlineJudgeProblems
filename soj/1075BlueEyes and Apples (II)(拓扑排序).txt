@@ -1,0 +1,84 @@
+#include<stdio.h>
+#include<string.h>
+struct cmpapp
+{
+    char heavapp[3];
+    char littapp[3];
+};
+char lastapple;
+struct cmpapp apple[30];                    //各种小错误。。。不过终于过了。。。拓扑排序。。啦啦啦
+int findapp(int n);
+int main(void)
+{
+    int n;
+    int over;
+    while(EOF!=scanf("%d",&n)&&n)
+    {
+        int loop,i;
+        for(i=1;i<=n;i++)
+        {
+            scanf("%s%s",apple[i].heavapp,apple[i].littapp);
+        }
+
+        for(loop=1;loop<=n+20;loop++)
+        {
+            over=findapp(n);
+            if(over)
+            {
+                break;
+
+            }
+        }
+
+
+    }
+  return 0;
+}
+int findapp(int n)
+{
+    int i,j;
+    int fail;
+    char exchange;
+    int k;
+    for(i=1;i<=n;i++)
+    {
+        fail=0;
+        if(apple[i].heavapp[0]=='\0')
+            {
+                continue;
+            }
+        for(j=1;j<=n;j++)
+        {
+            if(apple[j].littapp[0]==apple[i].heavapp[0])
+            {
+                    fail=1;
+            }
+
+        }
+
+        if(fail==0)
+        {
+
+            printf("%c ",apple[i].heavapp[0]);
+            exchange=apple[i].heavapp[0];
+            for(k=1;k<=n;k++)
+            {
+                if(apple[k].heavapp[0]==exchange)
+                {
+                        apple[k].heavapp[0]='\0';
+                        lastapple=apple[k].littapp[0];
+                        apple[k].littapp[0]='\0';
+                }
+            }
+
+            return 0;
+        }
+
+
+
+    }
+    printf("%c\n",lastapple);
+    return 1;
+
+
+}

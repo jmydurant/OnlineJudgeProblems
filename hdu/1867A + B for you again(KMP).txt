@@ -1,0 +1,67 @@
+#include <iostream>   //我是沙茶.....分别看a接b和b接a那个符合题意就可以了。。
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 210000
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+char a[maxn],b[maxn];
+char xa[maxn],xb[maxn];
+int nxt[maxn],ans;
+int getnxt(int len,char *temp){
+    nxt[0] = -1;
+    int k = -1;
+    FOR(i,1,len-1){
+        while(k>-1 && temp[i] != temp[k+1]) k = nxt[k];
+        if(temp[i] == temp[k+1]) k++;
+        nxt[i] = k;
+    }return nxt[len-1]+1;
+}
+void INIT(void){
+    scanf("%s",b);
+    int la = strlen(a), lb = strlen(b);
+    int tt = MIN(la,lb);
+    strcpy(xa,a); strcpy(xb,b);
+    strcat(xa,b); strcat(xb,a);
+    int sa = getnxt(la+lb,xa), sb = getnxt(la+lb,xb);
+    sa = MIN(tt,sa); sb = MIN(tt,sb);
+    if(sa>sb){
+        printf("%s",b);
+        FOR(i,sa,la-1)printf("%c",a[i]);printf("\n");
+    }else if(sb>sa){
+        printf("%s",a);
+        FOR(i,sb,lb-1)printf("%c",b[i]);printf("\n");
+    }else{
+        if(strcmp(a,b)<0){
+            printf("%s",a);
+            FOR(i,sb,lb-1)printf("%c",b[i]);printf("\n");
+        }else{
+            printf("%s",b);
+            FOR(i,sa,la-1)printf("%c",a[i]);printf("\n");
+        }
+    }
+}
+int main(void){
+    while(~scanf("%s",a))INIT();
+    return 0;
+}

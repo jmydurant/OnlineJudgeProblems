@@ -1,0 +1,57 @@
+#include<cstdio>
+#include<cstring>
+int first[100100];
+int second[100100];                   //算是弱智版本的hash表么。。。
+int visit[100100];                    //这个数字之前出现过没有。。
+using namespace std;
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int n;
+        int i,start=1,result=0;
+        scanf("%d",&n);
+        memset(first,0,sizeof(first));
+        memset(second,0,sizeof(second));
+        memset(visit,0,sizeof(visit));
+        for(i=1;i<=n;i++)
+        {
+            scanf("%d",&first[i]);
+        }
+        for(i=1;i<=n;i++)
+        {
+            scanf("%d",&second[i]);
+        }
+        for(i=1;i<=n;i++)
+        {
+            int tmpt=first[i];
+            if(visit[tmpt])
+            {
+                result--;
+            }
+            else
+            {
+                result++;
+                visit[tmpt]=1;
+            }
+            tmpt=second[i];
+            if(visit[tmpt])
+            {
+                result--;
+            }
+            else
+            {
+                result++;
+                visit[tmpt]=1;
+            }
+            if(0==result)
+            {
+                printf("%d-%d%c",start,i,(0==i%n)?'\n':' ');
+                start=i+1;
+            }
+        }
+    }
+    return 0;
+}

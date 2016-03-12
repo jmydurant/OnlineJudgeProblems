@@ -1,0 +1,28 @@
+#include<cstring>   //判断的方法异常简单。。但是。。很难想。。。我是2*n和3*n一直递推的。。。。
+#include<cstdio>
+#include<climits>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int a,b;
+        scanf("%d%d",&a,&b);
+        if((1==a%2) && (1==b%2) )printf("Aoiing will win.\n");
+        else printf("Zhym will win.\n");
+    }
+    return 0;
+}

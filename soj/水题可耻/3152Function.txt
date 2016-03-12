@@ -1,0 +1,32 @@
+#include<cstring>   //¶î¡£¡£Ë¯¾õÇ°Ò»Ë®¡£¡£¡£
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+#define MOD 19871118LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+long long dp[52];
+int main(void)
+{
+    dp[0]=dp[1]=dp[2]=1;
+    for(int i=3;i<=50;i++)
+    {
+        dp[i]=dp[i-1]-2*dp[i-2]+3*dp[i-3];
+    }
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int k; scanf("%d",&k);
+        printf("%lld\n",dp[k]);
+    }
+    return 0;
+}

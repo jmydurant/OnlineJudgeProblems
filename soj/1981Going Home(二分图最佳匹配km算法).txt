@@ -1,0 +1,101 @@
+#include <iostream>   //sojµÄlinkÊÇ¸ö²ÐÄî°¡
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 110
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+struct node{
+    int x, y;
+}people[maxn],house[maxn];
+int row,col;
+int n;
+char s[maxn];
+int puzzle[maxn][maxn];
+int lx[maxn],ly[maxn],link[maxn],slack[maxn];
+bool vx[maxn],vy[maxn];
+int np,nh;
+bool dfs(int x){
+    vx[x] = true;
+    FOR(y,1,nh){
+        if(vy[y]) continue;
+        int tt = lx[x] + ly[y] - puzzle[x][y];
+        if(tt == 0){
+            vy[y] = true;
+            if(link[y] == -1 || dfs(link[y])){
+                link[y] = x;
+                return true;
+            }
+        }else if(slack[y] > tt){
+            slack[y] = tt;
+        }
+    }return false;
+}
+void km(void){
+    FOR(i,1,nh)ly[i] = 0;
+    rst(link,-1);
+    FOR(i,1,np){
+        lx[i] = -INF;
+        FOR(j,1,nh){
+            if(puzzle[i][j] > lx[i]) lx[i] = puzzle[i][j];
+        }
+    }
+    FOR(i,1,np){
+        FOR(j,1,nh) slack[j] = INF;
+        while(true){
+            rst(vx,false);
+            rst(vy,false);
+            if(dfs(i)) break;
+            int deta = INF;
+            FOR(j,1,nh)if((!vy[j]) && deta > slack[j]) deta = slack[j];
+            FOR(j,1,np)if(vx[j]) lx[j] -= deta;
+            FOR(j,1,nh){
+                if(vy[j]) ly[j] += deta;
+                else      slack[j] -= deta;
+            }
+        }
+    }
+    int ans = 0;
+    FOR(i,1,nh){
+        if(link[i] != -1) ans += puzzle[link[i]][i];
+    }
+    printf("%d\n",1000*np - ans);
+}
+void INIT(void){
+    np = 0,nh = 0;
+    FOR(i,1,row){
+        scanf("%s",s+1);
+        FOR(j,1,col){
+            if(s[j] == 'H') house[++nh].x = i,house[nh].y = j;
+            else if(s[j] == 'm') people[++np].x = i,people[np].y = j;
+        }
+    }
+    FOR(i,1,np){
+        FOR(j,1,nh)puzzle[i][j] = abs(people[i].x - house[j].x) + abs(people[i].y - house[j].y), puzzle[i][j] = 1000 - puzzle[i][j];
+    }
+    km();
+}
+int main(void){
+    while(2 == scanf("%d%d",&row,&col)){
+        INIT();
+    }return 0;
+}

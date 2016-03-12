@@ -1,0 +1,31 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <climits>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define MAXN 100
+using namespace std;
+
+int N,M;
+int data[MAXN];
+int main(void)
+{
+    while(2==scanf("%d%d",&N,&M))
+    {
+        for(int i = 1;i<=M;i++)
+        {
+            scanf("%d",data+i);
+        }
+        sort(data+1,data+M+1);
+        int ans = INT_MAX;
+        for(int i = 1;i<=M-N+1;i++)
+        {
+            if(data[i+N-1]-data[i]<ans)
+                ans = data[i+N-1]-data[i];
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}

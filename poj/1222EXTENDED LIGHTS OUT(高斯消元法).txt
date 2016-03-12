@@ -1,0 +1,98 @@
+#include<cstdio>   //第一次遇到高斯消元法。。把模板记下来就可以了。。这题使用的异或运算。。总共30个变量30个方程。。。解决起来还是有规律可循的。。
+#include<climits>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int a[50][50];
+int x[50];
+int equ,var;
+void INIT(void)
+{
+    equ=30,var=30;
+    memset(a,0,sizeof(a));
+    for(int i=0;i<5;i++)
+    {
+        for(int j=0;j<6;j++)
+        {
+            int t=6*i+j;
+            a[t][t]=1;
+            if(i>0)a[(i-1)*6+j][t]=1;
+            if(i<4)a[(i+1)*6+j][t]=1;
+            if(j>0)a[i*6+j-1][t]=1;
+            if(j<5)a[i*6+j+1][t]=1;
+        }
+    }
+}
+void Gauss(void)
+{
+    int col=0,k;
+    for(k=0;k<equ && col<var;k++,col++)
+    {
+        //printf("pass\n");
+        int maxr=k;
+       // printf("pass\n");
+        for(int i=k+1;i<equ;i++)
+            if(a[i][col]>a[maxr][col])
+            maxr=i;
+       // printf("pass\n");
+        if(maxr!=k)
+        {
+            for(int i=col;i<=var;i++)
+            {
+                swap(a[k][i],a[maxr][i]);
+            }
+        }
+        //printf("pass\n");
+        if(0==a[k][col])
+        {
+            k--;
+            continue;
+        }
+        //printf("pass\n");
+        for(int i=k+1;i<equ;i++)
+        {
+            if(a[i][col])
+            {
+                for(int j=col;j<=var;j++)
+                {
+                    a[i][j]^=a[k][j];
+                }
+            }
+        }
+    }
+    for(int i=equ-1;i>=0;i--)
+    {
+        x[i]=a[i][var];
+        for(int j=i+1;j<var;j++)
+        {
+            x[i]^=(x[j] & a[i][j]);
+        }
+    }
+}
+int main(void)
+{
+    int casenum; scanf("%d",&casenum);
+    int iCase=1;
+    for(;iCase<=casenum;iCase++)
+    {
+        INIT();
+        for(int i=0;i<30;i++)scanf("%d",&a[i][30]);
+        Gauss();
+        printf("PUZZLE #%d\n",iCase);
+        for(int i=0;i<30;i++)
+        {
+            printf("%d%c",x[i],(0==((i+1)%6))?'\n':' ');
+        }
+    }
+}

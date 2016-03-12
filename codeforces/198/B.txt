@@ -1,0 +1,26 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#define MAXN 1000001
+using namespace std;
+typedef long long LL;
+
+LL m,n,mod;
+int main(void)
+{
+    while(cin >> n >> m)
+    {
+        mod = n;
+        LL ans = 0;
+        LL head = 1,tail;
+        for(int i = 1;i<=m;i++)
+        {
+            cin >> tail;
+            LL temp = tail - head;
+            temp = (temp%mod+mod)%mod;
+            ans += temp;
+            head = tail;
+        }
+        cout << ans << endl;
+    }
+}

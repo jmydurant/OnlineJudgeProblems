@@ -1,0 +1,67 @@
+#include <stdio.h>   //用dij算法。。每次更新dis就行了。。dis记录的东西变成的这个路径中的最长边。。。
+#include <iostream>
+#include <cstring>
+#include <queue>
+#include <cstdlib>
+#include <cmath>
+#include <map>
+#include <string>
+#define INF 9999999999999999999999999.0
+#define MAXN 51000
+#define eps 1e-10
+#define abs(a) ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+struct node
+{
+    double x,y;
+}p[250];
+int N;
+bool visit[250];
+double dis[250];
+inline double cal(node a,node b)
+{
+    return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y);
+}
+void dijkstra(void)
+{
+    memset(visit,false,sizeof(visit));
+    for(int i=1;i<=N;i++)
+        dis[i]=INF;
+    dis[1]=0.0;
+    int start=1,tmpt=1;
+    visit[1]=true;
+    while(start!=2)
+    {
+        for(int i=1;i<=N;i++)
+        {
+            if((!visit[i]) && dis[i]>MAX(dis[start],cal(p[start],p[i])))
+               dis[i]=MAX(dis[start],cal(p[start],p[i]));
+        }
+        double minr=INF;
+        for(int i=1;i<=N;i++)
+        {
+            if((!visit[i]) && dis[i]<minr)
+            {
+                minr=dis[i];
+                tmpt=i;
+            }
+        }
+        start=tmpt;
+        visit[start]=true;
+    }
+}
+int main(void)
+{
+    int iCase=1;
+    while(EOF!=scanf("%d",&N) && N)
+    {
+        for(int i=1;i<=N;i++)
+            scanf("%lf%lf",&p[i].x,&p[i].y);
+        dijkstra();
+        printf("Scenario #%d\nFrog Distance = %.3lf\n\n",iCase,sqrt(dis[2]));
+        iCase++;
+    }
+    return 0;
+}

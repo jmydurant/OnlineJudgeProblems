@@ -1,0 +1,130 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //一个比较麻烦的就是路径统计。。其他的没什么。都是最基础的dp思想。。
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 1000000000
+#define maxn 1010000
+using namespace std;
+typedef long long LL;
+struct node{
+    int fail,cnt;
+    int nxt[26];
+    void INIT(void){
+        fail = cnt = 0;
+        rst(nxt,0);
+    }
+}tree[1010];
+int tot;
+void Insert(char *s,int val){
+    int now = 0;
+    for(;*s;s++){
+        int c = *s - 'a';
+        if(tree[now].nxt[c] == 0){
+            tot++; tree[tot].INIT();
+            tree[now].nxt[c] = tot;
+        }
+        now = tree[now].nxt[c];
+    }
+    tree[now].cnt += val;
+}
+void bfs(void){
+    int now = 0;
+    queue<int> q; q.push(0);
+    while(!q.empty()){
+        now = q.front(); q.pop();
+        REP(i,26){
+            if(tree[now].nxt[i]){
+                int temp = tree[now].nxt[i];
+                if(now){
+                    tree[temp].fail = tree[tree[now].fail].nxt[i];
+                }
+                q.push(temp);
+                tree[temp].cnt += tree[tree[temp].fail].cnt;
+            }else tree[now].nxt[i] = tree[tree[now].fail].nxt[i];
+        }
+    }
+}
+char s[110][15];
+int misaka[110];
+int n,m,dp[51][1010];
+string path[51][1010];
+void solve(void){
+    tot = 0; tree[0].INIT();
+    scanf("%d%d",&n,&m);
+    REP(i,m) scanf("%s",s[i]);
+    REP(i,m) scanf("%d",misaka+i);
+    REP(i,m) Insert(s[i],misaka[i]);
+    bfs();
+    FOR(i,0,n){
+        FOR(j,0,tot){
+            path[i][j].clear();
+            dp[i][j] = -1;
+        }
+    }
+    dp[0][0] = 0;
+    string tt;
+    int ans = 0;
+    FOR(i,1,n){
+        FOR(j,0,tot){
+            if(dp[i-1][j] < 0)continue;
+            REP(k,26){
+                int temp = tree[j].nxt[k];
+                if(dp[i][temp] < dp[i-1][j] + tree[temp].cnt){
+                    dp[i][temp] = dp[i-1][j] + tree[temp].cnt;
+                    tt.clear(); tt.push_back(k+'a');
+                    path[i][temp] = path[i-1][j] + tt;
+                }else if(dp[i][temp] == dp[i-1][j] + tree[temp].cnt){
+                    tt.clear(); tt.push_back(k + 'a');
+                    tt = path[i-1][j] + tt;
+                    if(tt < path[i][temp]) path[i][temp] = tt;
+                }
+                ans = MAX(ans,dp[i][temp]);
+            }
+        }
+    }
+    if(ans == 0)cout << endl;
+    else{
+        bool is_find = false;
+        int len;
+        FOR(i,0,n){
+            FOR(j,0,tot){
+                if(ans == dp[i][j]){
+                    is_find = true;
+                    tt = path[i][j];
+                    len = i;
+                    break;
+                }
+            }
+            if(is_find)break;
+        }
+        //cout << "len is " << len << endl;
+        FOR(j,0,tot){
+            if(ans == dp[len][j] && path[len][j] < tt) tt = path[len][j];
+        }
+        cout << tt << endl;
+    }
+}
+int main(void){
+    int casenum; scanf("%d",&casenum);
+    while(casenum--)solve();
+    return 0;
+}

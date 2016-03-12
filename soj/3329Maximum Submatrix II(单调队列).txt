@@ -1,0 +1,79 @@
+#include<cstdio>     //和那个广告印刷差不多。。。因为不需要从队首弹出。。所以用栈就可以了。。
+#include<cstring>    //从左到右与从右到左扫两遍。。维护非严格单调增就可以了。。。。
+#include<queue>      //好像这种题目理解之后就很好做了。。。
+#include<vector>
+#include<map>
+#include<climits>
+#include<stack>
+#include<cmath>
+#include<deque>
+#define INF 100000000
+using namespace std;
+typedef pair <int, int> point;
+int left[1010],right[1010],h[1010];
+stack<point>q;
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int result=0;
+        int row,col;scanf("%d%d",&row,&col);
+        memset(h,0,sizeof(h));
+        memset(left,0,sizeof(left));
+        memset(right,0,sizeof(right));
+        h[0]=-1;h[col+1]=-1;
+        for(int i=1;i<=row;i++)
+        {
+            int p_max=0;
+            for(int j=1;j<=col;j++)
+            {
+                int a;
+                scanf("%d",&a);
+                if(0==a)h[j]+=1;
+                else h[j]=0;
+            }
+            for(int j=1;j<=col+1;j++)
+            {
+                while(!q.empty())
+                {
+                    point abc=q.top();
+                    if(abc.first>h[j])
+                    {
+                        right[abc.second]=j;
+                        q.pop();
+                        continue;
+                    }
+                    break;
+                }
+                q.push(point(h[j],j));
+            }
+            while(!q.empty())q.pop();
+            for(int j=col;j>=0;j--)
+            {
+                while(!q.empty())
+                {
+                    point abc=q.top();
+                    if(abc.first>h[j])
+                    {
+                        left[abc.second]=j;
+                        q.pop();
+                        continue;
+                    }
+                    break;
+                }
+                q.push(point(h[j],j));
+            }
+            while(!q.empty())q.pop();
+            for(int j=1;j<=col;j++)
+            {
+                int abc=h[j]*(right[j]-left[j]-1);
+                if(abc>p_max)p_max=abc;
+            }
+            if(p_max>result)result=p_max;
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

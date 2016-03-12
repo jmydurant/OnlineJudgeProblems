@@ -1,0 +1,56 @@
+#include <iostream>   //我是沙茶.....思路见下
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define maxn 1010000
+#define INF 2100001000
+#define mod 1000000007LL
+#define link fsafsdfas
+using namespace std;
+typedef long long LL;
+char a[maxn];
+int nxt[maxn];
+void getnxt(void){
+    int len = strlen(a);
+    nxt[0] = -1;
+    int k = -1;
+    FOR(i,1,len-1){
+        while(k>-1 && a[k+1] != a[i]) k = nxt[k];
+        if(a[k+1] == a[i])k++;
+        nxt[i] = k;
+    }
+}
+void solve(void){
+    getnxt();
+    int len = strlen(a);
+    if(len % (len-nxt[len-1]-1) == 0)printf("%d\n",len / (len-nxt[len-1]-1));
+    else printf("1\n");
+}
+int main(void){
+    while(gets(a) && a[0] != '.'){
+        solve();
+    }return 0;
+}
+假设S的长度为len，则S存在循环子串，当且仅当，len可以被len - next[len]整除，最短循环子串为S[len - next[len]]
+
+例子证明：
+设S=q1q2q3q4q5q6q7q8，并设next[8] = 6，此时str = S[len - next[len]] = q1q2，由字符串特征向量next的定义可知，q1q2q3q4q5q6 = q3q4q5q6q7q8，即有q1q2＝q3q4，q3q4＝q5q6，q5q6＝q7q8，即q1q2为循环子串，且易知为最短循环子串。由以上过程可知，若len可以被len - next[len]整除，则S存在循环子串，否则不存在。
+
+解法：利用KMP算法，求字符串的特征向量next，若len可以被len - next[len]整除，则最大循环次数n为len/(len - next[len])，否则为1。

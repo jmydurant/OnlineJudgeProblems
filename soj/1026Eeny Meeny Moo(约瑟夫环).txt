@@ -1,0 +1,32 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>  //丢手绢。。。是一个由子问题推原问题的题目。。。数学扎实就可以。。约瑟夫环可以自行百度。。
+#include<climits>
+using namespace std;
+int f[160];
+int vis[160];
+int main(void)
+{
+    int num;
+    memset(vis,0,sizeof(vis));
+    while(EOF!=scanf("%d",&num)&&num)
+    {
+        num-=1;
+        if(vis[num])
+        {
+            printf("%d\n",vis[num]);
+            continue;
+        }
+        int i,j;
+        for(i=2;;i++)
+        {
+            memset(f,0,sizeof(f));
+            for(j=2;j<=num;j++)
+            {
+                f[j]=(f[j-1]+i)%j;
+            }
+            if(0==f[num]){vis[num]=i;printf("%d\n",i);break;}
+        }
+    }
+    return 0;
+}

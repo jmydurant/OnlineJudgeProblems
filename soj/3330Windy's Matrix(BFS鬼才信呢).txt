@@ -1,0 +1,68 @@
+#include<cstdio>
+#include<cstring>   //被题目分类给坑了。。我居然用队列真的BFS模拟去了。。。
+#include<queue>    //我的原理。。开始找到所有1的位置。。然后像墨水散开一样。。第一波被波及的0就是距离为1的。。第二波为2.。把他们都加起来。。
+#include<cmath>
+using namespace std;
+int puzzle[1010][1010];
+int a_x[80000],a_y[80000],b_x[80000],b_y[80000];
+int visit[1010][1010];     //用这个数组判断墨水有没有浸没过。。如果开始就是1.。那么没扩散之前就被浸没了。。。
+int dx[]={0,0,1,-1};
+int dy[]={1,-1,0,0};
+int bfs(void);
+int row,col;
+int ones;
+int main(void)
+{
+    int casenum;scanf("%d",&casenum);
+    while(casenum--)
+    {
+        scanf("%d%d",&row,&col);
+        ones=0;
+        memset(visit,0,sizeof(visit));
+        for(int i=1;i<=row;i++)
+            for(int j=1;j<=col;j++)
+            {
+                scanf("%d",&puzzle[i][j]);
+                if(puzzle[i][j])
+                {
+                    a_x[++ones]=i;
+                    a_y[ones]=j;
+                    visit[i][j]=0;
+                }
+            }
+        printf("%d\n",bfs());
+    }
+    return 0;
+}
+int bfs(void)
+{
+    int result=0;
+    int road=1;
+    while(ones>0)
+    {
+        int tmpt=0;
+        for(int k=1;k<=ones;k++)
+        {
+            for(int dir=0;dir<=3;dir++)
+            {
+                int x=a_x[k]+dx[dir],y=a_y[k]+dy[dir];
+                if(x<=0||y<=0||x>row||y>col)continue;
+                if(0==visit[x][y]&&0==puzzle[x][y])
+                {
+                    b_x[++tmpt]=x;
+                    b_y[tmpt]=y;
+                    visit[x][y]=1;
+                }
+            }
+        }
+        result+=tmpt*road;
+        road++;
+        for(int i=1;i<=tmpt;i++)
+        {
+            a_x[i]=b_x[i];
+            a_y[i]=b_y[i];
+        }
+        ones=tmpt;
+    }
+    return result;
+}

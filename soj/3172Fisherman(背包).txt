@@ -1,0 +1,42 @@
+#include<cstdio>
+#include<cstring>
+#define INF 10000000  //这道题用背包正合适。。背包真是个好东西。。对于N背包来说。。dp【N】代表装鱼的最小数。。当然。。如果不是INF则代表可行。。
+using namespace std;
+int dp[30010];
+int w[31];
+int MIN(int a,int b){return a<b?a:b;}
+int main(void)
+{
+    int casenum;
+    scanf("%d",&casenum);
+    while(casenum--)
+    {
+        int N;
+        int HP=0;
+        int result=0;
+        scanf("%d",&N);
+        for(int i=1;i<=N;i++)
+        {
+            scanf("%d",w+i);
+            HP+=w[i];
+        }
+        for(int i=1;i<=HP;i++)
+        {
+            dp[i]=INF;
+        }
+        dp[0]=0;
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=HP;j>=w[i];j--)
+            {
+                dp[j]=MIN(dp[j],dp[j-w[i]]+1);
+            }
+        }
+        for(int i=1;i<=HP;i++)
+        {
+            if(INF!=dp[i])result++;
+        }
+        printf("%d\n",result);
+    }
+    return 0;
+}

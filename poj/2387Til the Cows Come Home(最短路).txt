@@ -1,0 +1,56 @@
+#include <iostream>   //最简单的Dijkstra算法。。。就是用临街矩阵来做有点慢。。
+#include <cstdio>    //只是因为是基础题。。所以不作优化了。。。。
+#include <cstring>
+#include <algorithm>
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 0x0f0f0f0f
+using namespace std;
+int puzzle[1010][1010];
+int path[1010];
+int visit[1010];
+int main(void)
+{
+    int T,N;
+    while(2==scanf("%d%d",&T,&N))
+    {
+        memset(visit,0,sizeof(visit));
+        memset(puzzle,INF,sizeof(puzzle));
+        for(int i=1;i<=T;i++)
+        {
+            int x,y,z; scanf("%d%d%d",&x,&y,&z);
+            puzzle[x][y]=MIN(puzzle[x][y],z);
+            puzzle[y][x]=MIN(puzzle[y][x],z);
+        }
+        for(int i=1;i<=N;i++)
+        {
+            path[i]=puzzle[i][N];
+        }
+        int start=N,aim=1;
+        visit[N]=1;
+        while(start!=aim)
+        {
+            int minroad=INF;
+            int tmpt;
+            for(int i=1;i<N;i++)
+            {
+                if(!visit[i])
+                {
+                    if(puzzle[i][start]+path[start]<path[i])
+                    {
+                        path[i]=puzzle[i][start]+path[start];
+                    }
+                    if(path[i]<minroad)
+                    {
+                        minroad=path[i];
+                        tmpt=i;
+                    }
+                }
+            }
+            start=tmpt;
+            visit[start]=1;
+        }
+        printf("%d\n",path[1]);
+    }
+}
+
+

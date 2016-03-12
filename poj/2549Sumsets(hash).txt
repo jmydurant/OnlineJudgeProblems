@@ -1,0 +1,111 @@
+#include <cstdio>   //原理见下。。。。
+#include <cstring>
+#include <map>
+#include <set>
+#include <algorithm>
+#include <climits>
+#define mod 999983   //一个好用的素数。。
+using namespace std;
+typedef long long LL;
+struct node
+{
+    int num;
+    int x,y;
+    node* nxt;
+}*hash[mod+2];
+int a[1010];
+void insert(int v,int x,int y)
+{
+    int aim = (v%mod+mod)%mod;
+    if(hash[aim] == NULL)
+    {
+        node *p = new node;
+        hash[aim] = p;
+        p->num = v;
+        p->x = x;
+        p->y = y;
+        p->nxt = NULL;
+        return;
+    }
+    else
+    {
+        node *i = hash[aim];
+        for(;i->nxt != NULL;i = i->nxt)
+        {
+            if(v == i->num)
+            {
+                i->x = -1;
+                i->y = -1;
+                return;
+            }
+        }
+        if(i->num == v)
+        {
+            i->x = -1;
+            i->y = -1;
+            return;
+        }
+        node *p = new node;
+        p->x = x;
+        p->y = y;
+        p->num = v;
+        p->nxt = NULL;
+        i->nxt = p;
+    }
+}
+
+bool find(int v,int x,int y)
+{
+    int aim = (v%mod+mod)%mod;
+    node *i = hash[aim];
+    for(;i != NULL;i = i->nxt)
+    {
+        if(i->num == v)
+        {
+            if(i->x != x && i->y != y && i->x != y && i->y != x)
+            {
+                //printf("bianhao is %d    %d     i->num is  %d\n",x,y,i->num);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main(void)
+{
+    int n;
+    while(EOF!=scanf("%d",&n) && n)
+    {
+        memset(hash,0,sizeof(hash));
+        for(int i = 0;i<n;i++)
+            scanf("%d",a+i);
+        sort(a,a+n);
+        for(int i = 0;i<n;i++)
+        {
+            for(int j = i+1;j<n;j++)
+                insert(a[i]+a[j],i,j);
+        }
+        int ok = false;
+        for(int i = n-1;i>=0;i--)
+        {
+            for(int j = 0;j<n;j++)
+            {
+                if((i!= j) && find(a[i]-a[j],i,j))
+                {
+                    ok = true;
+                    //printf("ok ok find it %d     %d\n",a[i],a[j]);
+                    printf("%d\n",a[i]);
+                    break;
+                }
+            }
+            if(ok)break;
+        }
+        if(!ok)
+            printf("no solution\n");
+    }
+    return 0;
+}
+大意说：给你1000个不同数S，找出符合a+b+c=d最大的d值，其中四者是S中不同的数。
+
+     解法：分解为a+b=d-c，这样，先插入a+b到hash表中，在枚举计算d-c值；可以先排序

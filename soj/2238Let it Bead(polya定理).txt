@@ -1,0 +1,63 @@
+#include<cstring>   //定理看懂了。。。但是只能做这种简单的题目。。。哎。。。
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+#include<queue>
+#include<cstdlib>
+#include<cmath>
+#include<stack>
+#include<map>
+#include<vector>
+#define abs(a)  ((a)>0?(a):(-(a)))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define INF 1000000000000LL
+#define MOD 1000003LL
+#define lowbit(a) (a)^(-(a))
+using namespace std;
+int p_pow(int x,int n)
+{
+    int ans=1;
+    while(n)
+    {
+        if(n%2)ans*=x;
+        x*=x;
+        n/=2;
+    }
+    return ans;
+}
+int p_gcd(int a,int b)
+{
+    int tmpt;
+    while(b)
+    {
+        tmpt=a%b;
+        a=b;
+        b=tmpt;
+    }
+    return a;
+}
+int main(void)
+{
+    int c,n;
+    while(2==scanf("%d%d",&c,&n) && (c || n))
+    {
+        int ans=0;
+        for(int i=1;i<=n;i++)
+        {
+            ans+=p_pow(c,p_gcd(i,n));
+        }
+        if(n%2)
+        {
+            ans+= n*p_pow(c,n/2+1);
+        }
+        else
+        {
+            ans+=(n/2)*(p_pow(c,n/2));
+            ans+=(n/2)*(p_pow(c,n/2+1));
+        }
+        ans/=(2*n);
+        printf("%d\n",ans);
+    }
+    return 0;
+}

@@ -1,0 +1,43 @@
+#include<iostream>      //这题比较操蛋。。。超时了3次。。ON^3的算法果然是渣渣。。。
+#include<cstring>       //显然。。递推方程是dp[i]=MIN(dp[i],dp[j]+1)..然后就是找到所有合法的j。。我开始就老实的去找了。。果断太慢。。
+#include<cstdio>       //其实只要递推比较斜率就可以了。。。永远记录的是成功的最小斜率。。如果当前的斜率大于他的话。。果断非法。。
+#include<algorithm>    //如果小于的话。。那么这个j就是合法的。。记录他的斜率。。然后和dp[i]比较。。最后得出dp[N]。。
+#include<climits>
+#define abs(a)  ((a)>0?(a):(-a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+long long h[5010];
+long long dp[5010];
+inline bool check_ok(long long x,long long y,long long x1,long long y1)
+{
+    if(y*x1>=y1*x)return true;
+    return false;
+}
+int main(void)
+{
+    int N,K;
+    while(2==scanf("%d%d",&N,&K))
+    {
+        for(int i=1;i<=N;i++)scanf("%lld",h+i);
+        dp[1]=1;
+        for(int i=2;i<=N;i++)
+        {
+            dp[i]=dp[i-1]+1;
+            int l=MAX(1,i-K);
+            int r=i;
+            long long x=1,y=h[i]-h[i-1];
+            for(int j=i-2;j>=l;j--)
+            {
+                long long x1=r-j,y1=h[r]-h[j];
+                if(check_ok(x,y,x1,y1))
+                {
+                    dp[i]=MIN(dp[j]+1,dp[i]);
+                    x=x1;y=y1;
+                }
+            }
+        }
+        printf("%lld\n",dp[N]);
+    }
+    return 0;
+}

@@ -1,0 +1,60 @@
+#include <iostream>   //我是沙茶....今天又写搓了。。
+#include <cstdio>     //确实这个博弈比较复杂。。详见http://blog.csdn.net/shahdza/article/details/7858032
+#include <cstring>    //可以将人分组。。这样就变成了nim堆博弈。。king在组前还是后是没有关系的。(组后好理解。。裸nim)组前可以这样转换。。
+#include <algorithm>  //当k-1前面的k-2已经到top时。。我们可以想象k-1移到1位置就死掉了。。称为废人。。所以相当于空堆。。所以当所有都不能移动的时候那个人就输了。。
+#include <queue>      //所以当k为2且为奇数时。第一堆直接减一。。原理就在于此。。
+#include <stack>
+#include <climits>
+#include <ctime>
+#include <cmath>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define abs(x) ((x)>0?(x):(-(x)))
+#define FOR(i,a,b) for(int i = (a);i<=(b);i++)
+#define FORD(i,a,b) for(int i = (a);i>=(b);i--)
+#define REP(i,n) for(int i = 0;i<(n);i++)
+#define rst(x,k) memset(x,k,sizeof(x))
+#define lowbit(x) ((x)&(-(x)))
+#define h(x) (1<<(x))
+#define lson (ind<<1)
+#define rson (ind<<1|1)
+#define eps 1e-6
+#define INF 14000000
+#define maxn 500000
+#define mod 835672545LL
+#define Pi acos(-1.0)
+#define link fjksldfjaslkdfjas
+using namespace std;
+typedef long long LL;
+int a[1010] , n , k;
+void solve(void){
+    a[0] = 0;
+    FOR(i,1,n) scanf("%d",a+i);
+    if(k == 1){
+        printf("Alice\n");
+        return;
+    }
+    int ans;
+    if(n % 2 == 0){
+        ans = 0;
+        for(int i = 1;i<=n;i+=2){
+            ans ^= (a[i+1] - a[i] - 1);
+        }
+    }else{
+        ans = a[1];
+        if(k == 2)ans--;
+        for(int i = 2;i<=n;i+=2){
+            ans ^= (a[i+1] - a[i] - 1);
+        }
+    }
+    if(ans)printf("Alice\n");
+    else printf("Bob\n");
+}
+int main(void){
+    while(2 == scanf("%d%d",&n,&k)) solve();
+    return 0;
+}
